@@ -1,9 +1,15 @@
-import 'package:fittrackr/exercise_form.dart';
-import 'package:fittrackr/timer_widget.dart';
+import 'package:fittrackr/state/exercises_list_state.dart';
+import 'package:fittrackr/widgets/exercise_form.dart';
+import 'package:fittrackr/widgets/exercise_list.dart';
+import 'package:fittrackr/widgets/timer_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (_) => ExerciseListState(),
+    child: MyApp()
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,7 +17,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Fit Tracker", home: MainWidget());
+    return MaterialApp(
+      title: "Fit Tracker",
+      home: MainWidget(),
+      theme: ThemeData(
+        colorScheme: ColorScheme(
+          brightness: Brightness.dark,
+          primary: Color(0xFF1DCD9F),
+          onPrimary: Color(0xFFEFEFEF),
+          secondary: Color(0xFF169976),
+          onSecondary: Color(0xFFEFEFEF),
+          surface: Color(0xFF222222),
+          onSurface: Colors.white,
+          error: Colors.red,
+          onError: Colors.white,
+        ),
+        useMaterial3: true,
+      ),
+    );
   }
 }
 
@@ -43,7 +66,7 @@ class _MainWidgetState extends State<MainWidget> {
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [Placeholder(), TimerWidget(), ExerciseForm(), Placeholder(), Placeholder()][currentPageIndex],
+      body: [Placeholder(), TimerWidget(), ExerciseList(), Placeholder(), Placeholder()][currentPageIndex],
     );
   }
 }

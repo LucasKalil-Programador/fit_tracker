@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fittrackr/value_inpuit_widget.dart';
+import 'package:fittrackr/widgets/value_inpuit_widget.dart';
 
 class Exercise {
   final String name;
