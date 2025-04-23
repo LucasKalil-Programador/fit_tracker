@@ -1,4 +1,4 @@
-import 'package:fittrackr/widgets/exercise_form.dart';
+import 'package:fittrackr/entities/exercise.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseListState extends ChangeNotifier {
@@ -8,6 +8,7 @@ class ExerciseListState extends ChangeNotifier {
 
   void addExercise(Exercise exercise) {
     _exercisesList.add(exercise);
+    _exercisesList.sort((a, b) => a.name.compareTo(b.name));
     notifyListeners();
   }
 

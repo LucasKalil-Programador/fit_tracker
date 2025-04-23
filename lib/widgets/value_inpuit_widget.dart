@@ -8,10 +8,11 @@ class ValueInputWidget extends StatefulWidget {
   final String label;
   final String suffix;
 
+  final int? initalValue;
   final int minValue;
   final int maxValue;
 
-  const ValueInputWidget({super.key, this.label = "Peso", this.suffix = "Kg", this.minValue = 1, this.maxValue = 32, this.onChanged});
+  const ValueInputWidget({super.key, this.label = "Peso", this.suffix = "Kg", this.initalValue, this.minValue = 1, this.maxValue = 32, this.onChanged});
 
   @override
   State<ValueInputWidget> createState() => _ValueInputWidgetState();
@@ -20,6 +21,15 @@ class ValueInputWidget extends StatefulWidget {
 class _ValueInputWidgetState extends State<ValueInputWidget> {
   int _value = 1;
   final TextEditingController _controller = TextEditingController(text: '1');
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initalValue != null) {
+      _value = widget.initalValue!;
+    }
+    _controller.text = _value.toString();
+  }
 
   @override
   Widget build(BuildContext context) {

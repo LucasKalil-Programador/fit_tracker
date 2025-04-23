@@ -1,5 +1,4 @@
 import 'package:fittrackr/state/exercises_list_state.dart';
-import 'package:fittrackr/widgets/exercise_form.dart';
 import 'package:fittrackr/widgets/exercise_list.dart';
 import 'package:fittrackr/widgets/timer_widget.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +65,7 @@ class _MainWidgetState extends State<MainWidget> {
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [Placeholder(), TimerWidget(), ExerciseList(), Placeholder(), Placeholder()][currentPageIndex],
+      body: [const Placeholder(), TimerWidget(), ExerciseList(), const Placeholder(), const Placeholder()][currentPageIndex],
     );
   }
 }

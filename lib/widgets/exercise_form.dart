@@ -1,29 +1,18 @@
+import 'package:fittrackr/entities/exercise.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/widgets/value_inpuit_widget.dart';
 
-class Exercise {
-  final String name;
-  final int load;
-  final int reps;
-  final int series;
-
-  const Exercise({
-    required this.name,
-    required this.load,
-    required this.reps,
-    required this.series,
-  });
-
-  @override
-  String toString() {
-    return 'Exercise(name: $name, load: $load kg, reps: $reps, series: $series)';
-  }
+class ExerciseFormMode {
+  static const int creation = 0;
+  static const int edit = 1;
 }
 
 class ExerciseForm extends StatefulWidget {
   final ValueChanged<Exercise>? onSubmit;
-
-  const ExerciseForm({super.key, this.onSubmit});
+  final Exercise? baseExercise;
+  final int mode;
+  
+  const ExerciseForm({super.key, this.onSubmit, this.mode = ExerciseFormMode.creation, this.baseExercise});
 
   @override
   State<ExerciseForm> createState() => _ExerciseFormState();
@@ -38,11 +27,22 @@ class _ExerciseFormState extends State<ExerciseForm> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.baseExercise != null) {
+      name = widget.baseExercise!.name;
+      load = widget.baseExercise!.load;
+      reps = widget.baseExercise!.reps;
+      series = widget.baseExercise!.series;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Criação de Exercicio",
+        title: Text(
+          widget.mode == 0 ? "Criação de exercicio" : "Editar exercicio",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -53,6 +53,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                controller: TextEditingController(text: widget.baseExercise?.name),
                 decoration: InputDecoration(labelText: "Nome"),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -68,6 +69,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
               child: ValueInputWidget(
                 label: "Carga",
                 suffix: "Kg",
+                initalValue: widget.baseExercise?.load,
                 maxValue: 500,
                 onChanged: (value) {
                   load = value;
@@ -77,9 +79,10 @@ class _ExerciseFormState extends State<ExerciseForm> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ValueInputWidget(
-                maxValue: 50,
                 label: "Qtd. de repetições",
                 suffix: "",
+                initalValue: widget.baseExercise?.reps,
+                maxValue: 50,
                 onChanged: (value) {
                   reps = value;
                 },
@@ -88,9 +91,10 @@ class _ExerciseFormState extends State<ExerciseForm> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ValueInputWidget(
-                maxValue: 50,
                 label: "Qtd. de series",
                 suffix: "",
+                initalValue: widget.baseExercise?.series,
+                maxValue: 50,
                 onChanged: (value) {
                   series = value;
                 },
@@ -108,13 +112,9 @@ class _ExerciseFormState extends State<ExerciseForm> {
                       series: series,
                     );
                     widget.onSubmit?.call(exercise);
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(exercise.toString())),
-                    );
                   }
                 },
-                child: const Text("Adicionar"),
+                child: Text(widget.mode == 0 ? "Adicionar" : "Editar"),
               ),
             ), 
           ],
