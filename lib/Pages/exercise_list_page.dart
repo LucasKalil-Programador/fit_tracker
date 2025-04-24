@@ -1,9 +1,9 @@
 import 'package:fittrackr/state/exercises_list_state.dart';
 import 'package:fittrackr/widgets/exercise_card.dart';
 import 'package:fittrackr/widgets/exercise_form.dart';
+import 'package:fittrackr/widgets/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class ExerciseListPage extends StatelessWidget {
   const ExerciseListPage({super.key});
@@ -27,9 +27,9 @@ class ExerciseListPage extends StatelessWidget {
           Expanded(
             child: Consumer<ExerciseListState>(builder: (context, exerciseListState, child) {
               return ListView.builder(
-                itemCount: exerciseListState.exercisesList.length,
+                itemCount: exerciseListState.exercises.length,
                 itemBuilder: (context, index) {
-                  final exercise = exerciseListState.exercisesList[index];
+                  final exercise = exerciseListState.exercises[index];
                   return ExerciseCard(exercise: exercise);
                 },
               );
@@ -48,12 +48,14 @@ class ExerciseListPage extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: ExerciseForm(
-            onSubmit: (value) {
-              Provider.of<ExerciseListState>(context, listen: false).addExercise(value);
+            onSubmit: (value) async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: const Text("Adicionado com sucesso!"))
-              );
+
+              ExerciseListState listState = Provider.of<ExerciseListState>(context, listen: false);
+              bool sucess = await listState.addExercise(value);
+
+              if(!context.mounted) return;
+              showSnackMessage(context, sucess ? "Adicionado com sucesso!" : "Erro ao adicionar exercício!", sucess);
             },
             mode: ExerciseFormMode.creation,
             ),

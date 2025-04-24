@@ -1,23 +1,25 @@
 
-import 'package:uuid/uuid.dart';
-
 class Exercise {
-  final String id;
+  String? id;
   final String name;
   final int load;
   final int reps;
   final int sets;
 
   Exercise({
-    String? id,
+    this.id,
     required this.name,
     required this.load,
     required this.reps,
     required this.sets,
-  }) : id = id ?? const Uuid().v4();
+  });
 
   @override
   String toString() {
     return 'Exercise(id: $id, name: $name, load: $load kg, reps: $reps, sets: $sets)';
+  }
+
+  static Exercise fromMap(Map<String, Object?> e) {
+    return Exercise(id: e['id'] as String, name: e['name'] as String, load: e['load'] as int, reps: e['reps'] as int, sets: e['sets'] as int);
   }
 }

@@ -1,33 +1,57 @@
+import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/entities/exercise.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseListState extends ChangeNotifier {
-  final List<Exercise> _exercisesList = [];
+  final List<Exercise> _exercises = [];
   
-  List<Exercise> get exercisesList => List.unmodifiable(_exercisesList);
+  List<Exercise> get exercises => List.unmodifiable(_exercises);
 
-  void addExercise(Exercise exercise) {
-    _exercisesList.add(exercise);
-    _exercisesList.sort((a, b) => a.name.compareTo(b.name));
-    notifyListeners();
+  Future<bool> addExercise(Exercise exercise) async {
+    final int result = await DatabaseHelper().insertExercise(exercise);
+    if(result > 0) {
+      _exercises.add(exercise);
+      _exercises.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
+    } 
+    return result > 0;
   }
 
-  void updateExercise(Exercise oldExercise, Exercise exercise) {
-    final index = _exercisesList.indexWhere((e) => e.id == oldExercise.id);
-    if (index != -1) {
-      _exercisesList[index] = exercise;
-      _exercisesList.sort((a, b) => a.name.compareTo(b.name));
+  Future<bool> updateExercise(Exercise exercise) async {
+    final index = _exercises.indexWhere((e) => e.id == exercise.id);
+    if(index == -1) return false;
+
+    final int result = await DatabaseHelper().updateExercise(exercise);
+    if (result > 0) {
+      _exercises[index] = exercise;
+      _exercises.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> removeExercise(Exercise exercise) async {
+    final int result = await DatabaseHelper().deleteExercise(exercise);
+    if(result > 0) {
+      _exercises.remove(exercise);
       notifyListeners();
     }
+    return result > 0;
   }
 
-  void removeExercise(Exercise exercise) {
-    _exercisesList.remove(exercise);
+  Future clearExercises() async {
+    await DatabaseHelper().clearExercise();
+    _exercises.clear();
     notifyListeners();
   }
 
-  void clearExercises() {
-    _exercisesList.clear();
+  Future<bool> loadDatabase() async {
+    List<Exercise> storageExircese = await DatabaseHelper().selectAll();
+    _exercises.addAll(storageExircese);
     notifyListeners();
+    
+    return storageExircese.isNotEmpty;
   }
 }
