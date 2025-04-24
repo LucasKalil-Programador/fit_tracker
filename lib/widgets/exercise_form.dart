@@ -1,6 +1,6 @@
 import 'package:fittrackr/entities/exercise.dart';
 import 'package:flutter/material.dart';
-import 'package:fittrackr/widgets/value_inpuit_widget.dart';
+import 'package:fittrackr/widgets/value_input_widget.dart';
 
 class ExerciseFormMode {
   static const int creation = 0;
@@ -19,10 +19,10 @@ class ExerciseForm extends StatefulWidget {
 }
 
 class _ExerciseFormState extends State<ExerciseForm> {
-  late String name;
+  final _nameController = TextEditingController(text: "");
   int load = 1;
   int reps = 1;
-  int series = 1;
+  int sets = 1;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -30,10 +30,10 @@ class _ExerciseFormState extends State<ExerciseForm> {
   void initState() {
     super.initState();
     if (widget.baseExercise != null) {
-      name = widget.baseExercise!.name;
+      _nameController.text = widget.baseExercise!.name;
       load = widget.baseExercise!.load;
       reps = widget.baseExercise!.reps;
-      series = widget.baseExercise!.series;
+      sets = widget.baseExercise!.sets;
     }
   }
 
@@ -43,83 +43,103 @@ class _ExerciseFormState extends State<ExerciseForm> {
       appBar: AppBar(
         title: Text(
           widget.mode == 0 ? "Criação de exercicio" : "Editar exercicio",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: TextEditingController(text: widget.baseExercise?.name),
-                decoration: InputDecoration(labelText: "Nome"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nome Invalido';
-                  }
-                  name = value;
-                  return null;
-                },
+      body: SingleChildScrollView( 
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: nameInput(),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ValueInputWidget(
-                label: "Carga",
-                suffix: "Kg",
-                initalValue: widget.baseExercise?.load,
-                maxValue: 500,
-                onChanged: (value) {
-                  load = value;
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: loadInput(),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ValueInputWidget(
-                label: "Qtd. de repetições",
-                suffix: "",
-                initalValue: widget.baseExercise?.reps,
-                maxValue: 50,
-                onChanged: (value) {
-                  reps = value;
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: repsInput(),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ValueInputWidget(
-                label: "Qtd. de series",
-                suffix: "",
-                initalValue: widget.baseExercise?.series,
-                maxValue: 50,
-                onChanged: (value) {
-                  series = value;
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: setsInput(),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Exercise exercise = Exercise(
-                      name: name,
-                      reps: reps,
-                      load: load,
-                      series: series,
-                    );
-                    widget.onSubmit?.call(exercise);
-                  }
-                },
-                child: Text(widget.mode == 0 ? "Adicionar" : "Editar"),
-              ),
-            ), 
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: submitButton(),
+              ), 
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget nameInput() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: const InputDecoration(labelText: "Nome"),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Nome Invalido';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget loadInput() {
+    return ValueInputWidget(
+      label: "Carga",
+      suffix: "Kg",
+      initialValue: widget.baseExercise?.load,
+      maxValue: 500,
+      onChanged: (value) => load = value,
+    );
+  }
+
+  Widget repsInput() {
+    return ValueInputWidget(
+      label: "Qtd. de repetições",
+      suffix: "",
+      initialValue: widget.baseExercise?.reps,
+      maxValue: 50,
+      onChanged: (value) => reps = value,
+    );
+  }
+
+  Widget setsInput() {
+    return ValueInputWidget(
+              label: "Qtd. de series",
+              suffix: "",
+              initialValue: widget.baseExercise?.sets,
+              maxValue: 50,
+              onChanged: (value) => sets = value,
+            );
+  }
+
+  Widget submitButton() {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          String? newId;
+          if (widget.mode == ExerciseFormMode.edit && widget.baseExercise != null) {
+            newId = widget.baseExercise!.id;
+          }
+          Exercise exercise = Exercise(
+            id: newId,
+            name: _nameController.text,
+            reps: reps,
+            load: load,
+            sets: sets,
+          );
+          widget.onSubmit?.call(exercise);
+        }
+      },
+      child: Text(widget.mode == 0 ? "Adicionar" : "Editar"),
     );
   }
 }

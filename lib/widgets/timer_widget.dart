@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:fittrackr/state/timer_state.dart';
 import 'package:flutter/material.dart';
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({super.key});
+  final TimerState timerState;
+
+  const TimerWidget({super.key, required this.timerState});
 
   @override
   State<TimerWidget> createState() => _TimerStateState();
@@ -11,41 +14,57 @@ class TimerWidget extends StatefulWidget {
 class _TimerStateState extends State<TimerWidget> {
   Timer? _timer;
 
-  DateTime? pausedTime;
-  DateTime? startTime;
+  final String placeholderElapsed = "00:00:00.00";
+  String formatedElapsed = "00:00:00.00";
 
-  bool paused = true;
-  String formatedElapsed = "00:00:00.000";
-  
+  @override
+  void initState() {
+    super.initState();
+    
+
+    if(!widget.timerState.paused) {
+      _startUpdater();
+    } else {
+      setState(() {
+        if (widget.timerState.startTime != null && widget.timerState.pausedTime != null) {
+          Duration elapsed = widget.timerState.pausedTime!.difference(widget.timerState.startTime!);
+          formatedElapsed = formatDuration(elapsed);
+        }
+      });
+    }
+  }
 
   String formatDuration(Duration d) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
-    String threeDigits(int n) => n.toString().padLeft(3, '0');
 
     final hours = twoDigits(d.inHours);
     final minutes = twoDigits(d.inMinutes.remainder(60));
     final seconds = twoDigits(d.inSeconds.remainder(60));
-    final milliseconds = threeDigits(d.inMilliseconds.remainder(1000));
+    final milliseconds = twoDigits(d.inMilliseconds.remainder(1000) ~/ 10);
 
     return "$hours:$minutes:$seconds.$milliseconds";
   }
 
   void start() {
-    paused = false;
+    widget.timerState.paused = false;
     _timer?.cancel();
 
-    if(pausedTime == null || startTime == null) {
-      startTime = DateTime.now();
+    if(widget.timerState.pausedTime == null || widget.timerState.startTime == null) {
+      widget.timerState.startTime = DateTime.now();
     } else {
-      Duration elapsed = DateTime.now().difference(pausedTime!);
-      startTime = startTime?.add(elapsed);
-      pausedTime = null;
+      Duration elapsed = DateTime.now().difference(widget.timerState.pausedTime!);
+      widget.timerState.startTime = widget.timerState.startTime?.add(elapsed);
+      widget.timerState.pausedTime = null;
     }
 
-    _timer = Timer.periodic(Duration(milliseconds: 5), (timer) {
+    _startUpdater();
+  }
+
+  void _startUpdater() {
+    _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
       setState(() {
-        if (startTime != null) {
-          Duration elapsed = DateTime.now().difference(startTime!);
+        if (widget.timerState.startTime != null) {
+          Duration elapsed = DateTime.now().difference(widget.timerState.startTime!);
           formatedElapsed = formatDuration(elapsed);
         }
       });
@@ -53,18 +72,23 @@ class _TimerStateState extends State<TimerWidget> {
   }
 
   void pause() {
-    paused = true;
     _timer?.cancel();
-    pausedTime = DateTime.now();
+    widget.timerState.paused = true;
+    widget.timerState.pausedTime = DateTime.now();
+
+    if (widget.timerState.startTime != null) {
+      Duration elapsed = widget.timerState.pausedTime!.difference(widget.timerState.startTime!);
+      formatedElapsed = formatDuration(elapsed);
+    }
   }
 
   void reset() {
     _timer?.cancel();
     setState(() {
-      paused = true;
-      pausedTime = null;
-      startTime = null;
-      formatedElapsed = "00:00:00.000";
+      widget.timerState.paused = true;
+      widget.timerState.pausedTime = null;
+      widget.timerState.startTime = null;
+      formatedElapsed = placeholderElapsed;
     });
   }
 
@@ -78,36 +102,56 @@ class _TimerStateState extends State<TimerWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Center(child: Text(formatedElapsed, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),)),
+        Center(child: Text(formatedElapsed, style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),)),
         Row(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
-                child: ElevatedButton(
-                  onPressed: reset,
-                  child: Icon(Icons.refresh),
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+                child: resetButton(context),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
-                child: ElevatedButton(
-                  onPressed: () {
-                      if(paused) {
-                        start();
-                      } else {
-                        pause();
-                      }
-                  },
-                  child: Icon(paused? Icons.play_arrow: Icons.pause),
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20),
+                child: playPauseButton(context),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget playPauseButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        shadowColor: Theme.of(context).colorScheme.primary,
+        elevation: 5,
+      ),
+      onPressed: () {
+        if (widget.timerState.paused) {
+          start();
+        } else {
+          pause();
+        }
+      },
+      child: Icon(widget.timerState.paused ? Icons.play_arrow : Icons.pause, size: 30),
+    );
+  }
+
+  Widget resetButton(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        shadowColor: Theme.of(context).colorScheme.primary,
+        elevation: 5,
+      ),
+      onPressed: reset,
+      child: const Icon(Icons.refresh, size: 30),
     );
   }
 }
