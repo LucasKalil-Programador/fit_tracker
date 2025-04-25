@@ -1,5 +1,4 @@
 import 'package:fittrackr/entities/exercise.dart';
-import 'package:uuid/uuid.dart';
 
 class ExercisePlan {
   int? id;
