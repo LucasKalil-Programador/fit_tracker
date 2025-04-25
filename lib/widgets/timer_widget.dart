@@ -20,7 +20,6 @@ class _TimerStateState extends State<TimerWidget> {
   @override
   void initState() {
     super.initState();
-    
 
     if(!widget.timerState.paused) {
       _startUpdater();

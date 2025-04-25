@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fittrackr/Pages/workout_page.dart';
 import 'package:fittrackr/entities/exercise.dart';
 import 'package:fittrackr/state/exercise_plan_state.dart';
@@ -9,18 +11,32 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   ExerciseListState exerciseList = ExerciseListState();
+  TimerState timerState = TimerState();
+
+  await exerciseList.loadFromDatabase();
+  await timerState.loadFromDatabase();
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<ExerciseListState>(create: (_) => exerciseList),
-      ChangeNotifierProvider<TimerState>(create: (_) => TimerState()),
+      ChangeNotifierProvider<TimerState>(create: (_) => timerState),
       ChangeNotifierProvider<ExercisePlanState>(create: (_) => ExercisePlanState())
     ],
     child: MyApp()
   ));
 
-  exerciseList.loadDatabase();
+  Timer? _debounce;
+  timerState.addListener(() {
+    _debounce?.cancel();
+    _debounce = Timer(Duration(seconds: 1), timerState.saveToDatabase);
+  });
+
+  // Timer timer = Timer(startTime: 0, pausedTime: 0, paused: true);
+  // int id = await DatabaseHelper().insertTimer(timer);
+  // print(id);
+  
   // generateDefaultExercises(exerciseList);
 }
 
@@ -117,7 +133,7 @@ class _MainWidgetState extends State<MainWidget> {
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [const Placeholder(), WorkoutPage(), ExerciseListPage(), const Placeholder(), const Placeholder()][currentPageIndex],
+      body: [const Placeholder(), const WorkoutPage(), const ExerciseListPage(), const Placeholder(), const Placeholder()][currentPageIndex],
     );
   }
 }

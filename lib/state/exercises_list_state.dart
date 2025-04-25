@@ -47,11 +47,11 @@ class ExerciseListState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> loadDatabase() async {
+  Future<bool> loadFromDatabase() async {
     List<Exercise> storageExircese = await DatabaseHelper().selectAll();
     _exercises.addAll(storageExircese);
     notifyListeners();
     
-    return storageExircese.isNotEmpty;
+    return _exercises.isNotEmpty;
   }
 }

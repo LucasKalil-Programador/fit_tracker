@@ -1,6 +1,6 @@
 
 class Exercise {
-  String? id;
+  int? id;
   final String name;
   final int load;
   final int reps;
@@ -20,6 +20,6 @@ class Exercise {
   }
 
   static Exercise fromMap(Map<String, Object?> e) {
-    return Exercise(id: e['id'] as String, name: e['name'] as String, load: e['load'] as int, reps: e['reps'] as int, sets: e['sets'] as int);
+    return Exercise(id: e['id'] as int, name: e['name'] as String, load: e['load'] as int, reps: e['reps'] as int, sets: e['sets'] as int);
   }
 }

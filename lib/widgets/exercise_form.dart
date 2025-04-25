@@ -131,7 +131,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
       ),
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          String? newId;
+          int? newId;
           if (widget.mode == ExerciseFormMode.edit && widget.baseExercise != null) {
             newId = widget.baseExercise!.id;
           }

@@ -39,7 +39,7 @@ class _ExercisePlanWidgetState extends State<ExercisePlanWidget> {
   Card _planItem(ExercisePlanRecipient item, int index, BuildContext context) {
     Exercise exercise = item.exercise;
     return Card(
-        key: Key(exercise.id!),
+        key: ValueKey(exercise.id!),
         color: Theme.of(context).colorScheme.primaryContainer,
         child: ListTile(
           title: Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold),),

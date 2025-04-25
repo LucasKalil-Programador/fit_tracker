@@ -15,7 +15,7 @@ class ExerciseCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Dismissible(
-        key: Key(exercise.id!),
+        key: ValueKey(exercise.id!),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) async {
           bool sucess = await Provider.of<ExerciseListState>(context, listen: false).removeExercise(exercise);

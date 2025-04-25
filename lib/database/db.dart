@@ -1,7 +1,7 @@
 import 'package:fittrackr/entities/exercise.dart';
+import 'package:fittrackr/entities/timer.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:uuid/uuid.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -25,11 +25,19 @@ class DatabaseHelper {
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE exercise(
-            id TEXT PRIMARY KEY,
-            name TEXT,
-            load INTEGER,
-            reps INTEGER,
-            sets INTEGER
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            load INTEGER NOT NULL,
+            reps INTEGER NOT NULL,
+            sets INTEGER NOT NULL
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE timer(
+            id INTEGER PRIMARY KEY AUTOINCREMENT ,
+            paused_time INTEGER,
+            start_time INTEGER,
+            paused INTEGER
           )
         ''');
       },
@@ -38,9 +46,8 @@ class DatabaseHelper {
 
   Future<int> insertExercise(Exercise exercise) async {
     final db = await database;
-    final id = Uuid().v4();
-    exercise.id = id;
-    return await db.insert('exercise', {'id': id, 'name': exercise.name, 'load': exercise.load, 'reps': exercise.reps, 'sets': exercise.sets});
+    exercise.id = await db.insert('exercise', {'name': exercise.name, 'load': exercise.load, 'reps': exercise.reps, 'sets': exercise.sets});
+    return exercise.id!;
   }
 
   Future<int> deleteExercise(Exercise exercise) async {
@@ -76,5 +83,34 @@ class DatabaseHelper {
     );
 
     return result.map((e) => Exercise.fromMap(e)).toList();
+  }
+
+  Future<int> insertTimer(Timer timer) async {
+    final db = await database;
+    int id = await db.insert('timer', {
+      'start_time': timer.startTime?.millisecondsSinceEpoch,
+      'paused_time': timer.pausedTime?.millisecondsSinceEpoch,
+      'paused': timer.paused ? 1 : 0,
+    });
+    timer.id = id;
+    return id;
+  }
+
+  Future<int> updateTimer(Timer timer) async {
+    final db = await database;
+    return db.update('timer', {
+      'start_time': timer.startTime?.millisecondsSinceEpoch,
+      'paused_time': timer.pausedTime?.millisecondsSinceEpoch,
+      'paused': timer.paused? 1 : 0
+    },
+    where: 'id = ?',
+    whereArgs: [timer.id]
+    );
+  }
+
+  Future<Timer?> selectOne(int id) async {
+    final db = await database;
+    final result = await db.query('timer', where: 'id = ?', whereArgs: [id]);
+    return result.isNotEmpty ? Timer.fromMap(result.first): null;
   }
 }
