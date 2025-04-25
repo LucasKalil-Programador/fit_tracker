@@ -1,7 +1,7 @@
 import 'package:fittrackr/entities/exercise.dart';
 import 'package:fittrackr/state/exercises_list_state.dart';
-import 'package:fittrackr/widgets/exercise_form.dart';
-import 'package:fittrackr/widgets/widget_utils.dart';
+import 'package:fittrackr/widgets/default_widgets.dart';
+import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,56 +22,36 @@ class ExerciseCard extends StatelessWidget {
           if(!context.mounted) return;
           showSnackMessage(context, sucess ? "Removido com sucesso!" : "Erro ao remover exercício!", sucess);
         },              
-        background: deleteButton(),
-        child: contentButton(context),    
+        background: deleteBackground(),
+        child: contentCard(context),    
+      ),
+    );
+  } 
+
+  Widget contentCard(BuildContext context) {
+    return DefaultExerciseCard(
+      exercise: this.exercise,
+      trailing: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary
+        ),
+        onPressed: () => showEditModalBottom(context),
+        child: Icon(Icons.edit),
       ),
     );
   }
 
-  ElevatedButton contentButton(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () => showEditModalBottom(context),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          shadowColor: Theme.of(context).colorScheme.shadow,
-          elevation: 2,
+  Widget deleteBackground() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          color: Colors.red,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Icon(Icons.delete, color: Colors.white),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: Center(
-                child: Text(exercise.name, style: const TextStyle(fontSize: 18)),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    "Carga: ${exercise.load} Kg",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    "Repetições: ${exercise.sets}x${exercise.reps}",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-  }
-
-  ClipRRect deleteButton() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Icon(Icons.delete, color: Colors.white),
       ),
     );
   }

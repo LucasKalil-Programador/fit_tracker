@@ -123,12 +123,6 @@ class _ExerciseFormState extends State<ExerciseForm> {
 
   Widget submitButton() {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        elevation: 2,
-      ),
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           int? newId;

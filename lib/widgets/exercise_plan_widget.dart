@@ -1,10 +1,11 @@
 
 import 'package:fittrackr/entities/exercise.dart';
 import 'package:fittrackr/entities/exercise_plan.dart';
+import 'package:fittrackr/widgets/default_widgets.dart';
 import 'package:flutter/material.dart';
 
 class ExercisePlanWidget extends StatefulWidget {
-  final ExercisePlan exercisePlan;
+  final ExercisePlan? exercisePlan;
   final bool editMode;
 
   const ExercisePlanWidget({super.key, this.editMode = false, required this.exercisePlan});
@@ -16,7 +17,10 @@ class ExercisePlanWidget extends StatefulWidget {
 class _ExercisePlanWidgetState extends State<ExercisePlanWidget> {
   @override
   Widget build(BuildContext context) {
-    List<ExercisePlanRecipient> exercises = widget.exercisePlan.exercises;
+    List<ExercisePlanRecipient> exercises =
+        widget.exercisePlan == null
+            ? List.empty(growable: false)
+            : widget.exercisePlan!.exercises;
 
     return ReorderableListView(
       padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -36,26 +40,28 @@ class _ExercisePlanWidgetState extends State<ExercisePlanWidget> {
     );
   }
 
-  Card _planItem(ExercisePlanRecipient item, int index, BuildContext context) {
+  Widget _planItem(ExercisePlanRecipient item, int index, BuildContext context) {
     Exercise exercise = item.exercise;
-    return Card(
-        key: ValueKey(exercise.id!),
-        color: Theme.of(context).colorScheme.primaryContainer,
-        child: ListTile(
-          title: Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold),),
-          subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.load} Kg"),
-          leading: Text("${index + 1}", textAlign: TextAlign.right, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),),
-          trailing:
-            widget.editMode? ReorderableDragStartListener(
-                  index: index,
-                  child: Icon(Icons.drag_indicator),
-                ) : Checkbox(
-                  value: item.done,
-                  onChanged: (selected) {
-                    setState(() => item.done = !item.done);
-                  },
-                ),
+    return DefaultExerciseCard(
+      key: ValueKey(exercise.id!),
+      exercise: exercise,
+      leading: Text(
+        "${index + 1}",
+        textAlign: TextAlign.right,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       ),
+      trailing:
+          widget.editMode
+              ? ReorderableDragStartListener(
+                index: index,
+                child: Icon(Icons.drag_indicator),
+              )
+              : Checkbox(
+                value: item.done,
+                onChanged: (selected) {
+                  setState(() => item.done = !item.done);
+                },
+              ),
     );
   }
 }

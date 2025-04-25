@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 
 class ExercisePlanState extends ChangeNotifier {
   final List<ExercisePlan> _planList = [];
-  String? _activated;
+  int? _activated;
   
   List<ExercisePlan> get planList => List.unmodifiable(_planList);
 
-  String? get activated => _activated;
-  set pausedTime(String? value) {
+  int? get activated => _activated;
+  set activated(int? value) {
     final index = _planList.indexWhere((e) => e.id == value);
     if(index != -1) {
       _activated = value;
-      notifyListeners();
     }
   }
 

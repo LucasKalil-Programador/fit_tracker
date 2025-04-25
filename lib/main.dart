@@ -15,7 +15,10 @@ void main() async {
   ExerciseListState exerciseList = ExerciseListState();
   TimerState timerState = TimerState();
 
-  await exerciseList.loadFromDatabase();
+  await exerciseList.loadFromDatabase().then((value) async {
+    await Future.delayed(Duration(seconds: 5));
+    return generateDefaultExercises(exerciseList);
+  });
   await timerState.loadFromDatabase();
 
   runApp(MultiProvider(
@@ -32,12 +35,6 @@ void main() async {
     _debounce?.cancel();
     _debounce = Timer(Duration(seconds: 1), timerState.saveToDatabase);
   });
-
-  // Timer timer = Timer(startTime: 0, pausedTime: 0, paused: true);
-  // int id = await DatabaseHelper().insertTimer(timer);
-  // print(id);
-  
-  // generateDefaultExercises(exerciseList);
 }
 
 void generateDefaultExercises(ExerciseListState exerciseList) async {
@@ -97,10 +94,23 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeData(
+      useMaterial3: true,
+      colorScheme: customDarkColorScheme,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: customDarkColorScheme.primaryContainer,
+          foregroundColor: customDarkColorScheme.onPrimaryContainer,
+          shadowColor: customDarkColorScheme.shadow,
+          elevation: 2,
+        ),
+      ),
+    );
+
     return MaterialApp(
       title: "Fit Tracker",
       home: MainWidget(),
-      theme: ThemeData(colorScheme: customDarkColorScheme, useMaterial3: true),
+      theme: theme,
     );
   }
 }

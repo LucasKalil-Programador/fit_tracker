@@ -1,7 +1,7 @@
 import 'package:fittrackr/state/exercises_list_state.dart';
+import 'package:fittrackr/widgets/default_widgets.dart';
 import 'package:fittrackr/widgets/exercise_card.dart';
-import 'package:fittrackr/widgets/exercise_form.dart';
-import 'package:fittrackr/widgets/widget_utils.dart';
+import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

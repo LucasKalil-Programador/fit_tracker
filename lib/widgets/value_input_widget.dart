@@ -36,13 +36,6 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
     widget.onChanged!.call(_value);
   }
 
-  ButtonStyle _buttonStyle () => ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-            shadowColor: Theme.of(context).colorScheme.shadow,
-            elevation: 2,
-          );
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -92,7 +85,6 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
 
   Widget decrementButton() {
     return ElevatedButton(
-          style: _buttonStyle(),
           onPressed: () {
             setState(() {
               if (_value > widget.minValue) { 
@@ -108,7 +100,6 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
 
   Widget incrementButton() {
     return ElevatedButton(
-          style: _buttonStyle(),
           onPressed: () {
             setState(() {
               if(_value < widget.maxValue) {

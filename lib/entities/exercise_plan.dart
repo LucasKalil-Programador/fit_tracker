@@ -2,15 +2,15 @@ import 'package:fittrackr/entities/exercise.dart';
 import 'package:uuid/uuid.dart';
 
 class ExercisePlan {
-  final String id;
+  int? id;
   final String name;
   final List<ExercisePlanRecipient> exercises;
 
   ExercisePlan({
-    String? id,
+    int? id,
     required this.name,
     required this.exercises,
-  }) : id = id ?? const Uuid().v4();
+  });
 
   @override
   String toString() {
