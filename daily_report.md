@@ -1,0 +1,51 @@
+O objetivo deste arquivo é documentar todo o processo de criação do app com codinome FitTracker.
+
+**Início do projeto: 22/04/2025**
+
+A ideia surgiu a partir de uma necessidade pessoal. Sempre fui muito à academia e, com o tempo, percebi uma deficiência na forma como eu acompanhava meu progresso. Até então, usava o bloco de notas para gerenciar meus treinos — o que, além de ineficiente, dificultava a análise de evolução de carga, frequência de treinos, entre outros. Com o desenvolvimento deste app, além de aprender uma nova stack (Flutter/Dart), estou criando algo que será útil no meu dia a dia.
+
+**Por que optei por Flutter (Dart)?**
+Considerei vários fatores, mas o principal foi a facilidade de portar o app para múltiplas plataformas (iOS, Android, Windows, macOS, etc.). Isso torna o projeto mais acessível no futuro, caso eu decida lançá-lo oficialmente. Além disso, o Flutter já entrega um visual moderno, minimalista e leve, o que me agrada bastante.
+
+**Por que não Android Studio (Java)?**
+Minha primeira opção foi Android Studio com Java, já que tenho conhecimento avançado na linguagem e já usei essa stack em um projeto da faculdade. Nesse projeto, eu e minha equipe criamos um ciclo computador, que exibia informações como velocidade instantânea, velocidade média, distância percorrida, etc., utilizando GPS.
+Repositório do projeto: [CicloComputer](https://github.com/LucasKalil-Programador/CicloComputer)
+
+No entanto, tive uma experiência ruim com a verbosidade do Java e com a estrutura do Android Studio. Isso me motivou a experimentar uma nova linguagem e, assim, expandir meus conhecimentos.
+
+**Situação atual (26/04/2025)**
+- O app está parcialmente funcional. Já implementei 4 telas:
+
+- Formulário de criação de exercício
+
+- Formulário de criação de plano de treino
+
+- Tela de treino (exibe o treino ativo)
+
+- Lista de exercícios criados (com opção de editar ou deletar)
+
+**Sobre a persistência de dados**
+Implementei um sistema com SQLite, que estava funcionando bem. No entanto, enfrentei problemas por estar implementando o banco de dados ao mesmo tempo que desenvolvia a UI e o controle de estado. Isso gerava dores de cabeça quando precisava de uma nova tabela e já a usava diretamente no código.
+
+Então, dei um passo atrás: irei reescrever todo o banco de dados, com todas as tabelas planejadas e com testes para a maioria dos casos de uso. Com isso, espero ter mais fluidez ao voltar para a parte de UI, já que poderei me concentrar melhor.
+
+## Abaixo estão as tabelas no novo sistema de banco de dados:
+
+- exercise: Representa um exercício individual.
+
+- training_plan: Representa um plano de treino, contendo uma lista de exercícios.
+
+- tag: Cada exercício ou plano de treino pode ser marcado com tags para facilitar a organização.
+
+- metadata: Armazena dados de configuração do sistema.
+
+- report_exercise: Quando um exercício é concluído, o usuário pode registrar seu desempenho, permitindo acompanhar o progresso.
+
+- report_training_plan: Registra o horário de início e fim de um treino, juntamente com informações relacionadas.
+
+- exercise_training_plan: Tabela relacional N:N entre exercícios e planos de treino.
+
+- exercise_tag: Tabela relacional N:N entre exercícios e tags.
+
+- training_plan_tag: Tabela relacional N:N entre planos de treino e tags.
+

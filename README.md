@@ -1,16 +1,66 @@
-# fittrackr
+# 📄 PRD – FitTrackr (App de Planejamento e Acompanhamento de Treinos)
+## 🧠 Visão Geral
+FitTrackr é um aplicativo mobile voltado para auxiliar usuários na criação, organização e acompanhamento de treinos de academia. O app permite o cadastro de treinos com tags, registro de desempenho por exercício e análise da evolução com gráficos.
 
-A new Flutter project.
+## 🎯 Objetivos
+- Permitir que usuários montem fichas de treino personalizadas
 
-## Getting Started
+- Acompanhar desempenho com registro de carga e repetições
 
-This project is a starting point for a Flutter application.
+- Visualizar progresso com gráficos
 
-A few resources to get you started if this is your first Flutter project:
+- Usar tags para organização e filtro de treinos
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Oferecer uma experiência simples, funcional e intuitiva
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 👤 Público-alvo
+- Praticantes de musculação de qualquer nível
+
+- Personal trainers que organizam treinos
+
+- Pessoas que gostam de monitorar performance
+
+- 🧱 Funcionalidades Principais
+### 📝 Cadastro de Treino
+- Nome do treino
+
+- Seleção de tags (ex: Peito, Segunda-feira)
+
+- Lista de exercícios (nome, séries, repetições alvo)
+
+### 🔖 Tags
+- Tags padrão (ex: grupos musculares, dias da semana)
+
+- Criação de tags personalizadas
+
+### ⏱ Execução de Treino
+- Início manual
+
+- Cronômetro geral
+
+- Entrada de dados: carga e repetições feitas por exercício
+
+### 📊 Histórico e Evolução
+- Lista de treinos feitos com data e duração
+
+- Gráficos de evolução por exercício (carga e reps)
+
+- Filtro por tag ou período
+
+### 💡 Funcionalidades Futuras (MVP+)
+- Timer de descanso entre séries
+
+- Compartilhamento de treinos
+
+- Backup em nuvem (ex: Firebase)
+
+- Login de usuário
+
+### 🛠️ Tecnologias
+- Frontend: Flutter (Dart)
+
+- Gerenciamento de estado: Provider
+
+- Banco local: SQLite ou Hive (offline)
+
+- Backend/Firebase: opcional, para futura sincronização
