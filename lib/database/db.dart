@@ -2,11 +2,12 @@
 // import 'package:sqflite/sqflite.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/metadata.dart';
+import 'package:fittrackr/database/entities/report.dart';
 import 'package:fittrackr/database/entities/tag.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _TrainingPlanHelper {
+class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _TrainingPlanHelper, _ReportExerciseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
   DatabaseHelper._internal();
@@ -83,7 +84,7 @@ class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _Trainin
         ''');
 
         await db.execute('''
-          CREATE TABLE exercise_training_plan (
+          CREATE TABLE training_plan_has_exercise (
             training_plan_id INTEGER NOT NULL,
             exercise_id INTEGER NOT NULL,
             position INTEGER NOT NULL DEFAULT 0,
@@ -94,7 +95,7 @@ class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _Trainin
         ''');
 
         await db.execute('''
-          CREATE TABLE exercise_tag (
+          CREATE TABLE exercise_has_tag (
             tag_id INTEGER NOT NULL,
             exercise_id INTEGER NOT NULL,
             PRIMARY KEY (tag_id, exercise_id),
@@ -104,7 +105,7 @@ class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _Trainin
         ''');
 
         await db.execute('''
-          CREATE TABLE training_plan_tag (
+          CREATE TABLE training_plan_has_tag (
             tag_id INTEGER NOT NULL,
             training_plan_id INTEGER NOT NULL,
             PRIMARY KEY (tag_id, training_plan_id),
@@ -121,7 +122,6 @@ mixin _ExerciseHelper {
   Future<int> insertExercise(Exercise exercise) async {
     final db = await (this as DatabaseHelper).database;
     exercise.id = await db.insert('exercise', {
-      'id': exercise.id,
       'name': exercise.name,
       'amount': exercise.amount,
       'reps': exercise.reps,
@@ -141,7 +141,6 @@ mixin _ExerciseHelper {
     return db.update(
       'exercise',
       {
-        'id': exercise.id,
         'name': exercise.name,
         'amount': exercise.amount,
         'reps': exercise.reps,
@@ -174,7 +173,6 @@ mixin _MetadataHelper {
   Future<int> insertMetadata(Metadata metadata) async {
     final db = await (this as DatabaseHelper).database;
     metadata.id = await db.insert('metadata', {
-      'id': metadata.id,
       'key': metadata.key,
       'value': metadata.value,
     });
@@ -191,7 +189,6 @@ mixin _MetadataHelper {
     return db.update(
       'metadata',
       {
-      'id': metadata.id, 
       'key': metadata.key, 
       'value': metadata.value
       },
@@ -217,7 +214,6 @@ mixin _TagHelper {
   Future<int> insertTag(Tag tag) async {
     final db = await (this as DatabaseHelper).database;
     tag.id = await db.insert('tag', {
-      'id': tag.id,
       'name': tag.name,
     });
     return tag.id!;
@@ -232,7 +228,7 @@ mixin _TagHelper {
     final db = await (this as DatabaseHelper).database;
     return await db.update(
       'tag',
-      {'id': tag.id, 'name': tag.name},
+      {'name': tag.name},
       where: 'id = ?',
       whereArgs: [tag.id],
     );
@@ -255,7 +251,6 @@ mixin _TrainingPlanHelper {
   Future<int> insertTrainingPlan(TrainingPlan plan) async {
     final db = await (this as DatabaseHelper).database;
     plan.id = await db.insert('training_plan', {
-      'id': plan.id,
       'name': plan.name,
     });
     return plan.id!;
@@ -270,7 +265,7 @@ mixin _TrainingPlanHelper {
     final db = await (this as DatabaseHelper).database;
     return await db.update(
       'training_plan',
-      {'id': plan.id, 'name': plan.name},
+      {'name': plan.name},
       where: 'id = ?',
       whereArgs: [plan.id],
     );
@@ -289,21 +284,123 @@ mixin _TrainingPlanHelper {
   }
 }
 
+mixin _ReportExerciseHelper {
+  Future<int> insertReport(Report<Object> report) async {
+    final db = await (this as DatabaseHelper).database;
+
+    if(report.object is Exercise) {
+      report.id = await db.insert('report_exercise', {
+        'data': report.data,
+        'report_date': report.reportDate,
+        'exercise_id': (report.object as Exercise).id,
+      });
+      return report.id!;
+    } else if(report.object is TrainingPlan) {
+      report.id = await db.insert('report_training_plan', {
+        'data': report.data,
+        'report_date': report.reportDate,
+        'training_plan_id': (report.object as TrainingPlan).id,
+      });
+      return report.id!;
+    }
+
+    return 0;
+  }
+
+  Future<int> deleteReport(Report<Object> report) async {
+    final db = await (this as DatabaseHelper).database;
+    if(report.object is Exercise) {
+      return db.delete('report_exercise', where: 'id = ?', whereArgs: [report.id]);
+    } else if(report.object is TrainingPlan) {
+      return db.delete('report_training_plan', where: 'id = ?', whereArgs: [report.id]);
+    }
+    return 0;
+  }
+
+  Future<int> updateReport(Report<Object> report) async {
+    final db = await (this as DatabaseHelper).database;
+    if(report.object is Exercise) {
+      return await db.update('report_exercise', 
+      {
+        'data': report.data,
+        'report_date': report.reportDate,
+        'exercise_id': (report.object as Exercise).id,
+      },
+      where: 'id = ?',
+      whereArgs: [report.id]
+      );
+    } else if(report.object is TrainingPlan) {
+      return await db.update('report_training_plan', 
+      {
+        'data': report.data,
+        'report_date': report.reportDate,
+        'training_plan_id': (report.object as TrainingPlan).id,
+      },
+      where: 'id = ?',
+      whereArgs: [report.id]
+      );
+    }
+    return 0;
+  }
+
+  Future<List<Report<T>>> selectAllReport<T>() async {
+    final db = await (this as DatabaseHelper).database;
+    if(T == Exercise) {
+      final result = await db.rawQuery('''
+        SELECT r.id, r.data, r.report_date, r.exercise_id, e.name, e.amount, e.reps, e.sets, e.type FROM report_exercise r 
+        INNER JOIN exercise e ON e.id = r.exercise_id
+      ''');
+      return result.map(Report.fromMap<T>).toList();
+    } else if(T == TrainingPlan) {
+      final result = await db.rawQuery('''
+        SELECT r.id, r.data, r.report_date, r.training_plan_id, e.name FROM report_training_plan r 
+        INNER JOIN training_plan e ON e.id = r.training_plan_id
+      ''');
+      return result.map(Report.fromMap<T>).toList();
+    }
+
+    return List.empty(growable: true);
+  }
+
+  Future<Report<T>?> selectReport<T>(int id) async {
+    final db = await (this as DatabaseHelper).database;
+    if(T == Exercise) {
+      final result = await db.rawQuery('''
+          SELECT r.id, r.data, r.report_date, r.exercise_id, e.name, e.amount, e.reps, e.sets, e.type FROM report_exercise r 
+          INNER JOIN exercise e ON e.id = r.exercise_id
+          WHERE r.id = ?
+        ''', [id]);
+      return result.isNotEmpty ? Report.fromMap<T>(result.first) : null;
+    } else if(T == TrainingPlan) {
+      final result = await db.rawQuery('''
+        SELECT r.id, r.data, r.report_date, r.training_plan_id, e.name FROM report_training_plan r 
+        INNER JOIN training_plan e ON e.id = r.training_plan_id
+        WHERE r.id = ?
+      ''', [id]);
+      return result.isNotEmpty ? Report.fromMap<T>(result.first) : null;
+    }
+    return null;
+  }
+}
+
 /* 
-- exercise                Implementado
-- training_plan           Implementado
-- tag                     Implementado
-- metadata                Implementado
-- report_exercise
-- report_training_plan
-- exercise_training_plan
-- exercise_tag
-- training_plan_tag 
+- exercise               Implementado
+- training_plan          Implementado
+- tag                    Implementado
+- metadata               Implementado
+
+- report_exercise        Implementado
+- report_training_plan   Implementado
 
 Insert
 delete
 update
 selectAll
 selectOne(id)
+
+- training_plan_has_exercise
+- exercise_has_tag
+- training_plan_has_tag 
+
 */
 

@@ -49,3 +49,27 @@ Então, dei um passo atrás: irei reescrever todo o banco de dados, com todas as
 
 - training_plan_tag: Tabela relacional N:N entre planos de treino e tags.
 
+# Dia 26/04/2025
+
+Implementei parte do novo banco de dados e os testes unitários para cada tabela.
+
+- exercise        Implementado
+- training_plan   Implementado
+- tag             Implementado
+- metadata        Implementado
+- report_exercise Implementado
+
+Os métodos básicos implementados são:
+
+Insert
+delete
+update
+selectAll
+selectOne(id)
+
+# Dia 27/04/2025
+
+Percebi semelhança entre report_exercise e report_training_plan; na prática, são muito similares, diferenciando-se apenas pelo fato de um armazenar um exercício e o outro um plano de treino. Por isso, decidi seguir um caminho unificado, criando apenas um `Report<T>` Nesse modelo, T pode ser Exercise ou TrainingPlan, tornando o código mais flexível e enxuto.
+
+
+
