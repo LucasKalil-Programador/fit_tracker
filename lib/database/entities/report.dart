@@ -18,10 +18,11 @@ CREATE TABLE report_training_plan(
 
 
 
+import 'package:fittrackr/database/entities/base_entity.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 
-class Report<T> {
+class Report<T> implements BaseEntity {
   int? id;
   final String data;
   final int reportDate;

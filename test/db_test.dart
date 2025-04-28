@@ -93,8 +93,8 @@ void ExerciseDbTest() {
       await databaseHelper.insertTag(tag);
       tags.add(tag);
 
-      await databaseHelper.setExerciseTagList(exercise, tags);
-      List<Tag> loaded = await databaseHelper.getExerciseTagList(exercise);
+      await databaseHelper.setTagList(exercise, tags);
+      List<Tag> loaded = await databaseHelper.getTagList(exercise);
       expect(loaded, tags);
     }
 
@@ -102,8 +102,8 @@ void ExerciseDbTest() {
       tags.shuffle();
       tags.removeLast();
 
-      await databaseHelper.setExerciseTagList(exercise, tags);
-      List<Tag> loaded = await databaseHelper.getExerciseTagList(exercise);
+      await databaseHelper.setTagList(exercise, tags);
+      List<Tag> loaded = await databaseHelper.getTagList(exercise);
       tags.sort((a, b) => (a.id as int).compareTo(b.id as int));
       expect(loaded, tags);
     }
@@ -496,8 +496,8 @@ void TrainingPlanDbTest() {
       await databaseHelper.insertTag(tag);
       tags.add(tag);
 
-      await databaseHelper.setTrainingPlanTagList(plan, tags);
-      List<Tag> loaded = await databaseHelper.getTrainingPlanTagList(plan);
+      await databaseHelper.setTagList(plan, tags);
+      List<Tag> loaded = await databaseHelper.getTagList(plan);
       expect(loaded, tags);
     }
 
@@ -505,8 +505,8 @@ void TrainingPlanDbTest() {
       tags.shuffle();
       tags.removeLast();
 
-      await databaseHelper.setTrainingPlanTagList(plan, tags);
-      List<Tag> loaded = await databaseHelper.getTrainingPlanTagList(plan);
+      await databaseHelper.setTagList(plan, tags);
+      List<Tag> loaded = await databaseHelper.getTagList(plan);
       tags.sort((a, b) => (a.id as int).compareTo(b.id as int));
       expect(loaded, tags);
     }

@@ -5,7 +5,9 @@ CREATE TABLE tag(
 )
 */
 
-class Tag {
+import 'package:fittrackr/database/entities/base_entity.dart';
+
+class Tag implements BaseEntity{
   int? id;
   final String name;
 

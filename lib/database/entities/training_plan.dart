@@ -5,7 +5,9 @@ CREATE TABLE training_plan(
 )
 */
 
-class TrainingPlan {
+import 'package:fittrackr/database/entities/base_entity.dart';
+
+class TrainingPlan implements BaseEntity{
   int? id;
   final String name;
 

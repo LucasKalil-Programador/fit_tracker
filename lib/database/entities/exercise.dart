@@ -9,9 +9,11 @@ CREATE TABLE exercise(
 ) 
 */
 
+import 'package:fittrackr/database/entities/base_entity.dart';
+
 enum ExerciseType {Cardio, Musclework}
 
-class Exercise {
+class Exercise implements BaseEntity {
   int? id;
   final String name;
   final int amount;

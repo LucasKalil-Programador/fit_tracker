@@ -4,7 +4,9 @@
   value TEXT NOT NULL
 ) */
 
-class Metadata {
+import 'package:fittrackr/database/entities/base_entity.dart';
+
+class Metadata implements BaseEntity {
   int? id;
   final String key;
   final String value;

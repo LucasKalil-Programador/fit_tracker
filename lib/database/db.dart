@@ -1,5 +1,6 @@
 // import 'package:path/path.dart';
 // import 'package:sqflite/sqflite.dart';
+import 'package:fittrackr/database/entities/base_entity.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/metadata.dart';
 import 'package:fittrackr/database/entities/report.dart';
@@ -8,6 +9,75 @@ import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _TrainingPlanHelper, _ReportExerciseHelper {
+
+  final create_table_sql = '''
+          CREATE TABLE exercise(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            amount INTEGER NOT NULL,
+            reps INTEGER NOT NULL,
+            sets INTEGER NOT NULL,
+            type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
+          );
+
+          CREATE TABLE training_plan(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+          );
+
+          CREATE TABLE tag(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+          );
+
+          CREATE TABLE metadata(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key TEXT NOT NULL UNIQUE,
+            value TEXT NOT NULL
+          );
+
+          CREATE TABLE report_exercise(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            data TEXT NOT NULL,
+            report_date INTEGER NOT NULL,
+            exercise_id INTEGER NOT NULL,
+            FOREIGN KEY (exercise_id) REFERENCES exercise(id)
+          );
+
+          CREATE TABLE report_training_plan(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            data TEXT NOT NULL,
+            report_date INTEGER NOT NULL,
+            training_plan_id INTEGER NOT NULL,
+            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id)
+          );
+
+          CREATE TABLE training_plan_has_exercise (
+            training_plan_id INTEGER NOT NULL,
+            exercise_id INTEGER NOT NULL,
+            position INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (training_plan_id, exercise_id),
+            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE,
+            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+          );
+
+          CREATE TABLE exercise_has_tag (
+            tag_id INTEGER NOT NULL,
+            exercise_id INTEGER NOT NULL,
+            PRIMARY KEY (tag_id, exercise_id),
+            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+          );
+
+          CREATE TABLE training_plan_has_tag (
+            tag_id INTEGER NOT NULL,
+            training_plan_id INTEGER NOT NULL,
+            PRIMARY KEY (tag_id, training_plan_id),
+            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
+          );
+        ''';
+
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
   DatabaseHelper._internal();
@@ -29,91 +99,7 @@ class DatabaseHelper with _ExerciseHelper, _MetadataHelper, _TagHelper, _Trainin
     return await openDatabase(
       path, 
       version: 1,
-      onCreate: (db, version) async {
-        await db.execute('''
-          CREATE TABLE exercise(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            amount INTEGER NOT NULL,
-            reps INTEGER NOT NULL,
-            sets INTEGER NOT NULL,
-            type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE training_plan(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE tag(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE
-          )
-        ''');
-        
-        await db.execute('''
-          CREATE TABLE metadata(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT NOT NULL UNIQUE,
-            value TEXT NOT NULL
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE report_exercise(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data TEXT NOT NULL,
-            report_date INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id)
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE report_training_plan(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data TEXT NOT NULL,
-            report_date INTEGER NOT NULL,
-            training_plan_id INTEGER NOT NULL,
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id)
-          )
-        ''');
-
-        await db.execute('''
-          CREATE TABLE training_plan_has_exercise (
-            training_plan_id INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            position INTEGER NOT NULL DEFAULT 0,
-            PRIMARY KEY (training_plan_id, exercise_id),
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE exercise_has_tag (
-            tag_id INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            PRIMARY KEY (tag_id, exercise_id),
-            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
-          );
-        ''');
-
-        await db.execute('''
-          CREATE TABLE training_plan_has_tag (
-            tag_id INTEGER NOT NULL,
-            training_plan_id INTEGER NOT NULL,
-            PRIMARY KEY (tag_id, training_plan_id),
-            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
-          );
-        ''');
-      },
+      onCreate: (db, version) async => await db.execute(create_table_sql),
     );
   }
 }
@@ -154,11 +140,7 @@ mixin _ExerciseHelper {
 
   Future<List<Exercise>> selectAllExercise() async {
     final db = await (this as DatabaseHelper).database;
-    final result = await db.query(
-      'exercise',
-      orderBy: 'name ASC'
-    );
-
+    final result = await db.query('exercise', orderBy: 'name ASC');
     return result.map(Exercise.fromMap).toList();
   }
 
@@ -166,49 +148,6 @@ mixin _ExerciseHelper {
     final db = await (this as DatabaseHelper).database;
     final result = await db.query('exercise', where: 'id = ?', whereArgs: [id]);
     return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
-  }
-
-/* CREATE TABLE exercise_has_tag (
-  tag_id INTEGER NOT NULL,
-  exercise_id INTEGER NOT NULL,
-  PRIMARY KEY (tag_id, exercise_id),
-  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-  FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
-); */
-  Future<void> setExerciseTagList(Exercise exercise, List<Tag> tags) async {
-    final db = await (this as DatabaseHelper).database;
-    await db.transaction((txn) async {
-      Batch batch = txn.batch();
-      var whereArgs = [exercise.id];
-      whereArgs.addAll(tags.map((e) => e.id));
-      batch.delete(
-        'exercise_has_tag',
-        where: 'exercise_id = ? AND tag_id NOT IN (${List.filled(tags.length, '?').join(', ')})',
-        whereArgs: whereArgs
-      );
-      for(int i = 0; i < tags.length; i++) {
-        batch.insert(
-          'exercise_has_tag', 
-          {
-            'tag_id': tags[i].id,
-            'exercise_id': exercise.id
-          },
-          conflictAlgorithm: ConflictAlgorithm.ignore
-        );
-      }
-      return batch.commit(noResult: true);
-    });
-  }
-
-  Future<List<Tag>> getExerciseTagList(Exercise exercise) async {
-    final db = await (this as DatabaseHelper).database;
-    final result = await db.rawQuery(
-      '''SELECT t.id, t.name FROM exercise_has_tag 
-         INNER JOIN tag t ON tag_id = t.id 
-         WHERE exercise_id = ?''',
-      [exercise.id]
-    );
-    return result.map(Tag.fromMap).toList();
   }
 }
 
@@ -231,10 +170,7 @@ mixin _MetadataHelper {
     final db = await (this as DatabaseHelper).database;
     return db.update(
       'metadata',
-      {
-      'key': metadata.key, 
-      'value': metadata.value
-      },
+      {'key': metadata.key, 'value': metadata.value},
       where: 'id = ?',
       whereArgs: [metadata.id],
     );
@@ -256,9 +192,7 @@ mixin _MetadataHelper {
 mixin _TagHelper {
   Future<int> insertTag(Tag tag) async {
     final db = await (this as DatabaseHelper).database;
-    tag.id = await db.insert('tag', {
-      'name': tag.name,
-    });
+    tag.id = await db.insert('tag', {'name': tag.name});
     return tag.id!;
   }
 
@@ -287,6 +221,64 @@ mixin _TagHelper {
     final db = await (this as DatabaseHelper).database;
     final result = await db.query('tag', where: 'id = ?', whereArgs: [id]);
     return result.isNotEmpty ? Tag.fromMap(result.first) : null;
+  }
+
+  /* CREATE TABLE training_plan_has_tag (
+  tag_id INTEGER NOT NULL,
+  training_plan_id INTEGER NOT NULL,
+  PRIMARY KEY (tag_id, training_plan_id),
+  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+  FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
+); 
+CREATE TABLE exercise_has_tag (
+  tag_id INTEGER NOT NULL,
+  exercise_id INTEGER NOT NULL,
+  PRIMARY KEY (tag_id, exercise_id),
+  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+); */
+  Future<void> setTagList<T extends BaseEntity>(T entity, List<Tag> tags) async {
+    final db = await (this as DatabaseHelper).database;
+    if(T == Exercise || T == TrainingPlan) {
+      final table = T == Exercise ? 'exercise_has_tag' : 'training_plan_has_tag';
+      final column = T == Exercise ? 'exercise_id' : 'training_plan_id';
+      await db.transaction((txn) async {
+        Batch batch = txn.batch();
+        var whereArgs = [entity.id];
+        whereArgs.addAll(tags.map((e) => e.id));
+        batch.delete(
+          table,
+          where:
+              '$column = ? AND tag_id NOT IN (${List.filled(tags.length, '?').join(', ')})',
+          whereArgs: whereArgs,
+        );
+        for (int i = 0; i < tags.length; i++) {
+          batch.insert(table, {
+            'tag_id': tags[i].id,
+            '$column': entity.id,
+          }, conflictAlgorithm: ConflictAlgorithm.ignore);
+        }
+        return batch.commit(noResult: true);
+      });
+    }
+  }
+
+  Future<List<Tag>> getTagList<T extends BaseEntity>(T entity) async {
+    final db = await (this as DatabaseHelper).database;
+    if (T == Exercise || T == TrainingPlan) {
+      final query = T == Exercise ? '''
+         SELECT t.id, t.name FROM exercise_has_tag 
+         INNER JOIN tag t ON tag_id = t.id 
+         WHERE exercise_id = ? 
+         ''' : '''
+         SELECT t.id, t.name FROM training_plan_has_tag 
+         INNER JOIN tag t ON tag_id = t.id
+         WHERE training_plan_id = ?
+      ''';
+      final result = await db.rawQuery(query, [entity.id],);
+      return result.map(Tag.fromMap).toList();
+    }
+    return List.empty();
   }
 }
 
@@ -374,100 +366,43 @@ mixin _TrainingPlanHelper {
 
     return resultList.map(Exercise.fromMap).toList();
   }
-
-/* CREATE TABLE training_plan_has_tag (
-  tag_id INTEGER NOT NULL,
-  training_plan_id INTEGER NOT NULL,
-  PRIMARY KEY (tag_id, training_plan_id),
-  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-  FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
-); */
-  Future<void> setTrainingPlanTagList(TrainingPlan plan, List<Tag> tags) async {
-    final db = await (this as DatabaseHelper).database;
-    await db.transaction((txn) async {
-      Batch batch = txn.batch();
-      var whereArgs = [plan.id];
-      whereArgs.addAll(tags.map((e) => e.id));
-      batch.delete(
-        'training_plan_has_tag',
-        where:
-            'training_plan_id = ? AND tag_id NOT IN (${List.filled(tags.length, '?').join(', ')})',
-        whereArgs: whereArgs,
-      );
-      for (int i = 0; i < tags.length; i++) {
-        batch.insert('training_plan_has_tag', {
-          'tag_id': tags[i].id,
-          'training_plan_id': plan.id,
-        }, conflictAlgorithm: ConflictAlgorithm.ignore);
-      }
-      return batch.commit(noResult: true);
-    });
-  }
-
-  Future<List<Tag>> getTrainingPlanTagList(TrainingPlan plan) async {
-    final db = await (this as DatabaseHelper).database;
-    final result = await db.rawQuery(
-      '''SELECT t.id, t.name FROM training_plan_has_tag 
-         INNER JOIN tag t ON tag_id = t.id
-         WHERE training_plan_id = ?
-      ''',
-      [plan.id]
-    );
-    return result.map(Tag.fromMap).toList();
-  }
 }
 
 mixin _ReportExerciseHelper {
-  Future<int> insertReport<T>(Report<T> report) async {
+  Future<int> insertReport<T extends BaseEntity>(Report<T> report) async {
     final db = await (this as DatabaseHelper).database;
-    
-    if(T == Exercise) {
-      report.id = await db.insert('report_exercise', {
+    if(T == Exercise || T == TrainingPlan) {
+      final table = T == Exercise ? 'report_exercise' : 'report_training_plan';
+      final column = T == Exercise ? 'exercise_id' : 'training_plan_id';
+      report.id = await db.insert(table, {
         'data': report.data,
         'report_date': report.reportDate,
-        'exercise_id': (report.object as Exercise).id,
+        column: report.object.id,
       });
       return report.id!;
-    } else if(T == TrainingPlan) {
-      report.id = await db.insert('report_training_plan', {
-        'data': report.data,
-        'report_date': report.reportDate,
-        'training_plan_id': (report.object as TrainingPlan).id,
-      });
-      return report.id!;
-    }
-
-    return 0;
-  }
-
-  Future<int> deleteReport(Report<Object> report) async {
-    final db = await (this as DatabaseHelper).database;
-    if(report.object is Exercise) {
-      return db.delete('report_exercise', where: 'id = ?', whereArgs: [report.id]);
-    } else if(report.object is TrainingPlan) {
-      return db.delete('report_training_plan', where: 'id = ?', whereArgs: [report.id]);
     }
     return 0;
   }
 
-  Future<int> updateReport(Report<Object> report) async {
+  Future<int> deleteReport<T extends BaseEntity>(Report<T> report) async {
     final db = await (this as DatabaseHelper).database;
-    if(report.object is Exercise) {
-      return await db.update('report_exercise', 
+    if(T == Exercise || T == TrainingPlan) {
+      final table = T == Exercise ? 'report_exercise' : 'report_training_plan';
+      return db.delete(table, where: 'id = ?', whereArgs: [report.id]);
+    }
+    return 0;
+  }
+
+  Future<int> updateReport<T extends BaseEntity>(Report<T> report) async {
+    final db = await (this as DatabaseHelper).database;
+    if(T == Exercise || T == TrainingPlan) {
+      final table = T == Exercise ? 'report_exercise' : 'report_training_plan';
+      final column = T == Exercise ? 'exercise_id' : 'training_plan_id';
+      return await db.update(table, 
       {
         'data': report.data,
         'report_date': report.reportDate,
-        'exercise_id': (report.object as Exercise).id,
-      },
-      where: 'id = ?',
-      whereArgs: [report.id]
-      );
-    } else if(report.object is TrainingPlan) {
-      return await db.update('report_training_plan', 
-      {
-        'data': report.data,
-        'report_date': report.reportDate,
-        'training_plan_id': (report.object as TrainingPlan).id,
+        column: report.object.id,
       },
       where: 'id = ?',
       whereArgs: [report.id]
@@ -476,40 +411,35 @@ mixin _ReportExerciseHelper {
     return 0;
   }
 
-  Future<List<Report<T>>> selectAllReport<T>() async {
+  Future<List<Report<T>>> selectAllReport<T extends BaseEntity>() async {
     final db = await (this as DatabaseHelper).database;
-    if(T == Exercise) {
-      final result = await db.rawQuery('''
+    if(T == Exercise || T == TrainingPlan) {
+      final query = T == Exercise ? '''
         SELECT r.id, r.data, r.report_date, r.exercise_id, e.name, e.amount, e.reps, e.sets, e.type FROM report_exercise r 
         INNER JOIN exercise e ON e.id = r.exercise_id
-      ''');
-      return result.map(Report.fromMap<T>).toList();
-    } else if(T == TrainingPlan) {
-      final result = await db.rawQuery('''
+      ''' : '''
         SELECT r.id, r.data, r.report_date, r.training_plan_id, e.name FROM report_training_plan r 
         INNER JOIN training_plan e ON e.id = r.training_plan_id
-      ''');
+      ''';
+      final result = await db.rawQuery(query);
       return result.map(Report.fromMap<T>).toList();
     }
-
     return List.empty(growable: true);
   }
 
-  Future<Report<T>?> selectReport<T>(int id) async {
+  Future<Report<T>?> selectReport<T extends BaseEntity>(int id) async {
     final db = await (this as DatabaseHelper).database;
-    if(T == Exercise) {
-      final result = await db.rawQuery('''
+    if(T == Exercise || T == TrainingPlan) {
+      final query = T == Exercise ? '''
           SELECT r.id, r.data, r.report_date, r.exercise_id, e.name, e.amount, e.reps, e.sets, e.type FROM report_exercise r 
           INNER JOIN exercise e ON e.id = r.exercise_id
           WHERE r.id = ?
-        ''', [id]);
-      return result.isNotEmpty ? Report.fromMap<T>(result.first) : null;
-    } else if(T == TrainingPlan) {
-      final result = await db.rawQuery('''
-        SELECT r.id, r.data, r.report_date, r.training_plan_id, e.name FROM report_training_plan r 
-        INNER JOIN training_plan e ON e.id = r.training_plan_id
-        WHERE r.id = ?
-      ''', [id]);
+        ''' : '''
+          SELECT r.id, r.data, r.report_date, r.training_plan_id, e.name FROM report_training_plan r 
+          INNER JOIN training_plan e ON e.id = r.training_plan_id
+          WHERE r.id = ?
+        ''';
+      final result = await db.rawQuery(query, [id]);
       return result.isNotEmpty ? Report.fromMap<T>(result.first) : null;
     }
     return null;
@@ -521,8 +451,8 @@ mixin _ReportExerciseHelper {
 - training_plan              Implementado
 - tag                        Implementado
 - metadata                   Implementado
-- report_exercise            Implementado
-- report_training_plan       Implementado
+- report_exercise            Implementado Revisado
+- report_training_plan       Implementado Revisado
 - training_plan_has_exercise Implementado
 - exercise_has_tag           Implementado
 - training_plan_has_tag      Implementado
