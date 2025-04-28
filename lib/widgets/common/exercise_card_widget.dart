@@ -1,6 +1,6 @@
-import 'package:fittrackr/entities/exercise.dart';
-import 'package:fittrackr/state/exercises_list_state.dart';
-import 'package:fittrackr/widgets/default_widgets.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/states/exercises_state.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,9 @@ class ExerciseCard extends StatelessWidget {
         key: ValueKey(exercise.id!),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) async {
-          bool sucess = await Provider.of<ExerciseListState>(context, listen: false).removeExercise(exercise);
+          final listState = Provider.of<ExercisesState>(context, listen: false);
+          bool sucess = await listState.remove(exercise);
+
           if(!context.mounted) return;
           showSnackMessage(context, sucess ? "Removido com sucesso!" : "Erro ao remover exercício!", sucess);
         },              
@@ -66,8 +68,10 @@ class ExerciseCard extends StatelessWidget {
           child: ExerciseForm(
             onSubmit: (newExercise) async {
               Navigator.pop(context);
-              bool sucess = await Provider.of<ExerciseListState>(context, listen: false,).updateExercise(newExercise);
-              
+
+              final listState = Provider.of<ExercisesState>(context, listen: false);
+              bool sucess = await listState.update(newExercise);
+              print(newExercise);
               if(!context.mounted) return;
               showSnackMessage(context, sucess ? "Editado com sucesso!" : "Erro ao editar exercício!", sucess);
             },

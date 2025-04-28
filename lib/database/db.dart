@@ -1,11 +1,12 @@
-// import 'package:path/path.dart';
-// import 'package:sqflite/sqflite.dart';
 import 'package:fittrackr/database/helpers/exercise_helper.dart';
 import 'package:fittrackr/database/helpers/metadata_helper.dart';
 import 'package:fittrackr/database/helpers/report_exercise_helper.dart';
 import 'package:fittrackr/database/helpers/tag_helper.dart';
 import 'package:fittrackr/database/helpers/training_plan_helper.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
 
 class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPlanHelper, ReportExerciseHelper {
 
@@ -18,23 +19,23 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
             sets INTEGER NOT NULL,
             type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
           );
-
+          <query>
           CREATE TABLE training_plan(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL
           );
-
+          <query>
           CREATE TABLE tag(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
           );
-
+          <query>
           CREATE TABLE metadata(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             key TEXT NOT NULL UNIQUE,
             value TEXT NOT NULL
           );
-
+          <query>
           CREATE TABLE report_exercise(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             data TEXT NOT NULL,
@@ -42,7 +43,7 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
             exercise_id INTEGER NOT NULL,
             FOREIGN KEY (exercise_id) REFERENCES exercise(id)
           );
-
+          <query>
           CREATE TABLE report_training_plan(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             data TEXT NOT NULL,
@@ -50,7 +51,7 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
             training_plan_id INTEGER NOT NULL,
             FOREIGN KEY (training_plan_id) REFERENCES training_plan(id)
           );
-
+          <query>
           CREATE TABLE training_plan_has_exercise (
             training_plan_id INTEGER NOT NULL,
             exercise_id INTEGER NOT NULL,
@@ -59,7 +60,7 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
             FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE,
             FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
           );
-
+          <query>
           CREATE TABLE exercise_has_tag (
             tag_id INTEGER NOT NULL,
             exercise_id INTEGER NOT NULL,
@@ -67,7 +68,7 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
             FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
             FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
           );
-
+          <query>
           CREATE TABLE training_plan_has_tag (
             tag_id INTEGER NOT NULL,
             training_plan_id INTEGER NOT NULL,
@@ -90,15 +91,19 @@ class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPla
   }
 
   Future<Database> _initDb() async {
-    //final path = join(await getDatabasesPath(), 'fittracker.db');
+    final sql_querys = create_table_sql.split('<query>');
 
-    final path = ":memory:";
-    databaseFactory = databaseFactoryFfi;
+    final path = join(await getDatabasesPath(), 'fittracker.db');
+    
+    // databaseFactory = databaseFactoryFfi;
+    // final path = ":memory:";
 
     return await openDatabase(
       path, 
       version: 1,
-      onCreate: (db, version) async => await db.execute(create_table_sql),
+      onCreate: (db, version) async {
+        for (var query in sql_querys) await db.execute(query);
+      },
     );
   }
 }

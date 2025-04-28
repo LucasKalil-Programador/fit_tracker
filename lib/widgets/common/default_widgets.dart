@@ -1,5 +1,5 @@
 
-import 'package:fittrackr/entities/exercise.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:flutter/material.dart';
 
 class DefaultDivider extends StatelessWidget {
@@ -25,6 +25,7 @@ class DefaultExerciseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typeStr = exercise.type == ExerciseType.Musclework ? "Kg" : "Minutos";
     return Card(
       key: super.key,
       //color: Theme.of(context).colorScheme.primaryContainer,
@@ -34,7 +35,7 @@ class DefaultExerciseCard extends StatelessWidget {
           exercise.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.load} Kg"),
+        subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.amount} ${typeStr}"),
         leading: this.leading,
         trailing: this.trailing,
       ),

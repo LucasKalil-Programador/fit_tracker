@@ -1,20 +1,20 @@
-import 'package:fittrackr/entities/exercise.dart';
-import 'package:fittrackr/entities/exercise_plan.dart';
-import 'package:fittrackr/state/exercises_list_state.dart';
-import 'package:fittrackr/widgets/default_widgets.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/states/exercises_state.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ExercisePlanForm extends StatefulWidget {
-  final void Function(ExercisePlan)? onSubmit;
+class TrainingPlanForm extends StatefulWidget {
+  final void Function(TrainingPlan)? onSubmit;
 
-  const ExercisePlanForm({super.key, this.onSubmit});
+  const TrainingPlanForm({super.key, this.onSubmit});
 
   @override
-  State<ExercisePlanForm> createState() => _ExercisePlanFormState();
+  State<TrainingPlanForm> createState() => _TrainingPlanFormState();
 }
 
-class _ExercisePlanFormState extends State<ExercisePlanForm> {
+class _TrainingPlanFormState extends State<TrainingPlanForm> {
   TextEditingController _nameController = TextEditingController(text: "");
   List<Exercise> selected = [];
 
@@ -34,7 +34,7 @@ class _ExercisePlanFormState extends State<ExercisePlanForm> {
           key: _formKey,
           child: Column(
             children: [
-                Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32,horizontal: 4),
                 child: nameInput(),
               ),
@@ -45,9 +45,9 @@ class _ExercisePlanFormState extends State<ExercisePlanForm> {
                     if (_formKey.currentState!.validate()) {
                       if (widget.onSubmit != null) {
                         widget.onSubmit!(
-                          ExercisePlan(
+                          TrainingPlan(
                             name: _nameController.text,
-                            exercises: selected.map((e) => ExercisePlanRecipient(exercise: e)).toList(),
+                            list: selected,
                           ),
                         );
                       }
@@ -86,7 +86,7 @@ class _ExercisePlanFormState extends State<ExercisePlanForm> {
   }
 
   Widget exerciseSelection() {
-    return Consumer<ExerciseListState>(
+    return Consumer<ExercisesState>(
       builder: (context, exerciseListState, child) {
         return ListView.builder(
           shrinkWrap: true,

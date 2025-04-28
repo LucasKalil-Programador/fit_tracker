@@ -1,6 +1,6 @@
-import 'package:fittrackr/entities/exercise.dart';
 import 'package:flutter/material.dart';
-import 'package:fittrackr/widgets/value_input_widget.dart';
+import 'package:fittrackr/widgets/common/value_input_widget.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
 
 class ExerciseFormMode {
   static const int creation = 0;
@@ -12,7 +12,7 @@ class ExerciseForm extends StatefulWidget {
   final Exercise? baseExercise;
   final int mode;
   
-  const ExerciseForm({super.key, this.onSubmit, this.mode = ExerciseFormMode.creation, this.baseExercise});
+  const ExerciseForm({super.key, this.onSubmit, this.baseExercise, this.mode = ExerciseFormMode.creation});
 
   @override
   State<ExerciseForm> createState() => _ExerciseFormState();
@@ -20,7 +20,8 @@ class ExerciseForm extends StatefulWidget {
 
 class _ExerciseFormState extends State<ExerciseForm> {
   final _nameController = TextEditingController(text: "");
-  int load = 1;
+  ExerciseType type = ExerciseType.Musclework;
+  int amount = 1;
   int reps = 1;
   int sets = 1;
 
@@ -31,7 +32,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
     super.initState();
     if (widget.baseExercise != null) {
       _nameController.text = widget.baseExercise!.name;
-      load = widget.baseExercise!.load;
+      amount = widget.baseExercise!.amount;
       reps = widget.baseExercise!.reps;
       sets = widget.baseExercise!.sets;
     }
@@ -57,7 +58,11 @@ class _ExerciseFormState extends State<ExerciseForm> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: loadInput(),
+                child: amountInput(),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: typeInput()
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -78,6 +83,37 @@ class _ExerciseFormState extends State<ExerciseForm> {
     );
   }
 
+  Widget typeInput() {
+    return Column(
+      children: [
+        ListTile(
+          title: const Text("Musculação"),
+          leading: Radio<ExerciseType>(
+            value: ExerciseType.Musclework,
+            groupValue: type,
+            onChanged: (exerciseType) {
+              setState(() {
+                type = exerciseType!;
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: const Text("Cardio"),
+          leading: Radio<ExerciseType>(
+            value: ExerciseType.Cardio,
+            groupValue: type,
+            onChanged: (exerciseType) {
+              setState(() {
+                type = exerciseType!;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget nameInput() {
     return TextFormField(
       controller: _nameController,
@@ -91,13 +127,13 @@ class _ExerciseFormState extends State<ExerciseForm> {
     );
   }
 
-  Widget loadInput() {
+  Widget amountInput() {
     return ValueInputWidget(
-      label: "Carga",
-      suffix: "Kg",
-      initialValue: widget.baseExercise?.load,
+      label: type == ExerciseType.Musclework ? "Carga" : "Tempo",
+      suffix: type == ExerciseType.Musclework ? "Kg" : "Minutos",
+      initialValue: widget.baseExercise?.amount,
       maxValue: 500,
-      onChanged: (value) => load = value,
+      onChanged: (value) => amount = value,
     );
   }
 
@@ -133,8 +169,9 @@ class _ExerciseFormState extends State<ExerciseForm> {
             id: newId,
             name: _nameController.text,
             reps: reps,
-            load: load,
+            amount: amount,
             sets: sets,
+            type: type
           );
           widget.onSubmit?.call(exercise);
         }

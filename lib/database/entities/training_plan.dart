@@ -5,20 +5,28 @@ CREATE TABLE training_plan(
 )
 */
 
+import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/base_entity.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
 
 class TrainingPlan implements BaseEntity{
   int? id;
   final String name;
+  List<Exercise>? list;
 
   TrainingPlan({
     this.id,
-    required this.name,
+    required this.name, 
+    this.list,
   });
+
+  void loadList() async {
+    this.list = await DatabaseHelper().getPlanExerciseList(this);
+  }
 
   @override
   String toString() {
-    return 'TrainingPlan(id: $id, name: $name)';
+    return 'TrainingPlan(id: $id, name: $name, list: ${this.list})';
   }
 
   @override

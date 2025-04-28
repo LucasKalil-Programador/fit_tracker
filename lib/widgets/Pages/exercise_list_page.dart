@@ -1,6 +1,6 @@
-import 'package:fittrackr/state/exercises_list_state.dart';
-import 'package:fittrackr/widgets/default_widgets.dart';
-import 'package:fittrackr/widgets/exercise_card.dart';
+import 'package:fittrackr/states/exercises_state.dart';
+import 'package:fittrackr/widgets/common/exercise_card_widget.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +23,9 @@ class ExerciseListPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Divider(color: Theme.of(context).colorScheme.primary, thickness: 2),
+          DefaultDivider(),
           Expanded(
-            child: Consumer<ExerciseListState>(builder: (context, exerciseListState, child) {
+            child: Consumer<ExercisesState>(builder: (context, exerciseListState, child) {
               return ListView.builder(
                 itemCount: exerciseListState.exercises.length,
                 itemBuilder: (context, index) {
@@ -51,8 +51,8 @@ class ExerciseListPage extends StatelessWidget {
             onSubmit: (value) async {
               Navigator.pop(context);
 
-              ExerciseListState listState = Provider.of<ExerciseListState>(context, listen: false);
-              bool sucess = await listState.addExercise(value);
+              final listState = Provider.of<ExercisesState>(context, listen: false);
+              bool sucess = await listState.add(value);
 
               if(!context.mounted) return;
               showSnackMessage(context, sucess ? "Adicionado com sucesso!" : "Erro ao adicionar exercício!", sucess);
