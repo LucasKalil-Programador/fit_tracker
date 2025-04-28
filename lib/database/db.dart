@@ -167,6 +167,49 @@ mixin _ExerciseHelper {
     final result = await db.query('exercise', where: 'id = ?', whereArgs: [id]);
     return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
   }
+
+/* CREATE TABLE exercise_has_tag (
+  tag_id INTEGER NOT NULL,
+  exercise_id INTEGER NOT NULL,
+  PRIMARY KEY (tag_id, exercise_id),
+  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+); */
+  Future<void> setExerciseTagList(Exercise exercise, List<Tag> tags) async {
+    final db = await (this as DatabaseHelper).database;
+    await db.transaction((txn) async {
+      Batch batch = txn.batch();
+      var whereArgs = [exercise.id];
+      whereArgs.addAll(tags.map((e) => e.id));
+      batch.delete(
+        'exercise_has_tag',
+        where: 'exercise_id = ? AND tag_id NOT IN (${List.filled(tags.length, '?').join(', ')})',
+        whereArgs: whereArgs
+      );
+      for(int i = 0; i < tags.length; i++) {
+        batch.insert(
+          'exercise_has_tag', 
+          {
+            'tag_id': tags[i].id,
+            'exercise_id': exercise.id
+          },
+          conflictAlgorithm: ConflictAlgorithm.ignore
+        );
+      }
+      return batch.commit(noResult: true);
+    });
+  }
+
+  Future<List<Tag>> getExerciseTagList(Exercise exercise) async {
+    final db = await (this as DatabaseHelper).database;
+    final result = await db.rawQuery(
+      '''SELECT t.id, t.name FROM exercise_has_tag 
+         INNER JOIN tag t ON tag_id = t.id 
+         WHERE exercise_id = ?''',
+      [exercise.id]
+    );
+    return result.map(Tag.fromMap).toList();
+  }
 }
 
 mixin _MetadataHelper {
@@ -282,20 +325,110 @@ mixin _TrainingPlanHelper {
     final result = await db.query('training_plan', where: 'id = ?', whereArgs: [id]);
     return result.isNotEmpty ? TrainingPlan.fromMap(result.first) : null;
   }
+
+/* CREATE TABLE training_plan_has_exercise (
+    training_plan_id INTEGER NOT NULL,
+    exercise_id INTEGER NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (training_plan_id, exercise_id),
+    FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE,
+    FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
+); */
+  Future<void> setPlanExerciseList(TrainingPlan plan, List<Exercise> exercises) async {
+    final db = await (this as DatabaseHelper).database;
+    await db.transaction((txn) async {
+      Batch batch = txn.batch();
+      var whereArgs = [plan.id];
+      whereArgs.addAll(exercises.map((e) => e.id));
+      batch.delete(
+        'training_plan_has_exercise',
+        where:
+            'training_plan_id = ? AND exercise_id NOT IN (${List.filled(exercises.length, '?').join(', ')})',
+        whereArgs: whereArgs,
+      );
+      for (int i = 0; i < exercises.length; i++) {
+        batch.insert(
+          'training_plan_has_exercise',
+          {
+            'training_plan_id': plan.id,
+            'exercise_id': exercises[i].id,
+            'position': i,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+      return await batch.commit(noResult: true);
+    });
+  }
+
+  Future<List<Exercise>> getPlanExerciseList(TrainingPlan plan) async {
+    final db = await (this as DatabaseHelper).database;
+    final result = await db.rawQuery(
+      '''SELECT position, e.id, e.name, e.amount, e.reps, e.sets, e.type FROM training_plan_has_exercise 
+         INNER JOIN exercise e ON exercise_id = e.id 
+         WHERE training_plan_id = ?''',
+      [plan.id]
+    );
+    var resultList = result.toList();
+    resultList.sort((e1, e2) => (e1['position'] as int).compareTo(e2['position'] as int));
+
+    return resultList.map(Exercise.fromMap).toList();
+  }
+
+/* CREATE TABLE training_plan_has_tag (
+  tag_id INTEGER NOT NULL,
+  training_plan_id INTEGER NOT NULL,
+  PRIMARY KEY (tag_id, training_plan_id),
+  FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+  FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
+); */
+  Future<void> setTrainingPlanTagList(TrainingPlan plan, List<Tag> tags) async {
+    final db = await (this as DatabaseHelper).database;
+    await db.transaction((txn) async {
+      Batch batch = txn.batch();
+      var whereArgs = [plan.id];
+      whereArgs.addAll(tags.map((e) => e.id));
+      batch.delete(
+        'training_plan_has_tag',
+        where:
+            'training_plan_id = ? AND tag_id NOT IN (${List.filled(tags.length, '?').join(', ')})',
+        whereArgs: whereArgs,
+      );
+      for (int i = 0; i < tags.length; i++) {
+        batch.insert('training_plan_has_tag', {
+          'tag_id': tags[i].id,
+          'training_plan_id': plan.id,
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+      return batch.commit(noResult: true);
+    });
+  }
+
+  Future<List<Tag>> getTrainingPlanTagList(TrainingPlan plan) async {
+    final db = await (this as DatabaseHelper).database;
+    final result = await db.rawQuery(
+      '''SELECT t.id, t.name FROM training_plan_has_tag 
+         INNER JOIN tag t ON tag_id = t.id
+         WHERE training_plan_id = ?
+      ''',
+      [plan.id]
+    );
+    return result.map(Tag.fromMap).toList();
+  }
 }
 
 mixin _ReportExerciseHelper {
-  Future<int> insertReport(Report<Object> report) async {
+  Future<int> insertReport<T>(Report<T> report) async {
     final db = await (this as DatabaseHelper).database;
-
-    if(report.object is Exercise) {
+    
+    if(T == Exercise) {
       report.id = await db.insert('report_exercise', {
         'data': report.data,
         'report_date': report.reportDate,
         'exercise_id': (report.object as Exercise).id,
       });
       return report.id!;
-    } else if(report.object is TrainingPlan) {
+    } else if(T == TrainingPlan) {
       report.id = await db.insert('report_training_plan', {
         'data': report.data,
         'report_date': report.reportDate,
@@ -384,23 +517,20 @@ mixin _ReportExerciseHelper {
 }
 
 /* 
-- exercise               Implementado
-- training_plan          Implementado
-- tag                    Implementado
-- metadata               Implementado
-
-- report_exercise        Implementado
-- report_training_plan   Implementado
+- exercise                   Implementado
+- training_plan              Implementado
+- tag                        Implementado
+- metadata                   Implementado
+- report_exercise            Implementado
+- report_training_plan       Implementado
+- training_plan_has_exercise Implementado
+- exercise_has_tag           Implementado
+- training_plan_has_tag      Implementado
 
 Insert
 delete
 update
 selectAll
 selectOne(id)
-
-- training_plan_has_exercise
-- exercise_has_tag
-- training_plan_has_tag 
-
 */
 
