@@ -15,12 +15,6 @@ void main() async {
   ExerciseListState exerciseList = ExerciseListState();
   TimerState timerState = TimerState();
 
-  await exerciseList.loadFromDatabase().then((value) async {
-    await Future.delayed(Duration(seconds: 5));
-    return generateDefaultExercises(exerciseList);
-  });
-  await timerState.loadFromDatabase();
-
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<ExerciseListState>(create: (_) => exerciseList),
@@ -29,12 +23,6 @@ void main() async {
     ],
     child: MyApp()
   ));
-
-  Timer? _debounce;
-  timerState.addListener(() {
-    _debounce?.cancel();
-    _debounce = Timer(Duration(seconds: 1), timerState.saveToDatabase);
-  });
 }
 
 void generateDefaultExercises(ExerciseListState exerciseList) async {
