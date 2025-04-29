@@ -1,5 +1,5 @@
 import 'package:fittrackr/states/exercises_state.dart';
-import 'package:fittrackr/widgets/common/exercise_card_widget.dart';
+import 'package:fittrackr/widgets/Pages/exercise_list/exercise_card_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +27,9 @@ class ExerciseListPage extends StatelessWidget {
           Expanded(
             child: Consumer<ExercisesState>(builder: (context, exerciseListState, child) {
               return ListView.builder(
-                itemCount: exerciseListState.exercises.length,
+                itemCount: exerciseListState.length,
                 itemBuilder: (context, index) {
-                  final exercise = exerciseListState.exercises[index];
+                  final exercise = exerciseListState.get(index);
                   return ExerciseCard(exercise: exercise);
                 },
               );

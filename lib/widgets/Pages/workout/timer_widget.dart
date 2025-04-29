@@ -11,8 +11,8 @@ class TimerData {
 }
 
 class TimerWidget extends StatefulWidget {
-  final TimerData? timerData;
   final int updateDelayMs;
+  final TimerData? timerData;
   final void Function(TimerData)? onTimerChanged;
 
   const TimerWidget({super.key, this.timerData, this.onTimerChanged, this.updateDelayMs = 25});

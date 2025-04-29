@@ -71,5 +71,9 @@ selectOne(id)
 
 Percebi semelhança entre report_exercise e report_training_plan; na prática, são muito similares, diferenciando-se apenas pelo fato de um armazenar um exercício e o outro um plano de treino. Por isso, decidi seguir um caminho unificado, criando apenas um `Report<T>` Nesse modelo, T pode ser Exercise ou TrainingPlan, tornando o código mais flexível e enxuto.
 
+# Dia 29/04/2025
+
+O projeto tem evoluído bem. Atualmente, já temos uma tela onde o usuário pode criar um treino, e é possível ativá-lo ou desativá-lo de forma eficiente. No entanto, tenho enfrentado bastante complexidade ao gerenciar o banco de dados, que é baseado em funções assíncronas. Isso tem causado diversos problemas de sincronização entre os estados e o que é exibido para o usuário. Por isso, decidi criar uma branch separada para testar uma abordagem diferente: usar um banco de dados baseado em um grande JSON que armazene todos os dados. A ideia é reduzir a complexidade. Se essa solução se mostrar vantajosa, pretendo seguir por esse caminho.
+
 
 

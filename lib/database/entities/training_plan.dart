@@ -12,17 +12,13 @@ import 'package:fittrackr/database/entities/exercise.dart';
 class TrainingPlan implements BaseEntity{
   int? id;
   final String name;
-  List<Exercise>? list;
+  late List<Exercise>? list;
 
   TrainingPlan({
     this.id,
     required this.name, 
     this.list,
   });
-
-  void loadList() async {
-    this.list = await DatabaseHelper().getPlanExerciseList(this);
-  }
 
   @override
   String toString() {

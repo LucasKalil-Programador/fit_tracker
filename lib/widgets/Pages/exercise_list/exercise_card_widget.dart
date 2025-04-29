@@ -38,7 +38,7 @@ class ExerciseCard extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.onPrimary
         ),
         onPressed: () => showEditModalBottom(context),
-        child: Icon(Icons.edit),
+        child: const Icon(Icons.edit),
       ),
     );
   }
@@ -52,7 +52,7 @@ class ExerciseCard extends StatelessWidget {
           color: Colors.red,
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Icon(Icons.delete, color: Colors.white),
+          child: const Icon(Icons.delete, color: Colors.white),
         ),
       ),
     );

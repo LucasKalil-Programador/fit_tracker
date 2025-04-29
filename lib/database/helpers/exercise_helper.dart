@@ -17,6 +17,21 @@ mixin ExerciseHelper {
     return exercise.id!;
   }
 
+  Future<void> insertAllExercise(List<Exercise> exercises) async {
+    final db = await (this as DatabaseHelper).database;
+    await db.transaction((txn) async {
+      for (var exercise in exercises) {
+        exercise.id = await txn.insert('exercise', {
+          'name': exercise.name,
+          'amount': exercise.amount,
+          'reps': exercise.reps,
+          'sets': exercise.sets,
+          'type': exercise.type.name,
+        });
+      }
+    });
+  }
+
   Future<int> deleteExercise(Exercise exercise) async {
     final db = await (this as DatabaseHelper).database;
     return await db.delete('exercise', where: 'id = ?', whereArgs: [exercise.id]);

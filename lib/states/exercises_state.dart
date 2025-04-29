@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class ExercisesState extends ChangeNotifier {
   final List<Exercise> _cache = [];
-  List<Exercise> get exercises => List.unmodifiable(_cache);
+  
+  int get length => _cache.length;
 
   Future<bool> add(Exercise exercise) async {
     int id = await DatabaseHelper().insertExercise(exercise);
@@ -15,6 +16,16 @@ class ExercisesState extends ChangeNotifier {
       return true;
     }
     return false;
+  }
+
+  Future<void> addAll(List<Exercise> exercises) async {
+    await DatabaseHelper().insertAllExercise(exercises);
+    _cache.addAll(exercises);
+    notifyListeners();
+  }
+
+  Exercise get(int index) {
+    return _cache[index];
   }
 
   Future<bool> update(Exercise exercise) async {

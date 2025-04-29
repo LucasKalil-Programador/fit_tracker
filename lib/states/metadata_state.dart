@@ -4,43 +4,41 @@ import 'package:flutter/material.dart';
 
 class MetadataState extends ChangeNotifier {
   final Map<String, Metadata> _cache = Map();
-  Map<String, Metadata> get map => Map.unmodifiable(_cache);
 
-  Metadata? operator [](String key) => _cache[key];
-
-  Metadata? get(String key) {
-    return _cache[key];
+  int get length => _cache.length;
+  
+  String? get(String key) {
+    return _cache[key]?.value;
   }
 
-  Future<bool> set(Metadata metadata) async {
-    int id = 0;
+  Future<bool> set(String key, String value) async {
+    final metadata = Metadata(id: _cache[key]?.id, key: key, value: value);
     if(metadata.id == null) {
-      metadata.id = await DatabaseHelper().insertMetadata(metadata);
+      await DatabaseHelper().insertMetadata(metadata);
     } else {
-      int result = await DatabaseHelper().updateMetadata(metadata);
-      if(result > 0) id = metadata.id!;
+      await DatabaseHelper().updateMetadata(metadata);
     }
+    if(metadata.id! <= 0) return false;
     
-    if(id > 0) {
-      _cache[metadata.key] = metadata;
-      notifyListeners();
-      return true;
-    }
-    return false;
+    _cache[metadata.key] = metadata;
+    notifyListeners();
+    return true;
   }
 
-  Future<bool> remove(Metadata metadata) async {
-    int result = await DatabaseHelper().deleteMetadata(metadata);
-    if(result > 0) {
-      _cache.remove(metadata.key);
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
-  bool contains(String key) {
+  bool containsKey(String key) {
     return _cache.containsKey(key);
+  }
+
+  Future<bool> remove(String key) async {
+    if (containsKey(key)) {
+      int result = await DatabaseHelper().deleteMetadata(_cache[key]!);
+      if (result > 0) {
+        _cache.remove(key);
+        notifyListeners();
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<bool> loadDatabase() async {

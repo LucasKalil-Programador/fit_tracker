@@ -91,9 +91,9 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: exerciseListState.exercises.length,
+          itemCount: exerciseListState.length,
           itemBuilder: (context, index) {
-            final exercise = exerciseListState.exercises[index];
+            final exercise = exerciseListState.get(index);
             return DefaultExerciseCard(
               exercise: exercise,
               trailing: Checkbox(
