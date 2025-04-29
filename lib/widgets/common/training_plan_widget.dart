@@ -1,4 +1,5 @@
 
+import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -16,6 +17,19 @@ class TrainingPlanWidget extends StatefulWidget {
 class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
   List<int> doneList = [];
 
+
+  @override
+  void initState() {
+    super.initState();
+    
+    DatabaseHelper().getPlanExerciseList(widget.trainingPlan)
+    .then((list) {
+      setState(() {
+        widget.trainingPlan.list = list;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Exercise> exercises = [];
@@ -24,7 +38,6 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
     }
     
     return ReorderableListView(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
       onReorder: (int oldIndex, int newIndex) {
         setState(() {
           if (oldIndex < newIndex) {
@@ -35,8 +48,12 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
         });
       },
       children: [
-        for (int index = 0; index < exercises.length; index += 1)
-          _planItem(exercises[index], index, context),
+        for (int i = 0; i < exercises.length; i++)
+          Padding(
+            key: ValueKey(exercises[i].id!),
+            padding: const EdgeInsets.all(4.0),
+            child: _planItem(exercises[i], i, context),
+          ),
       ],
     );
   }

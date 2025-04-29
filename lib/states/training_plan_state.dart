@@ -52,4 +52,12 @@ class TrainingPlanState extends ChangeNotifier {
   void _sort() {
     _cache.sort((a, b) => a.name.compareTo(b.name));
   }
+
+  TrainingPlan? getById(int id) {
+    int index = _cache.indexWhere((a) => a.id == id);
+    if(index != -1) {
+      return _cache[index];
+    }
+    return null;
+  }
 }

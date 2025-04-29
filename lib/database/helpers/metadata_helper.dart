@@ -3,6 +3,7 @@
 
 import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/metadata.dart';
+import 'package:sqflite/sqflite.dart';
 
 mixin MetadataHelper {
   Future<int> insertMetadata(Metadata metadata) async {
@@ -10,7 +11,7 @@ mixin MetadataHelper {
     metadata.id = await db.insert('metadata', {
       'key': metadata.key,
       'value': metadata.value,
-    });
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
     return metadata.id!;
   }
 

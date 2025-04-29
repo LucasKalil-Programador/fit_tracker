@@ -1,5 +1,6 @@
 
 import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:flutter/material.dart';
 
 class DefaultDivider extends StatelessWidget {
@@ -36,6 +37,33 @@ class DefaultExerciseCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.amount} ${typeStr}"),
+        leading: this.leading,
+        trailing: this.trailing,
+      ),
+    );
+  }
+}
+
+class TrainingPlanCard extends StatelessWidget {
+  final TrainingPlan plan;
+  final Widget? subtitle;
+  final Widget? trailing;
+  final Widget? leading;
+
+  const TrainingPlanCard({super.key, required this.plan, this.trailing, this.leading, this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      key: super.key,
+      child: ListTile(
+        tileColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text(
+          plan.name,
+          softWrap: false,
+          style: const TextStyle(fontWeight: FontWeight.bold,),
+        ),
+        subtitle: this.subtitle,
         leading: this.leading,
         trailing: this.trailing,
       ),
