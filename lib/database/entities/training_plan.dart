@@ -5,7 +5,6 @@ CREATE TABLE training_plan(
 )
 */
 
-import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/base_entity.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 

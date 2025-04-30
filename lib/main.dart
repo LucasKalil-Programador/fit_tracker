@@ -27,7 +27,8 @@ void main() async {
       child: MyApp(),
     ),
   );
-/*   List<Exercise> exercises = [];
+  
+  List<Exercise> exercises = [];
   exercises.add(Exercise(name: "Supino reto", amount: 40, reps: 10, sets: 4, type: ExerciseType.Musclework));
   exercises.add(Exercise(name: "Agachamento livre", amount: 60, reps: 12, sets: 4, type: ExerciseType.Musclework));
   exercises.add(Exercise(name: "Remada curvada", amount: 35, reps: 10, sets: 4, type: ExerciseType.Musclework));
@@ -47,7 +48,7 @@ void main() async {
   exercises.add(Exercise(name: "Corrida na esteira", amount: 30, reps: 1, sets: 1, type: ExerciseType.Cardio));
   exercises.add(Exercise(name: "Bicicleta ergométrica", amount: 25, reps: 1, sets: 1, type: ExerciseType.Cardio));
   exercises.add(Exercise(name: "Escada ergométrica", amount: 20, reps: 1, sets: 1, type: ExerciseType.Cardio));
-  await exercisesState.addAll(exercises); */
+  await exercisesState.addAll(exercises); 
 }
 
 class MyApp extends StatelessWidget {
