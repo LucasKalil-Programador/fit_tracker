@@ -1,3 +1,3 @@
 class BaseEntity {
-  int? id;
+  String? id;
 }

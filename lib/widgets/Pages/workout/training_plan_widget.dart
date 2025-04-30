@@ -1,18 +1,20 @@
 
 import 'dart:async';
 
-import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TrainingPlanWidget extends StatefulWidget {
-  final void Function(List<int>)? onDoneChange;
+  final void Function(List<String>)? onDoneChange;
 
   final TrainingPlan trainingPlan;
+  final List<String>? donelist;
 
-  const TrainingPlanWidget({super.key, required this.trainingPlan, this.onDoneChange});
+  const TrainingPlanWidget({super.key, required this.trainingPlan, this.onDoneChange, this.donelist});
 
   @override
   State<TrainingPlanWidget> createState() => _TrainingPlanWidgetState();
@@ -20,26 +22,26 @@ class TrainingPlanWidget extends StatefulWidget {
 
 class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
   Timer? saveDebounce;
-  List<int> doneList = [];
+  List<String> donelist = [];
 
 
   @override
   void initState() {
     super.initState();
-    
-    DatabaseHelper().getPlanExerciseList(widget.trainingPlan)
-    .then((list) {
-      setState(() {
-        widget.trainingPlan.list = list;
-      });
-    });
+    if(widget.donelist != null) donelist = widget.donelist!;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Exercise> exercises = [];
+    final exercisesState = Provider.of<ExercisesState>(context);
+    final List<Exercise> exercises = [];
+    List<String> exercisesId = [];
     if(widget.trainingPlan.list != null) {
-      exercises = widget.trainingPlan.list!;
+      exercisesId = widget.trainingPlan.list!;
+      for (var element in exercisesId) {
+        final exercise = exercisesState.getById(element);
+        if(exercise != null) exercises.add(exercise);
+      }
     }
     
     return ReorderableListView(
@@ -48,10 +50,9 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }
-          var item = exercises.removeAt(oldIndex);
-          exercises.insert(newIndex, item);
+          var item = exercisesId.removeAt(oldIndex);
+          exercisesId.insert(newIndex, item);
         });
-        saveOrder(exercises);
       },
       children: [
         for (int i = 0; i < exercises.length; i++)
@@ -64,13 +65,6 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
     );
   }
 
-  void saveOrder(List<Exercise> exercises) {
-    saveDebounce?.cancel();
-    saveDebounce = Timer(Duration(seconds: 1), () {
-      unawaited(DatabaseHelper().setPlanExerciseList(widget.trainingPlan, exercises));
-    });
-  } 
-
   Widget _planItem(Exercise exercise, int index, BuildContext context) {
     return DefaultExerciseCard(
       key: ValueKey(exercise.id!),
@@ -81,15 +75,15 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
       ),
       trailing: Checkbox(
-        value: doneList.contains(exercise.id),
+        value: donelist.contains(exercise.id),
         onChanged: (selected) {
           setState(() {
             if (selected == true) {
-              doneList.add(exercise.id!);
+              donelist.add(exercise.id!);
             } else {
-              doneList.remove(exercise.id!);
+              donelist.remove(exercise.id!);
             }
-            if (widget.onDoneChange != null) widget.onDoneChange!(doneList);
+            if (widget.onDoneChange != null) widget.onDoneChange!(donelist);
           });
         },
       ),

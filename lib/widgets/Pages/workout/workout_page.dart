@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/states/training_plan_state.dart';
@@ -25,6 +22,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     super.initState();
 
     loadActivated();
+    loadDoneList();
     loadTimer();
   }
 
@@ -45,10 +43,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
           Expanded(
             child: Consumer<TrainingPlanState>(
               builder: (context, trainingPlanState, child) {
-                if (trainingPlanState.plans.isEmpty) 
+                if (trainingPlanState.isEmpty) 
                   return emptyPlanText();
                 if (activatedPlan != null)
-                  return TrainingPlanWidget(trainingPlan: activatedPlan!);
+                  return TrainingPlanWidget(trainingPlan: activatedPlan!, donelist: donelist, onDoneChange: saveDoneList,);
                 return listTrainingPlan(trainingPlanState);
               },
             ),
@@ -61,8 +59,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 } else {
                   setState(() {
                     activatedPlan = null;
+                    donelist = null;
                   });
                   saveActivated(null);
+                  saveDoneList(donelist);
                 }
               },
               child: Text(activatedPlan == null ? "Criar plano" : "Finalizar plano"),
@@ -75,14 +75,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
 
   static const  metadataActivatedKey = "workout:activated";
-  Timer? activSaveDebounce;
+  static const  metadataDoneKey = "workout:donelist";
   TrainingPlan? activatedPlan;
+  List<String>? donelist;
 
   Widget listTrainingPlan(TrainingPlanState trainingPlanState) {
     return ListView.builder(
-      itemCount: trainingPlanState.plans.length,
+      itemCount: trainingPlanState.length,
       itemBuilder: (context, index) {
-        final plan = trainingPlanState.plans[index];
+        final plan = trainingPlanState[index];
         return Padding(
           padding: const EdgeInsets.all(4.0),
           child: DefaultTrainingPlanCard(
@@ -109,7 +110,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    showEditModalBottom(context, plan, TrainingPlanFormMode.edit);
+                  },
                   child: const Icon(Icons.edit),
                 ),
               ],
@@ -122,27 +125,34 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void saveActivated(TrainingPlan? plan) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
-    activSaveDebounce?.cancel();
-    activSaveDebounce = Timer(Duration(seconds: 1), () {
-      unawaited(metadataState.set(metadataActivatedKey, plan == null ? 'null' : plan.id.toString()));
-    });
+    metadataState.put(metadataActivatedKey, plan == null ? 'null' : plan.id!);
+  }
+
+  void saveDoneList(List<String>? donelist) {
+    final metadataState = Provider.of<MetadataState>(context, listen: false);
+    metadataState.putList(metadataDoneKey, donelist == null ? List.empty() : donelist);
   }
 
   void loadActivated() {
+    final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     if(metadataState.containsKey(metadataActivatedKey)) {
-      final data = metadataState.get(metadataActivatedKey)!;
-      final activatedPlanId = int.tryParse(data);
-      if(activatedPlanId != null) {
-        final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-        activatedPlan = trainingPlanState.getById(activatedPlanId);
-      }
+      final activatedPlanId = metadataState.get(metadataActivatedKey)!;
+      final index = trainingPlanState.indexWhere((plan) => plan.id == activatedPlanId);
+      if(index >= 0) activatedPlan = trainingPlanState.get(index);
+    }
+  }
+
+  void loadDoneList() {
+    final metadataState = Provider.of<MetadataState>(context, listen: false);
+    if(metadataState.containsKey(metadataDoneKey)) {
+      final donelist = metadataState.getList(metadataDoneKey);
+      if(donelist != null) this.donelist = donelist;
     }
   }
 
 
   static const metadataTimeKey = "workout:timer";
-  Timer? timerSaveDebounce;
   TimerData? timerData;
 
   Widget timerWidget() {
@@ -159,24 +169,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void saveTimer(TimerData timerData) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
-    final value = "${timerData.startTime?.toIso8601String()},${timerData.pausedTime?.toIso8601String()},${timerData.paused}";
-    timerSaveDebounce?.cancel();
-    timerSaveDebounce = Timer(Duration(seconds: 1), () {
-      unawaited(metadataState.set(metadataTimeKey, value));
-    });
+    final value = {
+      "start_time": timerData.startTime?.millisecondsSinceEpoch,
+      "paused_time": timerData.pausedTime?.millisecondsSinceEpoch,
+      "paused": timerData.paused,
+    };
+    metadataState.putMap(metadataTimeKey, value);
   }
 
   void loadTimer() {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
-    if (metadataState.containsKey(metadataTimeKey)) {
-      final data = metadataState.get(metadataTimeKey)!.split(",");
-      if(data.length == 3) {
-        timerData = TimerData(
-          startTime: DateTime.tryParse(data[0]),
-          pausedTime: DateTime.tryParse(data[1]),
-          paused: data[2].toLowerCase() == 'true',
-        );
-      }
+    final data = metadataState.getMap(metadataTimeKey);
+    if(data != null) {
+      timerData = TimerData(
+        startTime: data["start_time"] is int ? DateTime.fromMillisecondsSinceEpoch(data["start_time"] as int) : null,
+        pausedTime: data["paused_time"] is int ? DateTime.fromMillisecondsSinceEpoch(data["paused_time"] as int) : null,
+        paused: data["paused"] == true,
+      );
     }
   }
 
@@ -191,7 +200,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
-  void showEditModalBottom(BuildContext context) {
+  void showEditModalBottom(BuildContext context, [TrainingPlan? baseTrainingPlan, int mode = TrainingPlanFormMode.creation]) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -201,16 +210,28 @@ class _WorkoutPageState extends State<WorkoutPage> {
             16,
           ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: TrainingPlanForm(
-            onSubmit: (e) {
+            baseTrainingPlan: baseTrainingPlan,
+            mode: mode,
+            onSubmit: (newPlan) {
               Navigator.pop(context);
-
               TrainingPlanState plansState = Provider.of<TrainingPlanState>(context, listen: false);
-              plansState.add(e);
-              if(e.list != null && e.list!.isNotEmpty) {
-                DatabaseHelper().setPlanExerciseList(e, e.list!);
-              }
 
-              showSnackMessage(context, "Adicionado com sucesso!", true);
+              if(mode == TrainingPlanFormMode.creation) {
+                plansState.add(newPlan);
+                showSnackMessage(context, "Adicionado com sucesso!", true);
+              } else {
+                if(newPlan.id != null) {
+                  int index = plansState.indexWhere((entity) => entity.id == newPlan.id);
+                  
+                  if(index >= 0) {
+                    plansState[index] = newPlan;
+                    showSnackMessage(context, "Editado com sucesso!", true);
+                    return;
+                  }
+                }
+                
+                showSnackMessage(context, "Error ao editar!", false);
+              }
             },
           ),
         );

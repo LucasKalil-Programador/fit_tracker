@@ -1,4 +1,5 @@
 import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/states/training_plan_state.dart';
@@ -13,10 +14,7 @@ void main() async {
   TrainingPlanState trainingPlanState = TrainingPlanState();
   ExercisesState exercisesState = ExercisesState();
   MetadataState metadataState = MetadataState();
-  await trainingPlanState.loadDatabase();
-  await exercisesState.loadDatabase();
-  await metadataState.loadDatabase();
-  
+
   runApp(
     MultiProvider(
       providers: [
@@ -27,7 +25,12 @@ void main() async {
       child: MyApp(),
     ),
   );
-  
+  if(exercisesState.isEmpty) {
+    generateDB(exercisesState, trainingPlanState); 
+  }
+}
+
+void generateDB(ExercisesState exercisesState, TrainingPlanState trainingPlanState) {
   List<Exercise> exercises = [];
   exercises.add(Exercise(name: "Supino reto", amount: 40, reps: 10, sets: 4, type: ExerciseType.Musclework));
   exercises.add(Exercise(name: "Agachamento livre", amount: 60, reps: 12, sets: 4, type: ExerciseType.Musclework));
@@ -44,11 +47,15 @@ void main() async {
   exercises.add(Exercise(name: "Elevação lateral", amount: 10, reps: 15, sets: 3, type: ExerciseType.Musclework));
   exercises.add(Exercise(name: "Rosca alternada", amount: 12, reps: 12, sets: 4, type: ExerciseType.Musclework));
   exercises.add(Exercise(name: "Tríceps pulley", amount: 35, reps: 15, sets: 4, type: ExerciseType.Musclework));
-
+  
   exercises.add(Exercise(name: "Corrida na esteira", amount: 30, reps: 1, sets: 1, type: ExerciseType.Cardio));
   exercises.add(Exercise(name: "Bicicleta ergométrica", amount: 25, reps: 1, sets: 1, type: ExerciseType.Cardio));
   exercises.add(Exercise(name: "Escada ergométrica", amount: 20, reps: 1, sets: 1, type: ExerciseType.Cardio));
-  await exercisesState.addAll(exercises); 
+
+  
+  exercisesState.addAll(exercises); 
+  TrainingPlan plan = TrainingPlan(name: "Treino A", list: exercises.map((e) => e.id!).toList());
+  trainingPlanState.add(plan);
 }
 
 class MyApp extends StatelessWidget {

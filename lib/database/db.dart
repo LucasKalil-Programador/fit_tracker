@@ -1,14 +1,9 @@
-import 'package:fittrackr/database/helpers/exercise_helper.dart';
-import 'package:fittrackr/database/helpers/metadata_helper.dart';
-import 'package:fittrackr/database/helpers/report_exercise_helper.dart';
-import 'package:fittrackr/database/helpers/tag_helper.dart';
-import 'package:fittrackr/database/helpers/training_plan_helper.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 
-class DatabaseHelper with ExerciseHelper, MetadataHelper, TagHelper, TrainingPlanHelper, ReportExerciseHelper {
+class DatabaseHelper {
 
   final create_table_sql = '''
           CREATE TABLE exercise(

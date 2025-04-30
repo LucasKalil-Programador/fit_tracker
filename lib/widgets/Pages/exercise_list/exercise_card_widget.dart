@@ -17,12 +17,10 @@ class ExerciseCard extends StatelessWidget {
       child: Dismissible(
         key: ValueKey(exercise.id!),
         direction: DismissDirection.endToStart,
-        onDismissed: (direction) async {
+        onDismissed: (direction) {
           final listState = Provider.of<ExercisesState>(context, listen: false);
-          bool sucess = await listState.remove(exercise);
-
-          if(!context.mounted) return;
-          showSnackMessage(context, sucess ? "Removido com sucesso!" : "Erro ao remover exercício!", sucess);
+          listState.remove(exercise);
+          showSnackMessage(context, "Removido com sucesso!", true);
         },              
         background: deleteBackground(),
         child: contentCard(context),    
@@ -66,14 +64,11 @@ class ExerciseCard extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: ExerciseForm(
-            onSubmit: (newExercise) async {
+            onSubmit: (newExercise) {
               Navigator.pop(context);
-
               final listState = Provider.of<ExercisesState>(context, listen: false);
-              bool sucess = await listState.update(newExercise);
-              print(newExercise);
-              if(!context.mounted) return;
-              showSnackMessage(context, sucess ? "Editado com sucesso!" : "Erro ao editar exercício!", sucess);
+              listState[listState.indexOf(exercise)] = newExercise;
+              showSnackMessage(context, "Editado com sucesso!", true);
             },
             mode: ExerciseFormMode.edit,
             baseExercise: exercise,

@@ -14,7 +14,7 @@ import 'package:fittrackr/database/entities/base_entity.dart';
 enum ExerciseType {Cardio, Musclework}
 
 class Exercise implements BaseEntity {
-  int? id;
+  String? id;
   final String name;
   final int amount;
   final int reps;
@@ -47,9 +47,12 @@ class Exercise implements BaseEntity {
         other.type == this.type;
   }
 
+  @override
+  int get hashCode => Object.hash(id, name, amount, reps, sets, type);
+
   static Exercise fromMap(Map<String, Object?> e) {
     return Exercise(
-      id: e['id'] as int,
+      id: e['id'] as String,
       name: e['name'] as String,
       amount: e['amount'] as int,
       reps: e['reps'] as int,

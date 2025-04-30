@@ -1,4 +1,4 @@
-// import 'package:path/path.dart';
+/* // import 'package:path/path.dart';
 // import 'package:sqflite/sqflite.dart';
 
 import 'package:fittrackr/database/db.dart';
@@ -18,6 +18,7 @@ mixin ExerciseHelper {
   }
 
   Future<void> insertAllExercise(List<Exercise> exercises) async {
+    if (exercises.isEmpty) return;
     final db = await (this as DatabaseHelper).database;
     await db.transaction((txn) async {
       for (var exercise in exercises) {
@@ -65,3 +66,4 @@ mixin ExerciseHelper {
     return result.isNotEmpty ? Exercise.fromMap(result.first) : null;
   }
 }
+ */

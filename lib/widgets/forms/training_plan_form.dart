@@ -1,24 +1,41 @@
-import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class TrainingPlanFormMode {
+  static const int creation = 0;
+  static const int edit = 1;
+}
+
 class TrainingPlanForm extends StatefulWidget {
   final void Function(TrainingPlan)? onSubmit;
+  final TrainingPlan? baseTrainingPlan;
+  final int mode;
 
-  const TrainingPlanForm({super.key, this.onSubmit});
+  const TrainingPlanForm({super.key, this.onSubmit, this.baseTrainingPlan, this.mode = TrainingPlanFormMode.creation});
 
   @override
   State<TrainingPlanForm> createState() => _TrainingPlanFormState();
 }
 
 class _TrainingPlanFormState extends State<TrainingPlanForm> {
-  TextEditingController _nameController = TextEditingController(text: "");
-  List<Exercise> selected = [];
+  TextEditingController nameController = TextEditingController(text: "");
+  List<String> selected = [];
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.baseTrainingPlan != null) {
+      nameController.text = widget.baseTrainingPlan!.name;
+      if(widget.baseTrainingPlan!.list != null) {
+        selected.addAll(widget.baseTrainingPlan!.list!);
+      } 
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +61,16 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (widget.onSubmit != null) {
-                        widget.onSubmit!(
-                          TrainingPlan(
-                            name: _nameController.text,
-                            list: selected,
-                          ),
-                        );
+                          String? id = null;
+                          if(widget.baseTrainingPlan != null && widget.mode == TrainingPlanFormMode.edit) {
+                            id = widget.baseTrainingPlan?.id;
+                        }
+                        final plan = TrainingPlan(id: id, name: nameController.text, list: selected);
+                        widget.onSubmit!(plan);
                       }
                     }
                   }, 
-                  child: Text("Criar treino"),
+                  child: Text(widget.mode == TrainingPlanFormMode.creation ? "Criar treino" : "Editar treino"),
                 ),
               ),
               DefaultDivider(),
@@ -74,7 +91,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
 
   Widget nameInput() {
     return TextFormField(
-      controller: _nameController,
+      controller: nameController,
       decoration: const InputDecoration(labelText: "Nome"),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -97,14 +114,14 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
             return DefaultExerciseCard(
               exercise: exercise,
               trailing: Checkbox(
-                value: selected.indexOf(exercise) > -1,
+                value: selected.contains(exercise.id),
                 onChanged: (newValue) {
                   setState(() {
                     if (newValue == null) return;
                     if (newValue) {
-                      selected.add(exercise);
+                      selected.add(exercise.id!);
                     } else {
-                      selected.remove(exercise);
+                      selected.remove(exercise.id!);
                     }
                   });
                 },

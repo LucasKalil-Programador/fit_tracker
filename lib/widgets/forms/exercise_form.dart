@@ -161,7 +161,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          int? newId;
+          String? newId;
           if (widget.mode == ExerciseFormMode.edit && widget.baseExercise != null) {
             newId = widget.baseExercise!.id;
           }

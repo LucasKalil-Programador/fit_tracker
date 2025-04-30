@@ -48,14 +48,11 @@ class ExerciseListPage extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: ExerciseForm(
-            onSubmit: (value) async {
+            onSubmit: (value) {
               Navigator.pop(context);
-
               final listState = Provider.of<ExercisesState>(context, listen: false);
-              bool sucess = await listState.add(value);
-
-              if(!context.mounted) return;
-              showSnackMessage(context, sucess ? "Adicionado com sucesso!" : "Erro ao adicionar exercício!", sucess);
+              listState.add(value);
+              showSnackMessage(context, "Adicionado com sucesso!", true);
             },
             mode: ExerciseFormMode.creation,
             ),

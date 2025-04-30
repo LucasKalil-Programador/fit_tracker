@@ -6,12 +6,11 @@ CREATE TABLE training_plan(
 */
 
 import 'package:fittrackr/database/entities/base_entity.dart';
-import 'package:fittrackr/database/entities/exercise.dart';
 
 class TrainingPlan implements BaseEntity{
-  int? id;
+  String? id;
   final String name;
-  late List<Exercise>? list;
+  late List<String>? list;
 
   TrainingPlan({
     this.id,
@@ -33,8 +32,9 @@ class TrainingPlan implements BaseEntity{
 
   static TrainingPlan fromMap(Map<String, Object?> e) {
     return TrainingPlan(
-      id: e['id'] as int,
+      id: e['id'] as String,
       name: e['name'] as String,
+      list: e['list'] as List<String>,
     );
   }
 }

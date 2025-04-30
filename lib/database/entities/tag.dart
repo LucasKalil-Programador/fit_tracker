@@ -8,7 +8,7 @@ CREATE TABLE tag(
 import 'package:fittrackr/database/entities/base_entity.dart';
 
 class Tag implements BaseEntity{
-  int? id;
+  String? id;
   final String name;
 
   Tag({
@@ -30,7 +30,7 @@ class Tag implements BaseEntity{
 
   static Tag fromMap(Map<String, Object?> e) {
     return Tag(
-      id: e['id'] as int,
+      id: e['id'] as String,
       name: e['name'] as String,
     );
   }

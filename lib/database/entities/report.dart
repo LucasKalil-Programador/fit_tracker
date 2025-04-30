@@ -23,7 +23,7 @@ import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 
 class Report<T> implements BaseEntity {
-  int? id;
+  String? id;
   final String data;
   final int reportDate;
   final T object;
@@ -54,14 +54,14 @@ class Report<T> implements BaseEntity {
     Object object = Object();
     if(T == Exercise) {
       object = Exercise.fromMap(e);
-      (object as Exercise).id = e['exercise_id'] as int;
+      (object as Exercise).id = e['exercise_id'] as String;
     } else if(T == TrainingPlan) {
       object = TrainingPlan.fromMap(e);
-      (object as TrainingPlan).id = e['training_plan_id'] as int;
+      (object as TrainingPlan).id = e['training_plan_id'] as String;
     }
     
     return Report(
-      id: e['id'] as int,
+      id: e['id'] as String,
       data: e['data'] as String,
       reportDate: e['report_date'] as int,
       object: object as T,
