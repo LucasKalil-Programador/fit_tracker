@@ -1,10 +1,3 @@
-/* 
-CREATE TABLE training_plan(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL
-)
-*/
-
 import 'package:fittrackr/database/entities/base_entity.dart';
 
 class TrainingPlan implements BaseEntity{

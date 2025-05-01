@@ -1,14 +1,3 @@
-/* 
-CREATE TABLE exercise(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  amount INTEGER NOT NULL,
-  reps INTEGER NOT NULL,
-  sets INTEGER NOT NULL,
-  type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
-) 
-*/
-
 import 'package:fittrackr/database/entities/base_entity.dart';
 
 enum ExerciseType {Cardio, Musclework}

@@ -7,7 +7,7 @@ class DatabaseHelper {
 
   final create_table_sql = '''
           CREATE TABLE exercise(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            uuid TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             amount INTEGER NOT NULL,
             reps INTEGER NOT NULL,
@@ -16,18 +16,13 @@ class DatabaseHelper {
           );
           <query>
           CREATE TABLE training_plan(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
-          );
-          <query>
-          CREATE TABLE tag(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE
+            uuid TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            list TEXT NOT NULL
           );
           <query>
           CREATE TABLE metadata(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT NOT NULL UNIQUE,
+            key TEXT PRIMARY KEY,
             value TEXT NOT NULL
           );
         ''';
