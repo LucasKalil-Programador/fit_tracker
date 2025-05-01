@@ -4,8 +4,10 @@ import 'dart:async';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/exercises_state.dart';
+import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 class TrainingPlanWidget extends StatefulWidget {
@@ -24,18 +26,19 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
   Timer? saveDebounce;
   List<String> donelist = [];
 
+  List<String> exercisesId = [];
+  List<Exercise> exercises = [];
 
   @override
   void initState() {
     super.initState();
     if(widget.donelist != null) donelist = widget.donelist!;
+
+    loadExercises();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final exercisesState = Provider.of<ExercisesState>(context);
-    final List<Exercise> exercises = [];
-    List<String> exercisesId = [];
+  void loadExercises() {
+    final exercisesState = Provider.of<ExercisesState>(context, listen: false);
     if(widget.trainingPlan.list != null) {
       exercisesId = widget.trainingPlan.list!;
       for (var element in exercisesId) {
@@ -44,16 +47,19 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
       }
     }
     
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (exercises.length != exercisesId.length) {
+        showSnackMessage(context, "Erro ao carregar o treino", false);
+        exercisesId.clear();
+        exercises.clear();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ReorderableListView(
-      onReorder: (int oldIndex, int newIndex) {
-        setState(() {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          var item = exercisesId.removeAt(oldIndex);
-          exercisesId.insert(newIndex, item);
-        });
-      },
+      onReorder: (int oldIndex, int newIndex) => onReorder(oldIndex, newIndex, context),
       children: [
         for (int i = 0; i < exercises.length; i++)
           Padding(
@@ -63,6 +69,24 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
           ),
       ],
     );
+  }
+
+  void onReorder(int oldIndex, int newIndex, BuildContext context) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final item1 = exercisesId.removeAt(oldIndex);
+      exercisesId.insert(newIndex, item1);
+
+      final item2 = exercises.removeAt(oldIndex);
+      exercises.insert(newIndex, item2);
+    });
+    
+    if(widget.trainingPlan.list != null) {
+        Provider.of<TrainingPlanState>(context, listen: false)
+        .reportUpdate(widget.trainingPlan);
+    }
   }
 
   Widget _planItem(Exercise exercise, int index, BuildContext context) {

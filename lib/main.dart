@@ -1,7 +1,9 @@
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/states/debounce_save.dart';
 import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/states/save_utils.dart';
 import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_list_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
@@ -25,9 +27,33 @@ void main() async {
       child: MyApp(),
     ),
   );
+
+  setupSaver(metadataState, exercisesState, trainingPlanState);
+
   if(exercisesState.isEmpty) {
     generateDB(exercisesState, trainingPlanState); 
   }
+}
+
+void setupSaver(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState) {
+  final metadataSaver = DebounceRunner<void>(
+    delay: Duration(seconds: 1),
+    callback: (e) => saveMetadata(metadataState.clone()),
+  );
+  
+  final exerciseSaver = DebounceRunner<void>(
+    delay: Duration(seconds: 1),
+    callback: (e) => saveExercise(exercisesState.flushUpdatePatch()),
+  );
+  
+  final trainingPlanSaver = DebounceRunner<void>(
+    delay: Duration(seconds: 1),
+    callback: (e) => saveTrainingPlan(trainingPlanState.flushUpdatePatch()),
+  );
+  
+  metadataState.addListener(() => metadataSaver.runAfter(null));
+  exercisesState.addListener(() => exerciseSaver.runAfter(null));
+  trainingPlanState.addListener(() => trainingPlanSaver.runAfter(null));
 }
 
 void generateDB(ExercisesState exercisesState, TrainingPlanState trainingPlanState) {
@@ -54,8 +80,10 @@ void generateDB(ExercisesState exercisesState, TrainingPlanState trainingPlanSta
 
   
   exercisesState.addAll(exercises); 
-  TrainingPlan plan = TrainingPlan(name: "Treino A", list: exercises.map((e) => e.id!).toList());
-  trainingPlanState.add(plan);
+  TrainingPlan plan1 = TrainingPlan(name: "Treino A", list: exercises.take(5).map((e) => e.id!).toList());
+  TrainingPlan plan2 = TrainingPlan(name: "Treino B", list: exercises.take(6).map((e) => e.id!).toList());
+  TrainingPlan plan3 = TrainingPlan(name: "Treino C", list: exercises.take(4).map((e) => e.id!).toList());
+  trainingPlanState.addAll([plan1, plan2, plan3]);
 }
 
 class MyApp extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/states/exercises_state.dart';
+import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +18,12 @@ class ExerciseCard extends StatelessWidget {
       child: Dismissible(
         key: ValueKey(exercise.id!),
         direction: DismissDirection.endToStart,
-        onDismissed: (direction) {
-          final listState = Provider.of<ExercisesState>(context, listen: false);
-          listState.remove(exercise);
-          showSnackMessage(context, "Removido com sucesso!", true);
-        },              
+        onDismissed: (direction) => onDismissed(context),              
         background: deleteBackground(),
         child: contentCard(context),    
       ),
     );
-  } 
+  }
 
   Widget contentCard(BuildContext context) {
     return DefaultExerciseCard(
@@ -39,7 +36,7 @@ class ExerciseCard extends StatelessWidget {
         child: const Icon(Icons.edit),
       ),
     );
-  }
+  } 
 
   Widget deleteBackground() {
     return Padding(
@@ -54,6 +51,25 @@ class ExerciseCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void onDismissed(BuildContext context) {
+    final exercisesState = Provider.of<ExercisesState>(context, listen: false);
+    final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
+    
+    exercisesState.remove(exercise);
+    
+    while(true) {
+      int index = trainingPlanState.indexWhere((p) => p.list?.contains(exercise.id) == true);
+      if(index == -1) break;
+      trainingPlanState[index].list?.remove(exercise.id);
+      trainingPlanState.reportUpdate(trainingPlanState[index]);
+    }
+    
+    trainingPlanState.forEach((p0) => p0.list?.remove(exercise.id));
+            
+    showSnackMessage(context, "Removido com sucesso!", true);
+            
   }
 
   void showEditModalBottom(BuildContext context) {

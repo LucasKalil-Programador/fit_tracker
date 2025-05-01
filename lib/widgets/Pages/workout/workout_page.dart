@@ -46,7 +46,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 if (trainingPlanState.isEmpty) 
                   return emptyPlanText();
                 if (activatedPlan != null)
-                  return TrainingPlanWidget(trainingPlan: activatedPlan!, donelist: donelist, onDoneChange: saveDoneList,);
+                  return TrainingPlanWidget(trainingPlan: activatedPlan!, donelist: donelist, onDoneChange: saveDoneList);
                 return listTrainingPlan(trainingPlanState);
               },
             ),

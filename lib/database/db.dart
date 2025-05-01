@@ -30,47 +30,6 @@ class DatabaseHelper {
             key TEXT NOT NULL UNIQUE,
             value TEXT NOT NULL
           );
-          <query>
-          CREATE TABLE report_exercise(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data TEXT NOT NULL,
-            report_date INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id)
-          );
-          <query>
-          CREATE TABLE report_training_plan(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            data TEXT NOT NULL,
-            report_date INTEGER NOT NULL,
-            training_plan_id INTEGER NOT NULL,
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id)
-          );
-          <query>
-          CREATE TABLE training_plan_has_exercise (
-            training_plan_id INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            position INTEGER NOT NULL DEFAULT 0,
-            PRIMARY KEY (training_plan_id, exercise_id),
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
-          );
-          <query>
-          CREATE TABLE exercise_has_tag (
-            tag_id INTEGER NOT NULL,
-            exercise_id INTEGER NOT NULL,
-            PRIMARY KEY (tag_id, exercise_id),
-            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-            FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE
-          );
-          <query>
-          CREATE TABLE training_plan_has_tag (
-            tag_id INTEGER NOT NULL,
-            training_plan_id INTEGER NOT NULL,
-            PRIMARY KEY (tag_id, training_plan_id),
-            FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-            FOREIGN KEY (training_plan_id) REFERENCES training_plan(id) ON DELETE CASCADE
-          );
         ''';
 
   static final DatabaseHelper _instance = DatabaseHelper._internal();

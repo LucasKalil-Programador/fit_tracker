@@ -44,4 +44,12 @@ class MetadataState extends ChangeNotifier {
     _cache.remove(key);
     notifyListeners();
   }
+
+  void forEach(void Function(String, String) action) {
+    _cache.forEach(action);
+  }
+
+  Map<String, String> clone() {
+    return Map<String, String>.from(_cache);
+  }
 }

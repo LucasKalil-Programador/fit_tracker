@@ -1,10 +1,19 @@
 import 'package:fittrackr/database/entities/base_entity.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+enum UpdateEvent { insert, update, remove }
+
 abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
+  final Map<UpdateEvent, List<T>> _updatePatch = {
+    UpdateEvent.insert: [],
+    UpdateEvent.update: [],
+    UpdateEvent.remove: [],
+  };
   final List<T> _cache = [];
 
+  List<Exercise> get clone => List<Exercise>.from(_cache);
   bool get isEmpty => _cache.isEmpty;
   bool get isNotEmpty => _cache.isNotEmpty;
   int get length => _cache.length;
@@ -13,6 +22,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   void operator []=(int index, T value) {
     _cache[index] = value;
+    _updatePatch[UpdateEvent.update]!.add(value);
     this.sort();
   }
 
@@ -23,17 +33,20 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   void add(T entity) {
     entity.id = Uuid().v4();
     _cache.add(entity);
+    _updatePatch[UpdateEvent.insert]!.add(entity);
     this.sort();
   }
 
-  void addAll(List<T> entity) async {
-    for (var plan in entity) plan.id = Uuid().v4();
-    _cache.addAll(entity);
+  void addAll(List<T> entities) {
+    for (var plan in entities) plan.id = Uuid().v4();
+    _cache.addAll(entities);
+    _updatePatch[UpdateEvent.insert]!.addAll(entities);
     this.sort();
   }
 
-  void remove(T entity) async {
+  void remove(T entity) {
     _cache.remove(entity);
+    _updatePatch[UpdateEvent.remove]!.add(entity);
     notifyListeners();
   }
 
@@ -65,5 +78,22 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   void sort() {
     _cache.sort((e0, e1) => e0.id!.compareTo(e1.id!));
     notifyListeners();
+  }
+
+  void forEach(void Function(T) action) {
+    _cache.forEach(action);
+  }
+
+  void reportUpdate(T value) {
+    _updatePatch[UpdateEvent.update]!.add(value);
+    notifyListeners();
+  }
+
+  Map<UpdateEvent, List<T>> flushUpdatePatch() {
+    final retrMap = Map<UpdateEvent, List<T>>.from(_updatePatch);
+    _updatePatch[UpdateEvent.insert] = [];
+    _updatePatch[UpdateEvent.update] = [];
+    _updatePatch[UpdateEvent.remove] = [];
+    return retrMap;
   }
 }
