@@ -23,6 +23,7 @@ class TrainingPlanForm extends StatefulWidget {
 class _TrainingPlanFormState extends State<TrainingPlanForm> {
   TextEditingController nameController = TextEditingController(text: "");
   List<String> selected = [];
+  String searchStr = "";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -58,18 +59,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.onSubmit != null) {
-                          String? id = null;
-                          if(widget.baseTrainingPlan != null && widget.mode == TrainingPlanFormMode.edit) {
-                            id = widget.baseTrainingPlan?.id;
-                        }
-                        final plan = TrainingPlan(id: id, name: nameController.text, list: selected);
-                        widget.onSubmit!(plan);
-                      }
-                    }
-                  }, 
+                  onPressed: submit, 
                   child: Text(widget.mode == TrainingPlanFormMode.creation ? "Criar treino" : "Editar treino"),
                 ),
               ),
@@ -80,7 +70,21 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: exerciseSelection(),
+                child: TextField(
+                  decoration: const InputDecoration(labelText: "Pesquisa"),
+                  onChanged: (value) {
+                    setState(() {
+                      searchStr = value;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 600,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: exerciseSelection(),
+                ),
               ), 
             ],
           ),
@@ -88,6 +92,8 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
       ),
     );
   }
+
+  
 
   Widget nameInput() {
     return TextFormField(
@@ -105,12 +111,12 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
   Widget exerciseSelection() {
     return Consumer<ExercisesState>(
       builder: (context, exerciseListState, child) {
+        final exercises = exerciseListState.search(searchStr);
+
         return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: exerciseListState.length,
+          itemCount: exercises.length,
           itemBuilder: (context, index) {
-            final exercise = exerciseListState.get(index);
+            final exercise = exercises[index];
             return DefaultExerciseCard(
               exercise: exercise,
               trailing: Checkbox(
@@ -131,5 +137,18 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
         );
       },
     );
+  }
+
+  void submit() {
+    if (_formKey.currentState!.validate()) {
+      if (widget.onSubmit != null) {
+          String? id = null;
+          if(widget.baseTrainingPlan != null && widget.mode == TrainingPlanFormMode.edit) {
+            id = widget.baseTrainingPlan?.id;
+        }
+        final plan = TrainingPlan(id: id, name: nameController.text, list: selected);
+        widget.onSubmit!(plan);
+      }
+    }
   }
 }

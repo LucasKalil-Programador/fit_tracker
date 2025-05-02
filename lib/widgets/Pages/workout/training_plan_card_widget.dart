@@ -1,51 +1,47 @@
 import 'package:fittrackr/database/entities/training_plan.dart';
-import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class TrainingPlanCardWidget extends StatelessWidget {
   final void Function()? onStart;
+  final void Function()? onDelete;
   final void Function()? onEdit;
+
   final TrainingPlan plan;
 
-  const TrainingPlanCardWidget({super.key, required this.plan, this.onStart, this.onEdit});
-
+  const TrainingPlanCardWidget({super.key, required this.plan, this.onStart, this.onEdit, this.onDelete});
+  
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(plan.id),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-        trainingPlanState.remove(plan);     
-        showSnackMessage(context, "Removido com sucesso!", true);
-      },
-      background: DeleteBackground(),
-      child: DefaultTrainingPlanCard(
-        plan: plan,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 4),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                ),
-                onPressed: onStart,
-                child: const Icon(Icons.play_arrow),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-              onPressed: onEdit,
-              child: const Icon(Icons.edit),
-            ),
-          ],
-        ),
+    return Slidable(
+      child: DefaultTrainingPlanCard(plan: plan),
+      startActionPane: ActionPane(
+        motion: const BehindMotion(),
+        extentRatio: .75,
+        children: [
+          SlidableAction(
+            onPressed: (_) {if(onEdit != null) onEdit!();},
+            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: 'Editar',
+          ),
+          SlidableAction(
+            onPressed: (_) {if(onStart != null) onStart!();},
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
+            foregroundColor: Colors.white,
+            icon: Icons.play_arrow,
+            label: 'Iniciar',
+          ),
+          SlidableAction(
+            onPressed: (_) {if(onDelete != null) onDelete!();},
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+          ),
+        ],
       ),
     );
   }

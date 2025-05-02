@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 
 class TrainingPlanListView extends StatelessWidget {
   final void Function(TrainingPlan)? onStart;
+  final void Function(TrainingPlan)? onDelete;
   final void Function(TrainingPlan)? onEdit;
 
   final TrainingPlanState trainingPlanState;
 
-  const TrainingPlanListView({super.key, required this.trainingPlanState, this.onStart, this.onEdit});
+  const TrainingPlanListView({super.key, required this.trainingPlanState, this.onStart, this.onEdit, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,8 @@ class TrainingPlanListView extends StatelessWidget {
           child: TrainingPlanCardWidget(
             plan: plan, 
             onStart: () => {if(onStart != null) onStart!(plan)},
-            onEdit: () => {if(onStart != null) onEdit!(plan)},
+            onDelete: () => {if(onDelete != null) onDelete!(plan)},
+            onEdit: () => {if(onEdit != null) onEdit!(plan)},
           )
         );
       },

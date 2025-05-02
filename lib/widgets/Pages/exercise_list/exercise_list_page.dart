@@ -1,4 +1,3 @@
-import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_card_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -46,9 +45,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
           ),
           Expanded(
             child: Consumer<ExercisesState>(builder: (context, exerciseListState, child) {
-              final sortedList = exerciseListState.sorted()
-                .where((e) => searchFilter(e, searchStr.toLowerCase()))
-                .toList();
+              final sortedList = exerciseListState.search(searchStr);
               return ListView.builder(
                 itemCount: sortedList.length,
                 itemBuilder: (context, index) {
@@ -61,11 +58,6 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
         ],
       ),
     );
-  }
-
-  bool searchFilter(Exercise exercise, String searchStr) {
-    return exercise.name.toLowerCase().contains(searchStr) ||
-           [exercise.reps, exercise.amount, exercise.sets].contains(int.tryParse(searchStr));
   }
 
   void showAddModalBottom(BuildContext context) {

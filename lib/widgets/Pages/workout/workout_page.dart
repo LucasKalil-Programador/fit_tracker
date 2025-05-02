@@ -83,6 +83,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
         });
         saveActivated(plan);
       },
+      onDelete: (plan) {
+        final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
+        trainingPlanState.remove(plan);     
+        showSnackMessage(context, "Removido com sucesso!", true);
+      },
       onEdit: (plan) => showEditModalBottom(context, plan, TrainingPlanFormMode.edit),
     );
   }
@@ -126,6 +131,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               TrainingPlanState plansState = Provider.of<TrainingPlanState>(context, listen: false);
               
               if(mode == TrainingPlanFormMode.creation) {
+                plansState.add(newPlan);
                 showSnackMessage(context, "Adicionado com sucesso!", true);
               } else {
                 if(newPlan.id != null) {
@@ -137,7 +143,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     return;
                   }
                 }
-                
                 showSnackMessage(context, "Error ao editar!", false);
               }
             },
