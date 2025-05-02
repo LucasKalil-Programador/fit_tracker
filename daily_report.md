@@ -75,5 +75,35 @@ Percebi semelhança entre report_exercise e report_training_plan; na prática, s
 
 O projeto tem evoluído bem. Atualmente, já temos uma tela onde o usuário pode criar um treino, e é possível ativá-lo ou desativá-lo de forma eficiente. No entanto, tenho enfrentado bastante complexidade ao gerenciar o banco de dados, que é baseado em funções assíncronas. Isso tem causado diversos problemas de sincronização entre os estados e o que é exibido para o usuário. Por isso, decidi criar uma branch separada para testar uma abordagem diferente: usar um banco de dados baseado em um grande JSON que armazene todos os dados. A ideia é reduzir a complexidade. Se essa solução se mostrar vantajosa, pretendo seguir por esse caminho.
 
+# 01/05/2025
+Atualmente, o projeto já conta com duas telas totalmente implementadas:
 
+1. Tela de Exercícios – permite listar, adicionar, editar e deletar exercícios. Também inclui um sistema de busca por nome, número de séries, peso e outros critérios.
 
+2. Tela de Plano de Treinamento – o usuário pode montar um plano completo, selecionar os exercícios desejados e iniciar o treino. Um cronômetro integrado auxilia no controle do tempo de treino.
+
+Tudo isso já está funcionando com persistência de dados, utilizando um banco de dados para salvar e carregar as informações.
+
+Neste momento, estou pesquisando pacotes para personalizar ainda mais o app, como bibliotecas de gráficos, animações personalizadas, etc.
+
+Lista de bibliotecas relevantes:
+
+- [shimmer](https://pub.dev/packages/shimmer) efeito de carregamento com animação de brilho 
+- [fl_chart](https://pub.dev/packages/fl_chart) exibição de gráficos leves e customizáveis
+- [syncfusion_flutter_charts](https://pub.dev/packages/syncfusion_flutter_charts) gráficos avançados e completos
+- [lottie](https://pub.dev/packages/lottie) animações vetoriais em JSON de alta qualidade
+- [google_fonts](https://pub.dev/packages/google_fonts) fácil uso de fontes do Google
+- [flutter_staggered_grid_view](https://pub.dev/packages/flutter_staggered_grid_view) criação de grids com layouts irregulares
+- [flutter_animate](https://pub.dev/packages/flutter_animate)  animações simples, suaves e fáceis de usar
+- [flutter_local_notifications](https://pub.dev/packages/flutter_local_notifications) notificações locais ricas e customizáveis
+- [percent_indicator](https://pub.dev/packages/percent_indicator) barras circulares e lineares de progresso
+- [flutter_slidable](https://pub.dev/packages/flutter_slidable) ações deslizáveis em listas
+- [image_picker](https://pub.dev/packages/image_picker) captura ou seleção de imagens da galeria/câmera
+
+Essa foi uma pesquisa rápida, e até agora os pacotes que mais chamaram minha atenção foram:
+
+- Bibliotecas de gráficos: uma das funcionalidades que quero no projeto é permitir que o usuário acompanhe seu progresso ao longo do tempo. A melhor forma de fazer isso é através de visualizações gráficas, então com certeza vou utilizar uma das bibliotecas que encontrei.
+
+- Shimmer: apesar de o app não ter problemas de carregamento, adicionar uma animação de placeholder deixa a experiência mais polida e agradável.
+
+- Flutter Staggered Grid: permite criar layouts irregulares. Achei interessante para a tela principal (home), pois pode deixar o visual mais dinâmico e atrativo.

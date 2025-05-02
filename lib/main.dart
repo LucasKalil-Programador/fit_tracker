@@ -1,5 +1,3 @@
-import 'package:fittrackr/database/entities/exercise.dart';
-import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/database/debounce_save.dart';
 import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/database/load_utils.dart';
