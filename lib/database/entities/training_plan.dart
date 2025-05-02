@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fittrackr/database/entities/base_entity.dart';
 
 class TrainingPlan implements BaseEntity{
@@ -23,11 +25,18 @@ class TrainingPlan implements BaseEntity{
 
   }
 
-  static TrainingPlan fromMap(Map<String, Object?> e) {
-    return TrainingPlan(
-      id: e['id'] as String,
-      name: e['name'] as String,
-      list: e['list'] as List<String>,
-    );
+  static TrainingPlan? fromMap(Map<String, Object?> e) {
+    final uuid = e['uuid'];
+    final name = e['name'];
+    final list = e['list'];
+
+    if (uuid is String && name is String && list is String) {
+      return TrainingPlan(
+        id: uuid,
+        name: name,
+        list: List<String>.from(jsonDecode(list)),
+      );
+    }
+    return null;
   }
 }

@@ -52,4 +52,9 @@ class MetadataState extends ChangeNotifier {
   Map<String, String> clone() {
     return Map<String, String>.from(_cache);
   }
+
+  void setMap(Map<String, String> map) {
+    _cache.clear();
+    _cache.addAll(map);
+  }
 }

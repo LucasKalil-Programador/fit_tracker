@@ -96,4 +96,9 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     _updatePatch[UpdateEvent.remove] = [];
     return retrMap;
   }
+
+  void setList(List<T> list) {
+    _cache.clear();
+    _cache.addAll(list);
+  }
 }

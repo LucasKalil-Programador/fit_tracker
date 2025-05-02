@@ -39,14 +39,25 @@ class Exercise implements BaseEntity {
   @override
   int get hashCode => Object.hash(id, name, amount, reps, sets, type);
 
-  static Exercise fromMap(Map<String, Object?> e) {
-    return Exercise(
-      id: e['id'] as String,
-      name: e['name'] as String,
-      amount: e['amount'] as int,
-      reps: e['reps'] as int,
-      sets: e['sets'] as int,
-      type: ExerciseType.values.byName(e['type'] as String),
-    );
+  static Exercise? fromMap(Map<String, Object?> e) {
+    final uuid = e["uuid"];
+    final name = e["name"];
+    final amount = e["amount"];
+    final reps = e["reps"];
+    final sets = e["sets"];
+    final type = e["type"];
+    if(uuid is String && name is String && amount is int && 
+       reps is int    && sets is int    && type is String) {
+      return Exercise(
+        id: uuid,
+        name: name,
+        amount: amount,
+        reps: reps,
+        sets: sets,
+        type: ExerciseType.values.byName(type),
+      );
+    }
+
+    return null;
   }
 }
