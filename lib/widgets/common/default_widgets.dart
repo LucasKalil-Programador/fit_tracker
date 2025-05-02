@@ -1,7 +1,11 @@
 
+import 'dart:math';
+
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/states/exercises_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void showSnackMessage(BuildContext context, String message, bool sucess) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -58,14 +62,29 @@ class DefaultExerciseCard extends StatelessWidget {
 
 class DefaultTrainingPlanCard extends StatelessWidget {
   final TrainingPlan plan;
-  final Widget? subtitle;
   final Widget? trailing;
   final Widget? leading;
 
-  const DefaultTrainingPlanCard({super.key, required this.plan, this.trailing, this.leading, this.subtitle});
+  const DefaultTrainingPlanCard({super.key, required this.plan, this.trailing, this.leading});
 
   @override
   Widget build(BuildContext context) {
+    List<String> subtitleList = [];
+    final exerciseState = Provider.of<ExercisesState>(context);
+    String substring = "Exercícios: ";
+    if (plan.list != null && plan.list!.isNotEmpty) {
+      for (int i = 0; i < min(plan.list!.length, 6); i++) {
+        final exercise = exerciseState.getById(plan.list![i]);
+        if (exercise != null) subtitleList.add(exercise.name);
+      }
+      substring = subtitleList.join(", ");
+      if(plan.list!.length > 6) {
+        substring = substring + "...";
+      }
+    } else {
+      substring = "Lista vazia";
+    }
+
     return Card(
       key: super.key,
       child: ListTile(
@@ -75,7 +94,7 @@ class DefaultTrainingPlanCard extends StatelessWidget {
           softWrap: false,
           style: const TextStyle(fontWeight: FontWeight.bold,),
         ),
-        subtitle: this.subtitle,
+        subtitle: Text(substring),
         leading: this.leading,
         trailing: this.trailing,
       ),

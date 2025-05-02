@@ -47,6 +47,9 @@ class MyApp extends StatelessWidget {
           elevation: 2,
         ),
       ),
+      textTheme: TextTheme(
+        titleLarge: TextStyle(fontWeight: FontWeight.bold)
+      ) 
     );
 
     return MaterialApp(

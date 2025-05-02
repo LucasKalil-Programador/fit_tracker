@@ -8,6 +8,7 @@ import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 class TrainingPlanWidget extends StatefulWidget {
@@ -28,6 +29,8 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
 
   List<String> exercisesId = [];
   List<Exercise> exercises = [];
+
+  double get progress => donelist.length / exercises.length;
 
   @override
   void initState() {
@@ -58,9 +61,33 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Text(
+          widget.trainingPlan.name,
+          style: Theme.of(context).textTheme.titleLarge,
+          softWrap: false,
+        ),
+        Padding(
+              padding: EdgeInsets.all(8.0),
+              child: new LinearPercentIndicator(
+                addAutomaticKeepAlive: true,
+                barRadius: Radius.circular(10),
+                animation: true,
+                animateFromLastPercent: true,
+                animationDuration: 250,
+                lineHeight: 30.0,
+                percent: progress,
+                center: Text(
+                  "${(progress * 100).toInt().toString()}%",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                progressColor: Theme.of(context).colorScheme.primaryContainer,
+              ),
+            ),
         Expanded(
           child: ReorderableListView(
             onReorder: (int oldIndex, int newIndex) => onReorder(oldIndex, newIndex, context),

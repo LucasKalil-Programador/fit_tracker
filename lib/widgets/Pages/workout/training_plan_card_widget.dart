@@ -15,7 +15,7 @@ class TrainingPlanCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      child: DefaultTrainingPlanCard(plan: plan),
+      child: DefaultTrainingPlanCard(plan: plan, trailing: Icon(Icons.swipe_right)),
       startActionPane: ActionPane(
         motion: const BehindMotion(),
         extentRatio: .75,
