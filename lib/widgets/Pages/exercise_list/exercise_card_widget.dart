@@ -19,7 +19,7 @@ class ExerciseCard extends StatelessWidget {
         key: ValueKey(exercise.id!),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) => onDismissed(context),              
-        background: deleteBackground(),
+        background: DeleteBackground(),
         child: contentCard(context),    
       ),
     );
@@ -38,21 +38,6 @@ class ExerciseCard extends StatelessWidget {
     );
   } 
 
-  Widget deleteBackground() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          color: Colors.red,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: const Icon(Icons.delete, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
   void onDismissed(BuildContext context) {
     final exercisesState = Provider.of<ExercisesState>(context, listen: false);
     final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
@@ -65,11 +50,8 @@ class ExerciseCard extends StatelessWidget {
       trainingPlanState[index].list?.remove(exercise.id);
       trainingPlanState.reportUpdate(trainingPlanState[index]);
     }
-    
-    trainingPlanState.forEach((p0) => p0.list?.remove(exercise.id));
             
     showSnackMessage(context, "Removido com sucesso!", true);
-            
   }
 
   void showEditModalBottom(BuildContext context) {
@@ -94,3 +76,4 @@ class ExerciseCard extends StatelessWidget {
     );
   } 
 }
+

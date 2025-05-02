@@ -100,5 +100,6 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   void setList(List<T> list) {
     _cache.clear();
     _cache.addAll(list);
+    sort();
   }
 }

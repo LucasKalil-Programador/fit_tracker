@@ -40,11 +40,19 @@ void main() async {
   );
 }
 
-Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState) async {
+Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState, [bool debug = false]) async {
+  late DateTime start;
+  if(debug) start = DateTime.now();
+  
   final loadtask1 = loadMetadata().then(metadataState.setMap);
   final loadtask2 = loadExercises().then(exercisesState.setList);
   final loadtask3 = loadTrainingPlans().then(trainingPlanState.setList);
   await Future.wait([loadtask1, loadtask2, loadtask3]);
+  
+  if(debug) {
+    final elapsed = DateTime.now().difference(start);
+    print("Load took: $elapsed");
+  }
 }
 
 void setupSaver(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState) {

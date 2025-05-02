@@ -50,23 +50,30 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (exercises.length != exercisesId.length) {
         showSnackMessage(context, "Erro ao carregar o treino", false);
-        exercisesId.clear();
-        exercises.clear();
+        exercisesId = [];
+        exercises = [];
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView(
-      onReorder: (int oldIndex, int newIndex) => onReorder(oldIndex, newIndex, context),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        for (int i = 0; i < exercises.length; i++)
-          Padding(
-            key: ValueKey(exercises[i].id!),
-            padding: const EdgeInsets.all(4.0),
-            child: _planItem(exercises[i], i, context),
+        Expanded(
+          child: ReorderableListView(
+            onReorder: (int oldIndex, int newIndex) => onReorder(oldIndex, newIndex, context),
+            children: [
+              for (int i = 0; i < exercises.length; i++)
+                Padding(
+                  key: ValueKey(exercises[i].id!),
+                  padding: const EdgeInsets.all(4.0),
+                  child: _planItem(exercises[i], i, context),
+                ),
+            ],
           ),
+        ),
       ],
     );
   }
