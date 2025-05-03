@@ -124,3 +124,30 @@ class DeleteBackground extends StatelessWidget {
   }
 }
 
+// For layout test
+class Tile extends StatelessWidget {
+  
+  final int index;
+
+  const Tile({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorList = [
+      Colors.red,
+      Colors.black,
+      Colors.white,
+      Colors.blue,
+      Colors.green,
+      Colors.yellow,
+      Colors.purple,
+      Colors.orange,
+      Colors.pink,
+    ];
+    return Container(
+        color: colorList[index == 0 ? 0 : index % colorList.length],
+        child: Center(child: Text("$index", style: Theme.of(context).textTheme.titleLarge)),
+    );
+  }
+}
+

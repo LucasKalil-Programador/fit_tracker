@@ -1,4 +1,5 @@
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_list_page.dart';
+import 'package:fittrackr/widgets/Pages/home/home_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
 import 'package:flutter/material.dart';
 
@@ -88,7 +89,7 @@ class _MainWidgetState extends State<MainWidget> {
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [const Placeholder(), const WorkoutPage(), const ExerciseListPage(), const Placeholder(), const Placeholder()][currentPageIndex],
+      body: [const HomePage(), const WorkoutPage(), const ExerciseListPage(), const Placeholder(), const Placeholder()][currentPageIndex],
     );
   }
 }
