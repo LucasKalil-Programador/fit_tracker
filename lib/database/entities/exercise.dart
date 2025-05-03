@@ -39,6 +39,18 @@ class Exercise implements BaseEntity {
   @override
   int get hashCode => Object.hash(id, name, amount, reps, sets, type);
 
+  @override
+  Map<String, Object?> toJson() {
+    return {
+      "uuid": id,
+      "name": name,
+      "amount": amount,
+      "reps": reps,
+      "sets": sets,
+      "type": type.name
+    };
+  }
+
   static Exercise? fromMap(Map<String, Object?> e) {
     final uuid = e["uuid"];
     final name = e["name"];

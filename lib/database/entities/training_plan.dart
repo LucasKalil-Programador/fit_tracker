@@ -22,7 +22,18 @@ class TrainingPlan implements BaseEntity{
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is TrainingPlan && other.id == this.id && other.name == this.name;
+  }
 
+  @override
+  int get hashCode => Object.hash(id, name);
+
+  @override
+  Map<String, Object?> toJson() {
+    return {
+      "uuid": id,
+      "name": name,
+      "list": jsonEncode(list),
+    };
   }
 
   static TrainingPlan? fromMap(Map<String, Object?> e) {
