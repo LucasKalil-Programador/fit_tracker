@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:fittrackr/database/debounce_save.dart';
+import 'package:fittrackr/database/entities/report.dart';
+import 'package:fittrackr/database/entities/report_table.dart';
 import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/database/load_utils.dart';
 import 'package:fittrackr/app.dart';
@@ -22,7 +26,27 @@ void main() async {
   final reportState       = ReportState();
 
   // Try load each database and setup saver callback
-  loadDatabase(metadataState, exercisesState, trainingPlanState);
+  await loadDatabase(metadataState, exercisesState, trainingPlanState);
+
+  final table = ReportTable(
+    name: "Pesagem",
+    description: "Tabele de pesagem seco",
+    valueSuffix: "Kg",
+    createdAt: DateTime.now().millisecondsSinceEpoch,
+    updatedAt: DateTime.now().millisecondsSinceEpoch,
+  );
+
+  Random random = Random();
+  reportTableState.add(table);
+  for (int i = 0; i < 365; i++) {
+    final report = Report(
+      note: "Note: $i",
+      reportDate: DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
+      value: 110 + random.nextDouble() * 10,
+      tableId: table.id!,
+    );
+    reportState.add(report);
+  } 
 
   runApp(
     MultiProvider(

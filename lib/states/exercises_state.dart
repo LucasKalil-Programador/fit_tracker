@@ -9,9 +9,7 @@ class ExercisesState extends BaseListState<Exercise> {
   }
 
   List<Exercise> search(String searchStr) {
-    return sorted()
-      .where((e) => _searchFilter(e, searchStr.toLowerCase()))
-      .toList();
+    return where((e) => _searchFilter(e, searchStr.toLowerCase())).toList();
   }
 
   bool _searchFilter(Exercise exercise, String searchStr) {

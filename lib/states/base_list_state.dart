@@ -1,5 +1,4 @@
 import 'package:fittrackr/database/entities/base_entity.dart';
-import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,10 +12,13 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   };
   final List<T> _cache = [];
 
-  List<Exercise> get clone => List<Exercise>.from(_cache);
+  List<T> get clone => List<T>.from(_cache);
   bool get isEmpty => _cache.isEmpty;
   bool get isNotEmpty => _cache.isNotEmpty;
   int get length => _cache.length;
+
+  T get first => _cache.first;
+  T get last => _cache.last;
 
   T operator [](int index) => _cache[index];
 
@@ -101,5 +103,9 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     _cache.clear();
     _cache.addAll(list);
     sort();
+  }
+
+  Iterable<T> where(bool Function(T) test) {
+    return _cache.where(test);
   }
 }

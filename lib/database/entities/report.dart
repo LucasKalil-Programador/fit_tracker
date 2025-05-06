@@ -4,7 +4,7 @@ class Report implements BaseEntity {
   String? id;
   final String note;
   final int reportDate;
-  final int value;
+  final double value;
   final String tableId;
 
   Report({
@@ -53,7 +53,7 @@ class Report implements BaseEntity {
     final tableId = map["table_id"];
 
     if (uuid is String    && note is String &&
-        reportDate is int && value is int   && tableId is String) {
+        reportDate is int && value is double   && tableId is String) {
       return Report(
         id: uuid,
         note: note,
