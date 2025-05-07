@@ -111,3 +111,18 @@ Essa foi uma pesquisa rápida, e até agora os pacotes que mais chamaram minha a
 - 03/05/2025
 
 Implementei algumas das bibliotecas mencionadas anteriormente para o treino. Usei o flutter_slidable para criar uma interface mais bonita e fácil de usar, com os botões delete, edit e start ocultos atrás do card. Também implementei o percent_indicator, que exibe uma barra de progresso atualizada conforme o usuário completa os exercícios durante o treino. Além disso, embora ainda não tenha implementado, já preparei um modelo padrão com o fl_chart, incluindo todos os elementos necessários para o sistema. O design foi baseado no Sample 5 do site oficial, com algumas adaptações para melhor atender ao meu caso.
+
+- 07/05/2052
+
+Criei a tela de estatísticas. Ela possui:
+
+- Um DropdownButton para selecionar a tabela a ser exibida;
+- Um gráfico com os dados da tabela selecionada;
+- Três botões de filtro (7 dias, 30 dias e "lifetime") para definir o intervalo de dados exibidos;
+- Uma tabela com ordenação por coluna e seleção manual de dados a serem exibidos.
+
+Próximos passos para essa tela:
+
+- Adicionar botão para nova entrada;
+- Criar formulário para adicionar entrada;
+- Criar formulário para criar e editar tabelas.
