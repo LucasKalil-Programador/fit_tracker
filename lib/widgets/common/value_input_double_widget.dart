@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
-class ValueInputWidget extends StatefulWidget {
-  final ValueChanged<int>? onChanged;
+class ValueInputDoubleWidget extends StatefulWidget {
+  final ValueChanged<double>? onChanged;
 
   final String label, suffix;
-  final int minValue, maxValue;
-  final int? initialValue;
+  final double minValue, maxValue;
+  final double? initialValue;
 
-  const ValueInputWidget({
+  const ValueInputDoubleWidget({
     super.key,
     this.label = "Peso",
     this.suffix = "Kg",
@@ -20,13 +20,13 @@ class ValueInputWidget extends StatefulWidget {
   });
 
   @override
-  State<ValueInputWidget> createState() => _ValueInputWidgetState();
+  State<ValueInputDoubleWidget> createState() => _ValueInputDoubleWidgetState();
 }
 
-class _ValueInputWidgetState extends State<ValueInputWidget> {
+class _ValueInputDoubleWidgetState extends State<ValueInputDoubleWidget> {
   final TextEditingController _controller = TextEditingController(text: '1');
 
-  int _value = 1;
+  double _value = 1;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
     return TextFormField(
             controller: _controller,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
             decoration: InputDecoration(labelText: widget.label, suffixText: widget.suffix),
             validator: (value) {
               if (_value < widget.minValue || _value > widget.maxValue) {
@@ -72,8 +72,9 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
                 return null;
             },
             onChanged: (val) {
+              val = val.replaceAll(",", ".");
               setState(() {
-                final parsed = int.tryParse(val);
+                final parsed = double.tryParse(val);
                 if(parsed != null && parsed >= widget.minValue) {
                     _value = parsed > widget.maxValue ? widget.maxValue : parsed;
                     widget.onChanged?.call(_value);
@@ -88,7 +89,7 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
           onPressed: () {
             setState(() {
               if (_value > widget.minValue) { 
-                _value--;
+                _value -= 0.5;
                 _controller.text = _value.toString();
                 widget.onChanged?.call(_value);
               }
@@ -103,7 +104,7 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
           onPressed: () {
             setState(() {
               if(_value < widget.maxValue) {
-                _value++;
+                _value += 0.5;
                 _controller.text = _value.toString();
                 widget.onChanged?.call(_value);
               }

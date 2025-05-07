@@ -36,8 +36,17 @@ void main() async {
     updatedAt: DateTime.now().millisecondsSinceEpoch,
   );
 
+  final table2 = ReportTable(
+    name: "Pesagem 2",
+    description: "Tabele de pesagem seco",
+    valueSuffix: "Kg",
+    createdAt: DateTime.now().millisecondsSinceEpoch,
+    updatedAt: DateTime.now().millisecondsSinceEpoch,
+  );
+
   Random random = Random();
   reportTableState.add(table);
+  reportTableState.add(table2);
   for (int i = 0; i < 365; i++) {
     final report = Report(
       note: "Note: $i",
@@ -45,7 +54,14 @@ void main() async {
       value: 110 + random.nextDouble() * 10,
       tableId: table.id!,
     );
+    final report2 = Report(
+      note: "Note: $i",
+      reportDate: DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
+      value: 110 + random.nextDouble() * 10,
+      tableId: table2.id!,
+    );
     reportState.add(report);
+    reportState.add(report2);
   } 
 
   runApp(
