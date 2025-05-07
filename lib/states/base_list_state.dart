@@ -105,7 +105,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     sort();
   }
 
-  Iterable<T> where(bool Function(T) test) {
+  Iterable<T> where(bool Function(T) test) {  
     return _cache.where(test);
   }
 }

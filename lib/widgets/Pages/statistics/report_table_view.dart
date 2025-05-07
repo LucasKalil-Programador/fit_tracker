@@ -9,8 +9,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class ReportView extends StatefulWidget {
-  final List<Report> reports;
-  final ReportTable table;
+  final List<Report>? reports;
+  final ReportTable? table;
 
   const ReportView({
     super.key,
@@ -36,64 +36,61 @@ class _ReportViewState extends State<ReportView> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          DefaultDivider(),
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: AspectRatio(
-              aspectRatio: 1.5,
-              child: DefaultGraph(
-                spots: spots ?? [],
-                bottomTitlesList: bottomTitles ?? [],
-              ),
+    return Column(
+      children: [
+        DefaultDivider(),
+        Padding(
+          padding: const EdgeInsets.all(32),
+          child: AspectRatio(
+            aspectRatio: 1.5,
+            child: DefaultGraph(
+              spots: spots ?? [],
+              bottomTitlesList: bottomTitles ?? [],
             ),
           ),
-          DefaultDivider(),
-          Column(
-            children: [
-              ListTile(
-                title: const Text("Ultimos 7 dias"),
-                leading: Radio(
-                  value: ReportViewPeriod.Last7,
-                  groupValue: period,
-                  onChanged: onPeriodSelected,
-                ),
+        ),
+        DefaultDivider(),
+        Column(
+          children: [
+            ListTile(
+              title: const Text("Ultimos 7 dias"),
+              leading: Radio(
+                value: ReportViewPeriod.Last7,
+                groupValue: period,
+                onChanged: onPeriodSelected,
               ),
-              ListTile(
-                title: const Text("Ultimos 30 dias"),
-                leading: Radio(
-                  value: ReportViewPeriod.Last30,
-                  groupValue: period,
-                  onChanged: onPeriodSelected,
-                ),
+            ),
+            ListTile(
+              title: const Text("Ultimos 30 dias"),
+              leading: Radio(
+                value: ReportViewPeriod.Last30,
+                groupValue: period,
+                onChanged: onPeriodSelected,
               ),
-              ListTile(
-                title: const Text("Desde o início"),
-                leading: Radio(
-                  value: ReportViewPeriod.LifeTime,
-                  groupValue: period,
-                  onChanged: onPeriodSelected,
-                ),
+            ),
+            ListTile(
+              title: const Text("Desde o início"),
+              leading: Radio(
+                value: ReportViewPeriod.LifeTime,
+                groupValue: period,
+                onChanged: onPeriodSelected,
               ),
-            ],
-          ),
-          DefaultDivider(),
-          ReportTableView(
-            reports: reports,
-            selected: selected,
-            suffix: widget.table.valueSuffix,
-            onSelectedChanged: (reportsId) {
-              period = null;
-              generateSpots();
-            },
-            onReportSorted: (reports) {
-              generateSpots();
-            },
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ReportTableView(
+          reports: reports,
+          selected: selected,
+          suffix: widget.table?.valueSuffix,
+          onSelectedChanged: (reportsId) {
+            period = null;
+            generateSpots();
+          },
+          onReportSorted: (reports) {
+            generateSpots();
+          },
+        ),
+      ],
     );
   }
 
@@ -148,13 +145,15 @@ class _ReportViewState extends State<ReportView> {
   @override
   void initState() {
     super.initState();
-
-    reports.addAll(List.from(widget.reports));
-    reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
     
-    this.periodMap = createPeriodMap();
-    selected.addAll(this.periodMap[ReportViewPeriod.Last7]!);
-    generateSpots();
+    if(widget.reports != null) {
+      reports.addAll(List.from(widget.reports!));
+      reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
+      
+      this.periodMap = createPeriodMap();
+      selected.addAll(this.periodMap[ReportViewPeriod.Last7]!);
+      generateSpots();
+    }
   }
 
   void onPeriodSelected(ReportViewPeriod? value) {
