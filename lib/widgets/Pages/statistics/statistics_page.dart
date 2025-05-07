@@ -117,6 +117,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
           );
         },
       );
+    } else {
+      showSnackMessage(context, "Selecione uma tabela", false);
     }
   }
 }
