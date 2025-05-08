@@ -69,7 +69,6 @@ class _ReportFormState extends State<ReportForm> {
       maxLines: 6,
       validator: (value) {
         if (value == null || value.length > 500) {
-          print("object");
           return 'Nota Invalida';
         }
         return null;
@@ -81,8 +80,12 @@ class _ReportFormState extends State<ReportForm> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          Report report = Report(value: value, note: _noteController.text, tableId: widget.table.id!, reportDate: DateTime.now().millisecondsSinceEpoch);
-          print(widget.onSubmit);
+          Report report = Report(
+            value: value,
+            note: _noteController.text,
+            tableId: widget.table.id!,
+            reportDate: DateTime.now().millisecondsSinceEpoch,
+          );
           if(widget.onSubmit != null) widget.onSubmit!(report);
         }
       },

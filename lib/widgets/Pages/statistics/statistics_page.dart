@@ -5,6 +5,7 @@ import 'package:fittrackr/states/report_table_state.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/forms/report_form.dart';
+import 'package:fittrackr/widgets/forms/report_table_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,8 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   List<Report>? reports;
   ReportTable? activatedTable;
+
+  String? selectedId;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          showAddModalBottom(context);
+          showReportFormModalBottom(context);
         },
       ),
     );
@@ -60,27 +63,29 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   DropdownMenu<String?> dropDownTableSelect(ReportTableState tableState, ReportState reportState) {
     return DropdownMenu<String?>(
-                  width: double.infinity,
-                  dropdownMenuEntries: [
-                    DropdownMenuEntry(value: "new", label: "Criar nova tabela"),
-                    for(int i = 0; i < tableState.length; i++)
-                      DropdownMenuEntry(value: tableState[i].id, label: tableState[i].name),
-                  ],
-                  onSelected: (value) {
-                    if(value != null) {
-                      if(value == "new") {
-                        setState(() {
-                          activatedTable = null;
-                          reports = null;
-                        });
-                        // TODO: create table
-                        return;
-                      } else {
-                        loadReports(tableState, reportState, value);
-                      }
-                    }
-                  },
-                );
+      initialSelection: selectedId,
+      label: const Text("Selecione uma tabela ou crie uma"),
+      width: double.infinity,
+      dropdownMenuEntries: [
+        DropdownMenuEntry<String>(value: "new", label: "Criar nova tabela"),
+        for (int i = 0; i < tableState.length; i++)
+          DropdownMenuEntry<String>(value: tableState[i].id!, label: tableState[i].name),
+      ],
+      onSelected: (value) {
+        selectedId = value;
+        if (value == "new") {
+          setState(() {
+            activatedTable = null;
+            reports = null;
+          });
+          showReportTableFormModalBottom(context);
+          return;
+        } else {
+          if(value != null)
+            loadReports(tableState, reportState, value);
+        }
+      },
+    );
   }
 
   void loadReports(ReportTableState tableState, ReportState reportState, String tableId) {
@@ -92,7 +97,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     });
   }
 
-  void showAddModalBottom(BuildContext context) {
+  void showReportFormModalBottom(BuildContext context) {
     if (activatedTable != null) {
       showModalBottomSheet(
         context: context,
@@ -120,5 +125,32 @@ class _StatisticsPageState extends State<StatisticsPage> {
     } else {
       showSnackMessage(context, "Selecione uma tabela", false);
     }
+  }
+
+  void showReportTableFormModalBottom(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(16)
+            .copyWith(bottom: MediaQuery
+            .of(context).viewInsets.bottom),
+            child: ReportTableForm(
+              onSubmit: (table) {
+                Navigator.pop(context);
+                final reportTableState = Provider.of<ReportTableState>(context, listen: false);
+                final reportState = Provider.of<ReportState>(context, listen: false);
+                reportTableState.add(table);
+                activatedTable = table;
+                selectedId = table.id;
+                
+                loadReports(reportTableState, reportState, activatedTable!.id!);
+                showSnackMessage(context, "Adicionado com sucesso!", true);
+              },
+            ),
+        );
+      },
+    );
   }
 }
