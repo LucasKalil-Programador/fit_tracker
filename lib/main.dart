@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:fittrackr/database/debounce_save.dart';
+import 'package:fittrackr/database/save_load_utils/debounce_save.dart';
 import 'package:fittrackr/database/entities/report.dart';
 import 'package:fittrackr/database/entities/report_table.dart';
-import 'package:fittrackr/database/generate_db.dart';
-import 'package:fittrackr/database/load_utils.dart';
+import 'package:fittrackr/database/save_load_utils/generate_db.dart';
+import 'package:fittrackr/database/save_load_utils/load_utils.dart';
 import 'package:fittrackr/app.dart';
 import 'package:fittrackr/states/exercises_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/database/save_utils.dart';
+import 'package:fittrackr/database/save_load_utils/save_utils.dart';
 import 'package:fittrackr/states/report_state.dart';
 import 'package:fittrackr/states/report_table_state.dart';
 import 'package:fittrackr/states/training_plan_state.dart';
