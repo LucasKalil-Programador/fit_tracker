@@ -1,0 +1,3 @@
+flutter clean → Remove builds e dependências antigas para evitar conflitos.
+flutter pub get → Baixa e configura as dependências do projeto.
+flutter build appbundle --target-platform android-arm,android-arm64 → Gera o pacote .aab para Android (arquiteturas ARM e ARM64).
