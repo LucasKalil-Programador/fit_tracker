@@ -38,15 +38,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                  child: dropDownTableSelect(tableState, reportState),
+                  child: dropDownTableSelect(tableState, reportState)
                 ),
+                DeleteAndEditButton(),
                 activatedTable != null
                     ? ReportView(
                       key: ValueKey(activatedTable!.id! + reports!.length.toString()),
                       reports: reports,
                       table: activatedTable,
                     )
-                    : ReportView(reports: null, table: null)
+                    : ReportView(reports: null, table: null),
               ],
             ); 
           },
@@ -61,29 +62,67 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  DropdownMenu<String?> dropDownTableSelect(ReportTableState tableState, ReportState reportState) {
-    return DropdownMenu<String?>(
-      initialSelection: selectedId,
-      label: const Text("Selecione uma tabela ou crie uma"),
-      width: double.infinity,
-      dropdownMenuEntries: [
-        DropdownMenuEntry<String>(value: "new", label: "Criar nova tabela"),
-        for (int i = 0; i < tableState.length; i++)
-          DropdownMenuEntry<String>(value: tableState[i].id!, label: tableState[i].name),
+  Row DeleteAndEditButton() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Expanded(
+          child: Center(
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: activatedTable != null ? null : Colors.grey,
+              ),
+              onPressed: onEditButton,
+              label: const Text("Editar"),
+              icon: Icon(Icons.edit),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    activatedTable != null ? Colors.red : Colors.grey,
+              ),
+              onPressed: onDeleteButton,
+              label: const Text("Deletar"),
+              icon: Icon(Icons.delete),
+            ),
+          ),
+        ),
       ],
-      onSelected: (value) {
-        selectedId = value;
-        if (value == "new") {
-          setState(() {
-            activatedTable = null;
-            reports = null;
-          });
-          showReportTableFormModalBottom(context);
-          return;
-        } else {
-          if(value != null)
-            loadReports(tableState, reportState, value);
-        }
+    );
+  }
+
+  Widget dropDownTableSelect(ReportTableState tableState, ReportState reportState) {
+    return LayoutBuilder(builder: (context, constraints) {
+        return DropdownMenu<String?>(
+          initialSelection: selectedId,
+          label: const Text("Selecione uma tabela ou crie uma"),
+          width: constraints.maxWidth,
+          dropdownMenuEntries: [
+            DropdownMenuEntry<String>(value: "new", label: "Criar nova tabela"),
+            for (int i = 0; i < tableState.length; i++)
+              DropdownMenuEntry<String>(
+                value: tableState[i].id!,
+                label: tableState[i].name,
+              ),
+          ],
+          onSelected: (value) {
+            selectedId = value;
+            if (value == "new") {
+              setState(() {
+                activatedTable = null;
+                reports = null;
+              });
+              showReportTableFormModalBottom(context);
+              return;
+            } else {
+          if (value != null) loadReports(tableState, reportState, value);
+            }
+          },
+        );
       },
     );
   }
@@ -95,6 +134,35 @@ class _StatisticsPageState extends State<StatisticsPage> {
         activatedTable!.id!,
       );
     });
+  }
+
+  void onDeleteButton() {
+    if(activatedTable != null) {
+      final tableState = Provider.of<ReportTableState>(context, listen: false);
+      final reportState = Provider.of<ReportState>(context, listen: false);
+      final reportList = reportState.getByTable(activatedTable!.id!);
+      for (var element in reportList) {
+        reportState.remove(element);
+      }
+      tableState.remove(activatedTable!);
+      
+      setState(() {
+        activatedTable = null;
+        reports = null;
+      });
+
+      showSnackMessage(context, "Deletado com sucesso", true);
+    } else {
+      showSnackMessage(context, "Selecione uma tabela", false);
+    }
+  }
+
+  void onEditButton() {
+    if(activatedTable != null) {
+
+    } else {
+      showSnackMessage(context, "Selecione uma tabela", false);
+    }
   }
 
   void showReportFormModalBottom(BuildContext context) {
@@ -154,3 +222,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 }
+
+
+// editar tabela

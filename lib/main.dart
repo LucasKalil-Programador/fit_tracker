@@ -90,7 +90,7 @@ Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesS
       // setup call backs to save data in database
       setupSaver(metadataState, exercisesState, trainingPlanState); 
 
-      // if database is empty generate a simple data
+      // if database is empty generate a sample data
       if(exercisesState.isEmpty && trainingPlanState.isEmpty) 
         generateDB(exercisesState, trainingPlanState);
     });
@@ -102,22 +102,17 @@ Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesS
 }
 
 void setupSaver(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState) {
-  final metadataSaver = DebounceRunner<void>(
+  final debounceSaver = DebounceRunner(
     delay: Duration(seconds: 1),
-    callback: (e) => saveMetadata(metadataState.clone()),
+    callback: () async {
+      final task1 = saveMetadata(metadataState.clone());
+      final task2 = saveExercise(exercisesState.flushUpdatePatch());
+      final task3 = saveTrainingPlan(trainingPlanState.flushUpdatePatch());
+      await Future.wait([task1, task2, task3]);
+    }
   );
   
-  final exerciseSaver = DebounceRunner<void>(
-    delay: Duration(seconds: 1),
-    callback: (e) => saveExercise(exercisesState.flushUpdatePatch()),
-  );
-  
-  final trainingPlanSaver = DebounceRunner<void>(
-    delay: Duration(seconds: 1),
-    callback: (e) => saveTrainingPlan(trainingPlanState.flushUpdatePatch()),
-  );
-  
-  metadataState.addListener(() => metadataSaver.runAfter(null));
-  exercisesState.addListener(() => exerciseSaver.runAfter(null));
-  trainingPlanState.addListener(() => trainingPlanSaver.runAfter(null));
+  metadataState.addListener(debounceSaver.runAfter);
+  exercisesState.addListener(debounceSaver.runAfter);
+  trainingPlanState.addListener(debounceSaver.runAfter);
 }
