@@ -1,9 +1,8 @@
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/states/training_plan_state.dart';
-import 'package:fittrackr/widgets/Pages/workout/training_plan_list_view.dart';
+import 'package:fittrackr/widgets/Pages/workout/workout_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:fittrackr/widgets/Pages/workout/timer_widget.dart';
 import 'package:fittrackr/widgets/Pages/workout/training_plan_widget.dart';
 import 'package:fittrackr/widgets/forms/training_plan_form.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     loadActivated();
     loadDoneList();
-    loadTimer();
   }
 
   @override
@@ -38,8 +36,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       ),
       body: Column(
         children: [
-          DefaultDivider(),
-          timerWidget(),
           DefaultDivider(),
           Expanded(
             child: Consumer<TrainingPlanState>(
@@ -89,18 +85,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         showSnackMessage(context, "Removido com sucesso!", true);
       },
       onEdit: (plan) => showEditModalBottom(context, plan, TrainingPlanFormMode.edit),
-    );
-  }
-
-  Widget timerWidget() {
-    return TimerWidget(
-      onTimerChanged: (timerData) {
-        setState(() {
-          this.timerData = timerData;
-        });
-        saveTimer(timerData);
-      },
-      timerData: timerData,
     );
   }
 
@@ -155,20 +139,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   static const  metadataActivatedKey = "workout:activated";
   static const  metadataDoneKey = "workout:donelist";
-  static const metadataTimeKey = "workout:timer";
   TrainingPlan? activatedPlan;
   List<String>? donelist;
-  TimerData? timerData;
-
-  void saveTimer(TimerData timerData) {
-    final metadataState = Provider.of<MetadataState>(context, listen: false);
-    final value = {
-      "start_time": timerData.startTime?.millisecondsSinceEpoch,
-      "paused_time": timerData.pausedTime?.millisecondsSinceEpoch,
-      "paused": timerData.paused,
-    };
-    metadataState.putMap(metadataTimeKey, value);
-  }
 
   void saveActivated(TrainingPlan? plan) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
@@ -178,18 +150,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void saveDoneList(List<String>? donelist) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.putList(metadataDoneKey, donelist == null ? List.empty() : donelist);
-  }
-
-  void loadTimer() {
-    final metadataState = Provider.of<MetadataState>(context, listen: false);
-    final data = metadataState.getMap(metadataTimeKey);
-    if(data != null) {
-      timerData = TimerData(
-        startTime: data["start_time"] is int ? DateTime.fromMillisecondsSinceEpoch(data["start_time"] as int) : null,
-        pausedTime: data["paused_time"] is int ? DateTime.fromMillisecondsSinceEpoch(data["paused_time"] as int) : null,
-        paused: data["paused"] == true,
-      );
-    }
   }
 
   void loadActivated() {

@@ -1,7 +1,37 @@
 import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
+class TrainingPlanListView extends StatelessWidget {
+  final void Function(TrainingPlan)? onStart;
+  final void Function(TrainingPlan)? onDelete;
+  final void Function(TrainingPlan)? onEdit;
+
+  final TrainingPlanState trainingPlanState;
+
+  const TrainingPlanListView({super.key, required this.trainingPlanState, this.onStart, this.onEdit, this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: trainingPlanState.length,
+      itemBuilder: (context, index) {
+        final plan = trainingPlanState[index];
+        return Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: TrainingPlanCardWidget(
+            plan: plan, 
+            onStart: () => {if(onStart != null) onStart!(plan)},
+            onDelete: () => {if(onDelete != null) onDelete!(plan)},
+            onEdit: () => {if(onEdit != null) onEdit!(plan)},
+          )
+        );
+      },
+    );
+  }
+}
 
 class TrainingPlanCardWidget extends StatelessWidget {
   final void Function()? onStart;
