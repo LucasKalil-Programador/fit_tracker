@@ -1,79 +1,68 @@
 import 'package:fittrackr/database/entities/exercise.dart';
-import 'package:fittrackr/states/exercises_state.dart';
-import 'package:fittrackr/states/training_plan_state.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:fittrackr/widgets/forms/exercise_form.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
-class ExerciseCard extends StatelessWidget {
+class ExerciseListView extends StatelessWidget {
+  final void Function(Exercise)? onDelete, onEdit;
 
-  final Exercise exercise;
-  const ExerciseCard({super.key, required this.exercise});
+  final List<Exercise> sortedList;
+
+  const ExerciseListView({
+    super.key,
+    required this.sortedList, this.onDelete, this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: Dismissible(
-        key: ValueKey(exercise.id!),
-        direction: DismissDirection.endToStart,
-        onDismissed: (direction) => onDismissed(context),              
-        background: DeleteBackground(),
-        child: contentCard(context),    
-      ),
-    );
-  }
-
-  Widget contentCard(BuildContext context) {
-    return DefaultExerciseCard(
-      exercise: this.exercise,
-      trailing: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.onPrimary
-        ),
-        onPressed: () => showEditModalBottom(context),
-        child: const Icon(Icons.edit),
-      ),
-    );
-  } 
-
-  void onDismissed(BuildContext context) {
-    final exercisesState = Provider.of<ExercisesState>(context, listen: false);
-    final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-    
-    exercisesState.remove(exercise);
-    
-    while(true) {
-      int index = trainingPlanState.indexWhere((p) => p.list?.contains(exercise.id) == true);
-      if(index == -1) break;
-      trainingPlanState[index].list?.remove(exercise.id);
-      trainingPlanState.reportUpdate(trainingPlanState[index]);
-    }
-            
-    showSnackMessage(context, "Removido com sucesso!", true);
-  }
-
-  void showEditModalBottom(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
+    return ListView.builder(
+      itemCount: sortedList.length,
+      itemBuilder: (context, index) {
+        final exercise = sortedList[index];
         return Padding(
-          padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: ExerciseForm(
-            onSubmit: (newExercise) {
-              Navigator.pop(context);
-              final listState = Provider.of<ExercisesState>(context, listen: false);
-              listState[listState.indexOf(exercise)] = newExercise;
-              showSnackMessage(context, "Editado com sucesso!", true);
-            },
-            mode: ExerciseFormMode.edit,
-            baseExercise: exercise,
+          padding: const EdgeInsets.all(4.0),
+          child: ExerciseCard(
+            exercise: exercise,
+            onEdit: () => {if (onEdit != null) onEdit!(exercise)},
+            onDelete: () => {if (onDelete != null) onDelete!(exercise)},
           ),
         );
       },
     );
-  } 
+  }
+}
+
+class ExerciseCard extends StatelessWidget {
+  final void Function()? onDelete, onEdit;
+  final Exercise exercise;
+
+  const ExerciseCard({super.key, required this.exercise, this.onDelete, this.onEdit});
+
+  @override
+  Widget build(BuildContext context) {
+    return Slidable(
+      child: DefaultExerciseCard(exercise: this.exercise, trailing: Icon(Icons.swipe_right)),
+      startActionPane: ActionPane(
+        motion: const BehindMotion(),
+        extentRatio: .5,
+        children: [
+          SlidableAction(
+            onPressed: (_) {if(onEdit != null) onEdit!();},
+            backgroundColor: Theme.of(context).colorScheme.onSecondary,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: 'Editar',
+          ),
+          SlidableAction(
+            onPressed: (_) {if(onDelete != null) onDelete!();},
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+          ),
+        ],
+      ),
+    );
+  }
 }
 

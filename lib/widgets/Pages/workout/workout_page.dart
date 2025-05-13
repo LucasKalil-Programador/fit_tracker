@@ -103,9 +103,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       isScrollControlled: true,
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.all(
-            16,
-          ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.all(16,).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: TrainingPlanForm(
             baseTrainingPlan: baseTrainingPlan,
             mode: mode,
