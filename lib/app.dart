@@ -1,6 +1,7 @@
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_list_page.dart';
 import 'package:fittrackr/widgets/Pages/home/home_page.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_page.dart';
+import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
 import 'package:flutter/material.dart';
 
@@ -84,13 +85,14 @@ class _MainWidgetState extends State<MainWidget> {
         selectedIndex: currentPageIndex,
         destinations: const <Widget>[
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.alarm), label: 'Timer'),
           NavigationDestination(icon: Icon(Icons.fitness_center), label: 'Treinar'),
           NavigationDestination(icon: Icon(Icons.format_list_bulleted), label: 'Exercícios'),
           NavigationDestination(icon: Icon(Icons.insights), label: "Progresso"),
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [const HomePage(), const WorkoutPage(), const ExerciseListPage(), const StatisticsPage(), const Placeholder()][currentPageIndex],
+      body: [const HomePage(), const StopWatchPage(), const WorkoutPage(), const ExerciseListPage(), const StatisticsPage(), const Placeholder()][currentPageIndex],
     );
   }
 }

@@ -15,6 +15,8 @@ class StatisticsPage extends StatefulWidget {
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
 }
+// TODO: editar tabela
+// TODO: deletar valores
 
 class _StatisticsPageState extends State<StatisticsPage> {
   List<Report>? reports;
@@ -159,7 +161,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   void onEditButton() {
     if(activatedTable != null) {
-
+      // TODO: editar tabela
     } else {
       showSnackMessage(context, "Selecione uma tabela", false);
     }
@@ -223,5 +225,3 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 }
 
-
-// editar tabela

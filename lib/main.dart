@@ -28,6 +28,23 @@ void main() async {
   // Try load each database and setup saver callback
   await loadDatabase(metadataState, exercisesState, trainingPlanState);
 
+  newMethod(reportTableState, reportState); 
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => exercisesState),
+        ChangeNotifierProvider(create: (_) => metadataState),
+        ChangeNotifierProvider(create: (_) => trainingPlanState),
+        ChangeNotifierProvider(create: (_) => reportTableState),
+        ChangeNotifierProvider(create: (_) => reportState),
+      ],
+      child: App(),
+    ),
+  );
+}
+
+void newMethod(ReportTableState reportTableState, ReportState reportState) {
   final table = ReportTable(
     name: "Pesagem",
     description: "Tabele de pesagem seco",
@@ -35,7 +52,7 @@ void main() async {
     createdAt: DateTime.now().millisecondsSinceEpoch,
     updatedAt: DateTime.now().millisecondsSinceEpoch,
   );
-
+  
   final table2 = ReportTable(
     name: "Pesagem 2",
     description: "Tabele de pesagem seco",
@@ -43,7 +60,7 @@ void main() async {
     createdAt: DateTime.now().millisecondsSinceEpoch,
     updatedAt: DateTime.now().millisecondsSinceEpoch,
   );
-
+  
   Random random = Random();
   reportTableState.add(table);
   reportTableState.add(table2);
@@ -63,19 +80,6 @@ void main() async {
     reportState.add(report);
     reportState.add(report2);
   } 
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => exercisesState),
-        ChangeNotifierProvider(create: (_) => metadataState),
-        ChangeNotifierProvider(create: (_) => trainingPlanState),
-        ChangeNotifierProvider(create: (_) => reportTableState),
-        ChangeNotifierProvider(create: (_) => reportState),
-      ],
-      child: App(),
-    ),
-  );
 }
 
 Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState, [bool debug = false]) async {
