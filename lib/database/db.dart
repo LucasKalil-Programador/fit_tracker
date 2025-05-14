@@ -12,7 +12,7 @@ class DatabaseHelper {
             amount INTEGER NOT NULL,
             reps INTEGER NOT NULL,
             sets INTEGER NOT NULL,
-            type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
+            type TEXT NOT NULL CHECK(type IN ('cardio', 'musclework'))
           );
           <query>
           CREATE TABLE training_plan(

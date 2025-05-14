@@ -32,7 +32,7 @@ Future<Map<String, String>> loadMetadata([bool debug = false]) async {
   amount INTEGER NOT NULL,
   reps INTEGER NOT NULL,
   sets INTEGER NOT NULL,
-  type TEXT NOT NULL CHECK(type IN ('Cardio', 'Musclework'))
+  type TEXT NOT NULL CHECK(type IN ('cardio', 'musclework'))
 );
 */
 Future<List<Exercise>> loadExercises([bool debug = false]) async {
