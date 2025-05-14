@@ -1,4 +1,4 @@
-import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -41,7 +41,6 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      child: DefaultExerciseCard(exercise: this.exercise, trailing: Icon(Icons.swipe_right)),
       startActionPane: ActionPane(
         motion: const BehindMotion(),
         extentRatio: .5,
@@ -62,6 +61,7 @@ class ExerciseCard extends StatelessWidget {
           ),
         ],
       ),
+      child: DefaultExerciseCard(exercise: this.exercise, trailing: Icon(Icons.swipe_right)),
     );
   }
 }

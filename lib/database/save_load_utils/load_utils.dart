@@ -1,6 +1,5 @@
 import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/database/entities/exercise.dart';
-import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/database/entities.dart';
 
 /* CREATE TABLE metadata(
   key TEXT PRIMARY KEY,

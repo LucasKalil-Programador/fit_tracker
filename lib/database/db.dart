@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseHelper {
 
-  final create_table_sql = '''
+  final createTableSql = '''
           CREATE TABLE exercise(
             uuid TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -40,7 +40,7 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDb() async {
-    final sql_querys = create_table_sql.split('<query>');
+    final sqlQuerys = createTableSql.split('<query>');
 
     final path = join(await getDatabasesPath(), 'fittracker.db');
     
@@ -51,7 +51,9 @@ class DatabaseHelper {
       path, 
       version: 1,
       onCreate: (db, version) async {
-        for (var query in sql_querys) await db.execute(query);
+        for (var query in sqlQuerys) {
+          await db.execute(query);
+        }
       },
     );
   }

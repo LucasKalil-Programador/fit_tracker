@@ -1,4 +1,4 @@
-import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities.dart';
 import 'package:flutter/material.dart';
 
 class ReportTableForm extends StatefulWidget {
@@ -25,7 +25,7 @@ class _ReportTableFormState extends State<ReportTableForm> {
       appBar: AppBar(
         title: const Text(
           "Criar tabela de progresso",
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Form(
@@ -93,7 +93,6 @@ class _ReportTableFormState extends State<ReportTableForm> {
             createdAt: DateTime.now().millisecondsSinceEpoch,
             updatedAt: DateTime.now().millisecondsSinceEpoch,
           );
-          print(table);
           if(widget.onSubmit != null) widget.onSubmit!(table);
         }
       },

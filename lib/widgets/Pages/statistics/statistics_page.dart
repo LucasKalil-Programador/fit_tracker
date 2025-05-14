@@ -1,11 +1,9 @@
-import 'package:fittrackr/database/entities/report.dart';
-import 'package:fittrackr/database/entities/report_table.dart';
-import 'package:fittrackr/states/report_state.dart';
-import 'package:fittrackr/states/report_table_state.dart';
+import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:fittrackr/widgets/forms/report_form.dart';
-import 'package:fittrackr/widgets/forms/report_table_form.dart';
+import 'package:fittrackr/widgets/Pages/statistics/report_form.dart';
+import 'package:fittrackr/widgets/Pages/statistics/report_table_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,6 @@
+import 'package:fittrackr/database/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/widgets/common/value_input_widget.dart';
-import 'package:fittrackr/database/entities/exercise.dart';
 
 class ExerciseFormMode {
   static const int creation = 0;
@@ -20,7 +20,7 @@ class ExerciseForm extends StatefulWidget {
 
 class _ExerciseFormState extends State<ExerciseForm> {
   final _nameController = TextEditingController(text: "");
-  ExerciseType type = ExerciseType.Musclework;
+  ExerciseType type = ExerciseType.musclework;
   int amount = 1;
   int reps = 1;
   int sets = 1;
@@ -89,7 +89,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
         ListTile(
           title: const Text("Musculação"),
           leading: Radio<ExerciseType>(
-            value: ExerciseType.Musclework,
+            value: ExerciseType.musclework,
             groupValue: type,
             onChanged: (exerciseType) {
               setState(() {
@@ -101,7 +101,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
         ListTile(
           title: const Text("Cardio"),
           leading: Radio<ExerciseType>(
-            value: ExerciseType.Cardio,
+            value: ExerciseType.cardio,
             groupValue: type,
             onChanged: (exerciseType) {
               setState(() {
@@ -129,8 +129,8 @@ class _ExerciseFormState extends State<ExerciseForm> {
 
   Widget amountInput() {
     return ValueInputWidget(
-      label: type == ExerciseType.Musclework ? "Carga" : "Tempo",
-      suffix: type == ExerciseType.Musclework ? "Kg" : "Minutos",
+      label: type == ExerciseType.musclework ? "Carga" : "Tempo",
+      suffix: type == ExerciseType.musclework ? "Kg" : "Minutos",
       initialValue: widget.baseExercise?.amount,
       maxValue: 500,
       onChanged: (value) => amount = value,

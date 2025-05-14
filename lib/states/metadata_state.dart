@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class MetadataState extends ChangeNotifier {
-  final Map<String, String> _cache = Map();
+  final Map<String, String> _cache = {};
 
   int get length => _cache.length;
   

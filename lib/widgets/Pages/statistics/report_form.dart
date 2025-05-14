@@ -1,5 +1,4 @@
-import 'package:fittrackr/database/entities/report.dart';
-import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -7,8 +6,7 @@ class ReportForm extends StatefulWidget {
   final void Function(Report report)? onSubmit;
   final ReportTable table;
 
-
-  ReportForm({
+  const ReportForm({
     super.key, required this.table, this.onSubmit 
   });
 
@@ -29,7 +27,7 @@ class _ReportFormState extends State<ReportForm> {
       appBar: AppBar(
         title: const Text(
           "Reportar valor",
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(

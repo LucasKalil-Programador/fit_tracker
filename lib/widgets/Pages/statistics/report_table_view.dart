@@ -1,12 +1,13 @@
 import 'dart:math';
 
-import 'package:fittrackr/database/entities/report.dart';
-import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table.dart';
-import 'package:fittrackr/widgets/common/default_graph.dart';
+import 'package:fittrackr/widgets/Pages/statistics/default_graph.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+enum ReportViewPeriod {last7, last30, lifeTime}
 
 class ReportView extends StatefulWidget {
   final List<Report>? reports;
@@ -22,11 +23,9 @@ class ReportView extends StatefulWidget {
   State<ReportView> createState() => _ReportViewState();
 }
 
-enum ReportViewPeriod {Last7, Last30, LifeTime}
-
 class _ReportViewState extends State<ReportView> {
   late final Map<ReportViewPeriod, List<String>> periodMap;
-  ReportViewPeriod? period = ReportViewPeriod.Last7;
+  ReportViewPeriod? period = ReportViewPeriod.last7;
 
   final List<Report> reports = [];
   final List<String> selected = [];
@@ -55,7 +54,7 @@ class _ReportViewState extends State<ReportView> {
             ListTile(
               title: const Text("Ultimos 7 dias"),
               leading: Radio(
-                value: ReportViewPeriod.Last7,
+                value: ReportViewPeriod.last7,
                 groupValue: period,
                 onChanged: onPeriodSelected,
               ),
@@ -63,7 +62,7 @@ class _ReportViewState extends State<ReportView> {
             ListTile(
               title: const Text("Ultimos 30 dias"),
               leading: Radio(
-                value: ReportViewPeriod.Last30,
+                value: ReportViewPeriod.last30,
                 groupValue: period,
                 onChanged: onPeriodSelected,
               ),
@@ -71,7 +70,7 @@ class _ReportViewState extends State<ReportView> {
             ListTile(
               title: const Text("Desde o início"),
               leading: Radio(
-                value: ReportViewPeriod.LifeTime,
+                value: ReportViewPeriod.lifeTime,
                 groupValue: period,
                 onChanged: onPeriodSelected,
               ),
@@ -96,13 +95,13 @@ class _ReportViewState extends State<ReportView> {
 
   Map<ReportViewPeriod, List<String>> createPeriodMap() {
     Map<ReportViewPeriod, List<String>> periodMap = {};
-    periodMap[ReportViewPeriod.Last7] = List.unmodifiable(
+    periodMap[ReportViewPeriod.last7] = List.unmodifiable(
       reports.sublist(0, min(7, reports.length)).map((e) => e.id!).toList(),
     );
-    periodMap[ReportViewPeriod.Last30] = List.unmodifiable(
+    periodMap[ReportViewPeriod.last30] = List.unmodifiable(
       reports.sublist(0, min(30, reports.length)).map((e) => e.id!).toList(),
     );
-    periodMap[ReportViewPeriod.LifeTime] = List.unmodifiable(
+    periodMap[ReportViewPeriod.lifeTime] = List.unmodifiable(
       reports.map((e) => e.id!).toList(),
     );
     return Map.unmodifiable(periodMap);
@@ -151,7 +150,7 @@ class _ReportViewState extends State<ReportView> {
       reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
       
       this.periodMap = createPeriodMap();
-      selected.addAll(this.periodMap[ReportViewPeriod.Last7]!);
+      selected.addAll(this.periodMap[ReportViewPeriod.last7]!);
       generateSpots();
     }
   }

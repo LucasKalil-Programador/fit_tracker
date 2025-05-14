@@ -1,19 +1,11 @@
-import 'dart:math';
-
-import 'package:fittrackr/database/save_load_utils/debounce_save.dart';
-import 'package:fittrackr/database/entities/report.dart';
-import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/app.dart';
 import 'package:fittrackr/database/save_load_utils/generate_db.dart';
 import 'package:fittrackr/database/save_load_utils/load_utils.dart';
-import 'package:fittrackr/app.dart';
-import 'package:fittrackr/states/exercises_state.dart';
-import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/database/save_load_utils/save_utils.dart';
-import 'package:fittrackr/states/report_state.dart';
-import 'package:fittrackr/states/report_table_state.dart';
-import 'package:fittrackr/states/training_plan_state.dart';
-import 'package:provider/provider.dart';
+import 'package:fittrackr/states/app_states.dart';
+import 'package:fittrackr/states/metadata_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,9 +18,7 @@ void main() async {
   final reportState       = ReportState();
 
   // Try load each database and setup saver callback
-  await loadDatabase(metadataState, exercisesState, trainingPlanState);
-
-  newMethod(reportTableState, reportState); 
+  await loadDatabase(metadataState, exercisesState, trainingPlanState, reportTableState, reportState);
 
   runApp(
     MultiProvider(
@@ -44,45 +34,14 @@ void main() async {
   );
 }
 
-void newMethod(ReportTableState reportTableState, ReportState reportState) {
-  final table = ReportTable(
-    name: "Pesagem",
-    description: "Tabele de pesagem seco",
-    valueSuffix: "Kg",
-    createdAt: DateTime.now().millisecondsSinceEpoch,
-    updatedAt: DateTime.now().millisecondsSinceEpoch,
-  );
-  
-  final table2 = ReportTable(
-    name: "Pesagem 2",
-    description: "Tabele de pesagem seco",
-    valueSuffix: "Kg",
-    createdAt: DateTime.now().millisecondsSinceEpoch,
-    updatedAt: DateTime.now().millisecondsSinceEpoch,
-  );
-  
-  Random random = Random();
-  reportTableState.add(table);
-  reportTableState.add(table2);
-  for (int i = 0; i < 365; i++) {
-    final report = Report(
-      note: "Note: $i",
-      reportDate: DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
-      value: 110 + random.nextDouble() * 10,
-      tableId: table.id!,
-    );
-    final report2 = Report(
-      note: "Note: $i",
-      reportDate: DateTime.now().subtract(Duration(days: i)).millisecondsSinceEpoch,
-      value: 110 + random.nextDouble() * 10,
-      tableId: table2.id!,
-    );
-    reportState.add(report);
-    reportState.add(report2);
-  } 
-}
-
-Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesState, TrainingPlanState trainingPlanState, [bool debug = false]) async {
+Future<void> loadDatabase(
+  MetadataState metadataState,
+  ExercisesState exercisesState,
+  TrainingPlanState trainingPlanState,
+  ReportTableState reportTableState,
+  ReportState reportState, [
+  bool debug = false,
+]) async {
   late DateTime start;
   if(debug) start = DateTime.now();
   
@@ -95,8 +54,12 @@ Future<void> loadDatabase(MetadataState metadataState, ExercisesState exercisesS
       setupSaver(metadataState, exercisesState, trainingPlanState); 
 
       // if database is empty generate a sample data
-      if(exercisesState.isEmpty && trainingPlanState.isEmpty) 
-        generateDB(exercisesState, trainingPlanState);
+      if(exercisesState.isEmpty && trainingPlanState.isEmpty) {
+        generateExercisesPlans(exercisesState, trainingPlanState);
+      }
+      if(reportTableState.isEmpty && reportState.isEmpty) {
+        generateReports(reportTableState, reportState);
+      }
     });
 
   if(debug) {
