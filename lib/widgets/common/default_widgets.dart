@@ -51,9 +51,9 @@ class DefaultExerciseCard extends StatelessWidget {
           exercise.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.amount} ${typeStr}"),
-        leading: this.leading,
-        trailing: this.trailing,
+        subtitle: Text("${exercise.sets}x${exercise.reps}   ${exercise.amount} $typeStr"),
+        leading: leading,
+        trailing: trailing,
       ),
     );
   }
@@ -94,8 +94,8 @@ class DefaultTrainingPlanCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold,),
         ),
         subtitle: Text(substring),
-        leading: this.leading,
-        trailing: this.trailing,
+        leading: leading,
+        trailing: trailing,
       ),
     );
   }

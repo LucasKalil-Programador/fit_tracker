@@ -35,6 +35,7 @@ class _ReportViewState extends State<ReportView> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         DefaultDivider(),
@@ -45,6 +46,9 @@ class _ReportViewState extends State<ReportView> {
             child: DefaultGraph(
               spots: spots ?? [],
               bottomTitlesList: bottomTitles ?? [],
+              borderColor: colorScheme.onPrimaryContainer,
+              tooltipBackground: colorScheme.primaryContainer,
+              textColor: colorScheme.onSurface,
             ),
           ),
         ),

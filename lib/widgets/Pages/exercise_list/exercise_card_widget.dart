@@ -40,6 +40,7 @@ class ExerciseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Slidable(
       startActionPane: ActionPane(
         motion: const BehindMotion(),
@@ -47,21 +48,21 @@ class ExerciseCard extends StatelessWidget {
         children: [
           SlidableAction(
             onPressed: (_) {if(onEdit != null) onEdit!();},
-            backgroundColor: Theme.of(context).colorScheme.onSecondary,
-            foregroundColor: Colors.white,
+            backgroundColor: colorScheme.secondaryContainer,
+            foregroundColor: colorScheme.onSecondaryContainer,
             icon: Icons.edit,
             label: 'Editar',
           ),
           SlidableAction(
             onPressed: (_) {if(onDelete != null) onDelete!();},
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
+            backgroundColor: colorScheme.errorContainer,
+            foregroundColor: colorScheme.onErrorContainer,
             icon: Icons.delete,
             label: 'Delete',
           ),
         ],
       ),
-      child: DefaultExerciseCard(exercise: this.exercise, trailing: Icon(Icons.swipe_right)),
+      child: DefaultExerciseCard(exercise: exercise, trailing: Icon(Icons.swipe_right)),
     );
   }
 }

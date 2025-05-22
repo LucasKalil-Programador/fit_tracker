@@ -39,10 +39,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
           Expanded(
             child: Consumer<TrainingPlanState>(
               builder: (context, trainingPlanState, child) {
-                if (trainingPlanState.isEmpty) 
+                if (trainingPlanState.isEmpty) {
                   return emptyPlanText();
-                if (activatedPlan != null)
+                }
+                if (activatedPlan != null) {
                   return TrainingPlanWidget(trainingPlan: activatedPlan!, donelist: donelist, onDoneChange: saveDoneList);
+                }
                 return listViewTrainingPlan(trainingPlanState);
               },
             ),

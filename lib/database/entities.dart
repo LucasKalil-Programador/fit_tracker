@@ -248,7 +248,7 @@ class TrainingPlan implements BaseEntity {
 
   @override
   String toString() {
-    return 'TrainingPlan(id: $id, name: $name, list: ${list})';
+    return 'TrainingPlan(id: $id, name: $name, list: $list)';
   }
 
   @override

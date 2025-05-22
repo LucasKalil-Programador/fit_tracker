@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+const themeKey = "Config:key";
+
 class MetadataState extends ChangeNotifier {
   final Map<String, String> _cache = {};
 

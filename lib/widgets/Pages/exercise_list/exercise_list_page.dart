@@ -39,6 +39,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
           Expanded(
             child: Consumer<ExercisesState>(builder: (context, exerciseListState, child) {
               final sortedList = exerciseListState.search(searchStr);
+              sortedList.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                 return ExerciseListView(
                   sortedList: sortedList,
                   onDelete: (e) => onDelete(context, e),

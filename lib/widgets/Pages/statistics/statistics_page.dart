@@ -40,7 +40,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                   child: dropDownTableSelect(tableState, reportState)
                 ),
-                DeleteAndEditButton(),
+                deleteAndEditButton(),
                 activatedTable != null
                     ? ReportView(
                       key: ValueKey(activatedTable!.id! + reports!.length.toString()),
@@ -62,7 +62,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
     );
   }
 
-  Row DeleteAndEditButton() {
+  Row deleteAndEditButton() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -83,10 +84,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    activatedTable != null ? Colors.red : Colors.grey,
+                    activatedTable != null ? colorScheme.errorContainer : Colors.grey,
               ),
               onPressed: onDeleteButton,
-              label: const Text("Deletar"),
+              label: Text(
+                "Deletar",
+                style: TextStyle(color: colorScheme.onErrorContainer),
+              ),
               icon: Icon(Icons.delete),
             ),
           ),

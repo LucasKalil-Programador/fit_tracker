@@ -30,7 +30,7 @@ class DefaultGraph extends StatefulWidget {
     this.gradientColorStart = Colors.blueAccent,
     this.gradientColorEnd = Colors.cyan,
     this.topTitle = "Placeholder: top",
-    this.bottomTitlesList = null,
+    this.bottomTitlesList,
     this.leftTitle = "Placeholder: left",
     this.rightTitle = "Placeholder: right",
   });
@@ -161,6 +161,7 @@ class _DefaultGraphState extends State<DefaultGraph> {
         borderData: FlBorderData(
           show: true,
           border: Border.all(
+            width: 3,
             color: widget.borderColor
           )
         )

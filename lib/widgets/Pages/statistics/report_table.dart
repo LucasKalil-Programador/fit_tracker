@@ -40,7 +40,7 @@ class _ReportTableViewState extends State<ReportTableView> {
     );
 
     return PaginatedDataTable(
-      header: Text("Tabela de completa"),
+      header: const Text("Tabela completa"),
       sortAscending: sortAscending,
       sortColumnIndex: sortColumnIndex,
       columns: [
