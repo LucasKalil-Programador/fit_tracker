@@ -83,7 +83,17 @@ class _MainWidgetState extends State<MainWidget> {
           NavigationDestination(icon: Icon(Icons.settings), label: "Config")
         ],
       ),
-      body: [const HomePage(), const StopWatchPage(), const WorkoutPage(), const ExerciseListPage(), const StatisticsPage(), const ConfigPage()][currentPageIndex],
+      body: IndexedStack(
+        index: currentPageIndex,
+        children: [
+          const HomePage(),
+          const StopWatchPage(),
+          const WorkoutPage(),
+          const ExerciseListPage(),
+          const StatisticsPage(),
+          const ConfigPage(),
+        ],
+      ),
     );
   }
 }
