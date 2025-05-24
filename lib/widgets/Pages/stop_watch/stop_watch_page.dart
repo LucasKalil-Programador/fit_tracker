@@ -152,7 +152,7 @@ class _StopWatchPageState extends State<StopWatchPage> with TickerProviderStateM
     
     final initialController = StopWatchController();
     initialController.addListener(onControllerChanged);
-    return [StopWatchController()];
+    return [initialController];
   }
 
   bool isAnimating = false;

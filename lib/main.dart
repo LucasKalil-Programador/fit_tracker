@@ -1,5 +1,4 @@
 import 'package:fittrackr/app.dart';
-import 'package:fittrackr/database/save_load_utils/generate_db.dart';
 import 'package:fittrackr/database/save_load_utils/load_utils.dart';
 import 'package:fittrackr/database/save_load_utils/save_utils.dart';
 import 'package:fittrackr/states/app_states.dart';
@@ -51,14 +50,6 @@ Future<void> loadDatabase(
     .then((value) {
       // setup call backs to save data in database
       setupSaver(metadataState, exercisesState, trainingPlanState); 
-
-      // if database is empty generate a sample data
-      if(exercisesState.isEmpty && trainingPlanState.isEmpty) {
-        generateExercisesPlans(exercisesState, trainingPlanState);
-      }
-      if(reportTableState.isEmpty && reportState.isEmpty) {
-        generateReports(reportTableState, reportState);
-      }
     });
 
   if(kDebugMode) {
