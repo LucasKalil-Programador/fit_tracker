@@ -112,7 +112,7 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
         ),
         Padding(
               padding: EdgeInsets.all(8.0),
-              child: new LinearPercentIndicator(
+              child: LinearPercentIndicator(
                 addAutomaticKeepAlive: true,
                 barRadius: Radius.circular(10),
                 animation: true,

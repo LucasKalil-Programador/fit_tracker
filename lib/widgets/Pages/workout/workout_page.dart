@@ -148,7 +148,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void saveDoneList(List<String>? donelist) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
-    metadataState.putList(metadataDoneKey, donelist == null ? List.empty() : donelist);
+    metadataState.putList(metadataDoneKey, donelist ?? List.empty());
   }
 
   void loadActivated() {

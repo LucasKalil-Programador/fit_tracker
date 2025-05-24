@@ -40,7 +40,9 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   }
 
   void addAll(List<T> entities) {
-    for (var plan in entities) plan.id = Uuid().v4();
+    for (var plan in entities) {
+      plan.id = Uuid().v4();
+    }
     _cache.addAll(entities);
     _updatePatch[UpdateEvent.insert]!.addAll(entities);
     this.sort();
@@ -56,7 +58,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return _cache.indexOf(entity);
   }
 
-  int indexWhere(bool test(T entity), [int start = 0]) {
+  int indexWhere(bool Function(T entity) test, [int start = 0]) {
     return _cache.indexWhere(test, start);
   }
 
@@ -73,7 +75,6 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
         max = mid - 1;
       }
     }
-    print("error");
     return null;
   }
 

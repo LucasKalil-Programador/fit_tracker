@@ -142,7 +142,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
   void submit() {
     if (_formKey.currentState!.validate()) {
       if (widget.onSubmit != null) {
-          String? id = null;
+          String? id;
           if(widget.baseTrainingPlan != null && widget.mode == TrainingPlanFormMode.edit) {
             id = widget.baseTrainingPlan?.id;
         }

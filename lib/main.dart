@@ -4,6 +4,7 @@ import 'package:fittrackr/database/save_load_utils/load_utils.dart';
 import 'package:fittrackr/database/save_load_utils/save_utils.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,15 +40,13 @@ Future<void> loadDatabase(
   ExercisesState exercisesState,
   TrainingPlanState trainingPlanState,
   ReportTableState reportTableState,
-  ReportState reportState, [
-  bool debug = false,
-]) async {
+  ReportState reportState) async {
   late DateTime start;
-  if(debug) start = DateTime.now();
+  if(kDebugMode) start = DateTime.now();
   
-  final loadtask1 = loadMetadata(debug).then(metadataState.setMap);
-  final loadtask2 = loadExercises(debug).then(exercisesState.setList);
-  final loadtask3 = loadTrainingPlans(debug).then(trainingPlanState.setList);
+  final loadtask1 = loadMetadata().then(metadataState.setMap);
+  final loadtask2 = loadExercises().then(exercisesState.setList);
+  final loadtask3 = loadTrainingPlans().then(trainingPlanState.setList);
   await Future.wait([loadtask1, loadtask2, loadtask3])
     .then((value) {
       // setup call backs to save data in database
@@ -62,7 +61,7 @@ Future<void> loadDatabase(
       }
     });
 
-  if(debug) {
+  if(kDebugMode) {
     final elapsed = DateTime.now().difference(start);
     print("Load took: $elapsed");
   }

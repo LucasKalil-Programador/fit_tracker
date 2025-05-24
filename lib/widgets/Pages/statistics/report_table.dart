@@ -157,7 +157,7 @@ class ReportSource extends DataTableSource implements ValueListenable {
   String compactText(String text, int maxLength) {
     if(text.length > maxLength) {
       text = text.substring(0, maxLength);
-      text = text + "...";
+      text = "$text...";
     }
     return text;
   }

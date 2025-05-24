@@ -68,12 +68,12 @@ class _DefaultGraphState extends State<DefaultGraph> {
 
     final flTitlesData = FlTitlesData(
       leftTitles: AxisTitles(
-        axisNameWidget: Text(widget.rightTitle, style: TextStyle(color: widget.textColor)),
+        axisNameWidget: Text(widget.leftTitle, style: TextStyle(color: widget.textColor)),
         axisNameSize: 24,
         sideTitles: SideTitles(showTitles: false, reservedSize: 0),
       ),
       rightTitles: AxisTitles(
-        axisNameWidget: Text(widget.leftTitle, style: TextStyle(color: widget.textColor)),
+        axisNameWidget: Text(widget.rightTitle, style: TextStyle(color: widget.textColor)),
         axisNameSize: 24,
         sideTitles: SideTitles(showTitles: false, reservedSize: 0),
       ),
@@ -152,8 +152,8 @@ class _DefaultGraphState extends State<DefaultGraph> {
         },).toList(),
         lineBarsData: lineBarsData,
         lineTouchData: lineTouchData,
-        minY: widget.minY,
-        maxY: widget.maxY,
+        minY: widget.minY ?? getMin(),
+        maxY: widget.maxY ?? getMax(),
         minX: widget.minX,
         maxX: widget.maxX,
         gridData: FlGridData(show: false),
@@ -167,6 +167,30 @@ class _DefaultGraphState extends State<DefaultGraph> {
         )
       )
     );
+  }
+
+  double? getMin() {
+    if(widget.spots.isEmpty) return null;
+
+    double min = double.infinity;
+    for (var i = 0; i < widget.spots.length; i++) {
+      if(min > widget.spots[i].y) {
+        min = widget.spots[i].y;
+      }
+    }
+    return min * 0.9;
+  }
+
+  double? getMax() {
+    if(widget.spots.isEmpty) return null;
+
+    double max = double.negativeInfinity;
+    for (var i = 0; i < widget.spots.length; i++) {
+      if(max < widget.spots[i].y) {
+        max = widget.spots[i].y;
+      }
+    }
+    return max * 1.1;
   }
 
   Widget getTitle(double value, TitleMeta meta) {

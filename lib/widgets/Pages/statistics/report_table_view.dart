@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table.dart';
-import 'package:fittrackr/widgets/Pages/statistics/default_graph.dart';
+import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +49,9 @@ class _ReportViewState extends State<ReportView> {
               borderColor: colorScheme.onPrimaryContainer,
               tooltipBackground: colorScheme.primaryContainer,
               textColor: colorScheme.onSurface,
+              topTitle: "Gráfico interativo",
+              rightTitle: widget.table == null ? "" : widget.table!.valueSuffix,
+              leftTitle: widget.table == null ? "" : widget.table!.valueSuffix,
             ),
           ),
         ),
@@ -129,7 +132,7 @@ class _ReportViewState extends State<ReportView> {
     for (var element in reports) {
       if(selected.contains(element.id)) {
         spots.add(FlSpot(spots.length.toDouble(), element.value));
-        if (bottomTitles.length == 0 ||
+        if (bottomTitles.isEmpty ||
             bottomTitles.length == selected.length - 1 ||
             bottomTitles.length == (selected.length / 2).toInt()) {
           bottomTitles.add(formatDate(element.reportDate));
@@ -153,8 +156,8 @@ class _ReportViewState extends State<ReportView> {
       reports.addAll(List.from(widget.reports!));
       reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
       
-      this.periodMap = createPeriodMap();
-      selected.addAll(this.periodMap[ReportViewPeriod.last7]!);
+      periodMap = createPeriodMap();
+      selected.addAll(periodMap[ReportViewPeriod.last7]!);
       generateSpots();
     }
   }

@@ -186,8 +186,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 final reportTableState = Provider.of<ReportTableState>(context, listen: false);
                 final reportState = Provider.of<ReportState>(context, listen: false);
                 reportState.add(report);
-                if(activatedTable != null)
+                if(activatedTable != null) {
                   loadReports(reportTableState, reportState, activatedTable!.id!);
+                }
                 showSnackMessage(context, "Adicionado com sucesso!", true);
               },
             ),

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/base_list_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -22,14 +23,14 @@ class DebounceRunner {
     _debouncer = Timer(delay, run);
   }
 
-  Future<void> run([bool debug = false]) async {
+  Future<void> run() async {
     late DateTime start;
     await _lock.synchronized(() async {
-      if(debug) start = DateTime.now();
+      if(kDebugMode) start = DateTime.now();
       
       await callback();
 
-      if(debug) {
+      if(kDebugMode) {
         final elapsed = DateTime.now().difference(start);
         print("Save took: $elapsed");
       }
@@ -42,7 +43,7 @@ class DebounceRunner {
   value TEXT NOT NULL
 ); 
 */
-Future<void> saveMetadata(Map<String, String> data, [bool debug = false]) async {
+Future<void> saveMetadata(Map<String, String> data) async {
   final db = await DatabaseHelper().database;
   final batch = db.batch();
   for (var element in data.entries) {
@@ -59,7 +60,7 @@ Future<void> saveMetadata(Map<String, String> data, [bool debug = false]) async 
   );
 
   batch.commit();
-  if(debug) {
+  if(kDebugMode) {
     print("------ Database call Metadata------");
     for (var element in data.entries) {
       print("${element.key}: ${element.value}");
@@ -76,7 +77,7 @@ Future<void> saveMetadata(Map<String, String> data, [bool debug = false]) async 
   type TEXT NOT NULL CHECK(type IN ('cardio', 'musclework'))
 );
 */
-Future<void> saveExercise(Map<UpdateEvent, List<Exercise>> data, [bool debug = false]) async {
+Future<void> saveExercise(Map<UpdateEvent, List<Exercise>> data) async {
   final db = await DatabaseHelper().database;
   final batch = db.batch();
   final insertOrUpdateList = [...(data[UpdateEvent.insert] ?? []), ...(data[UpdateEvent.update] ?? [])];
@@ -98,7 +99,7 @@ Future<void> saveExercise(Map<UpdateEvent, List<Exercise>> data, [bool debug = f
   }
 
   await batch.commit();
-  if(debug) {
+  if(kDebugMode) {
     print("------ Database call Exercise ------");
     printDebug(data);
   }
@@ -127,14 +128,16 @@ Future<void> saveTrainingPlan(Map<UpdateEvent, List<TrainingPlan>> data, [bool d
   }
 
   await batch.commit();
-  if(debug) {
+  if(kDebugMode) {
     print("------ Database call TrainingPlan ------");
     printDebug(data);
   }
 }
 
 void printDebug(Map<UpdateEvent, List> data) {
-  print("${UpdateEvent.insert}: ${data[UpdateEvent.insert]!.length}");
-  print("${UpdateEvent.update}: ${data[UpdateEvent.update]!.length}");
-  print("${UpdateEvent.remove}: ${data[UpdateEvent.remove]!.length}");
+  if (kDebugMode) {
+    print("${UpdateEvent.insert}: ${data[UpdateEvent.insert]!.length}");
+    print("${UpdateEvent.update}: ${data[UpdateEvent.update]!.length}");
+    print("${UpdateEvent.remove}: ${data[UpdateEvent.remove]!.length}");
+  }
 }
