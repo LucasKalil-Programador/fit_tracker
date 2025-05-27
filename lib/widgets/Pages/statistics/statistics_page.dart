@@ -1,9 +1,9 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
-import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
-import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_form.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table_form.dart';
+import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +13,6 @@ class StatisticsPage extends StatefulWidget {
   @override
   State<StatisticsPage> createState() => _StatisticsPageState();
 }
-// TODO: editar tabela
-// TODO: deletar valores
 
 class _StatisticsPageState extends State<StatisticsPage> {
   List<Report>? reports;
@@ -46,6 +44,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       key: ValueKey(activatedTable!.id! + reports!.length.toString()),
                       reports: reports,
                       table: activatedTable,
+                      onDelete: onDeleteReport,
                     )
                     : ReportView(reports: null, table: null),
               ],
@@ -73,7 +72,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: activatedTable != null ? null : Colors.grey,
               ),
-              onPressed: onEditButton,
+              onPressed: onEditTable,
               label: const Text("Editar"),
               icon: Icon(Icons.edit),
             ),
@@ -86,7 +85,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 backgroundColor:
                     activatedTable != null ? colorScheme.errorContainer : Colors.grey,
               ),
-              onPressed: onDeleteButton,
+              onPressed: onDeleteTable,
               label: Text(
                 "Deletar",
                 style: TextStyle(color: colorScheme.onErrorContainer),
@@ -138,35 +137,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
         activatedTable!.id!,
       );
     });
-  }
-
-  void onDeleteButton() {
-    if(activatedTable != null) {
-      final tableState = Provider.of<ReportTableState>(context, listen: false);
-      final reportState = Provider.of<ReportState>(context, listen: false);
-      final reportList = reportState.getByTable(activatedTable!.id!);
-      for (var element in reportList) {
-        reportState.remove(element);
-      }
-      tableState.remove(activatedTable!);
-      
-      setState(() {
-        activatedTable = null;
-        reports = null;
-      });
-
-      showSnackMessage(context, "Deletado com sucesso", true);
-    } else {
-      showSnackMessage(context, "Selecione uma tabela", false);
-    }
-  }
-
-  void onEditButton() {
-    if(activatedTable != null) {
-      // TODO: editar tabela
-    } else {
-      showSnackMessage(context, "Selecione uma tabela", false);
-    }
   }
 
   void showReportFormModalBottom(BuildContext context) {
@@ -225,6 +195,46 @@ class _StatisticsPageState extends State<StatisticsPage> {
         );
       },
     );
+  }
+
+// Actions
+
+  void onDeleteTable() {
+    if(activatedTable != null) {
+      final tableState = Provider.of<ReportTableState>(context, listen: false);
+      final reportState = Provider.of<ReportState>(context, listen: false);
+      final reportList = reportState.getByTable(activatedTable!.id!);
+      for (var element in reportList) {
+        reportState.remove(element);
+      }
+      tableState.remove(activatedTable!);
+      
+      setState(() {
+        activatedTable = null;
+        reports = null;
+      });
+
+      showSnackMessage(context, "Deletado com sucesso", true);
+    } else {
+      showSnackMessage(context, "Selecione uma tabela", false);
+    }
+  }
+
+  void onEditTable() {
+    if(activatedTable != null) {
+      // TODO: editar tabela
+    } else {
+      showSnackMessage(context, "Selecione uma tabela", false);
+    }
+  }
+
+  void onDeleteReport(Report r) {
+    final reportState = Provider.of<ReportState>(context, listen: false);
+    setState(() {
+      reportState.remove(r);
+      if(reports != null) reports!.remove(r);
+    });
+    showSnackMessage(context, "Removido com sucesso!", true);
   }
 }
 

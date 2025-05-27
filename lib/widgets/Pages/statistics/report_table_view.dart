@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:fittrackr/database/entities.dart';
-import 'package:fittrackr/widgets/Pages/statistics/report_table.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -13,10 +12,13 @@ class ReportView extends StatefulWidget {
   final List<Report>? reports;
   final ReportTable? table;
 
+  final void Function(Report)? onDelete;
+
   const ReportView({
     super.key,
     required this.reports,
-    required this.table,
+    required this.table, 
+    this.onDelete,
   });
 
   @override
@@ -95,6 +97,7 @@ class _ReportViewState extends State<ReportView> {
           onReportSorted: (reports) {
             generateSpots();
           },
+          onDelete: widget.onDelete,
         ),
       ],
     );
