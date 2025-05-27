@@ -1,11 +1,12 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
-import 'package:fittrackr/widgets/Pages/statistics/report_form.dart';
-import 'package:fittrackr/widgets/Pages/statistics/report_table_form.dart';
 import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
+import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+// TODO: Posição dos botoes de mudança de pagina da tabela
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key});
@@ -52,16 +53,15 @@ class _StatisticsPageState extends State<StatisticsPage> {
           },
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {
-          showReportFormModalBottom(context);
-        },
+        onPressed: () => showReportForm(context),
       ),
     );
   }
 
-  Row deleteAndEditButton() {
+  Widget deleteAndEditButton() {
     final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -119,10 +119,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 activatedTable = null;
                 reports = null;
               });
-              showReportTableFormModalBottom(context);
+              showReportTableForm(context);
               return;
             } else {
-          if (value != null) loadReports(tableState, reportState, value);
+              if (value != null) {
+                loadReports(tableState, reportState, value);
+              }
             }
           },
         );
@@ -139,7 +141,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
     });
   }
 
-  void showReportFormModalBottom(BuildContext context) {
+// Forms
+
+  void showReportForm(BuildContext context) {
     if (activatedTable != null) {
       showModalBottomSheet(
         context: context,
@@ -151,16 +155,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               .of(context).viewInsets.bottom),
             child: ReportForm(
               table: activatedTable!,
-              onSubmit: (report) {
-                Navigator.pop(context);
-                final reportTableState = Provider.of<ReportTableState>(context, listen: false);
-                final reportState = Provider.of<ReportState>(context, listen: false);
-                reportState.add(report);
-                if(activatedTable != null) {
-                  loadReports(reportTableState, reportState, activatedTable!.id!);
-                }
-                showSnackMessage(context, "Adicionado com sucesso!", true);
-              },
+              onSubmit: (report) => onCreateReport(context, report),
             ),
           );
         },
@@ -170,7 +165,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     }
   }
 
-  void showReportTableFormModalBottom(BuildContext context) {
+  void showReportTableForm(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -180,24 +175,26 @@ class _StatisticsPageState extends State<StatisticsPage> {
             .copyWith(bottom: MediaQuery
             .of(context).viewInsets.bottom),
             child: ReportTableForm(
-              onSubmit: (table) {
-                Navigator.pop(context);
-                final reportTableState = Provider.of<ReportTableState>(context, listen: false);
-                final reportState = Provider.of<ReportState>(context, listen: false);
-                reportTableState.add(table);
-                activatedTable = table;
-                selectedId = table.id;
-                
-                loadReports(reportTableState, reportState, activatedTable!.id!);
-                showSnackMessage(context, "Adicionado com sucesso!", true);
-              },
+              onSubmit: (table) => onCreateTable(context, table),
             ),
         );
       },
     );
   }
 
-// Actions
+// Actions table
+
+  void onCreateTable(BuildContext context, ReportTable table) {
+    Navigator.pop(context);
+    final reportTableState = Provider.of<ReportTableState>(context, listen: false);
+    final reportState = Provider.of<ReportState>(context, listen: false);
+    reportTableState.add(table);
+    activatedTable = table;
+    selectedId = table.id;
+    
+    loadReports(reportTableState, reportState, activatedTable!.id!);
+    showSnackMessage(context, "Adicionado com sucesso!", true);
+  }
 
   void onDeleteTable() {
     if(activatedTable != null) {
@@ -226,6 +223,19 @@ class _StatisticsPageState extends State<StatisticsPage> {
     } else {
       showSnackMessage(context, "Selecione uma tabela", false);
     }
+  }
+
+// Actions report
+
+  void onCreateReport(BuildContext context, Report report) {
+    Navigator.pop(context);
+    final reportTableState = Provider.of<ReportTableState>(context, listen: false);
+    final reportState = Provider.of<ReportState>(context, listen: false);
+    reportState.add(report);
+    if(activatedTable != null) {
+      loadReports(reportTableState, reportState, activatedTable!.id!);
+    }
+    showSnackMessage(context, "Adicionado com sucesso!", true);
   }
 
   void onDeleteReport(Report r) {

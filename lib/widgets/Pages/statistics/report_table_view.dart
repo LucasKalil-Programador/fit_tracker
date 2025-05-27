@@ -26,7 +26,7 @@ class ReportView extends StatefulWidget {
 }
 
 class _ReportViewState extends State<ReportView> {
-  late final Map<ReportViewPeriod, List<String>> periodMap;
+  late Map<ReportViewPeriod, List<String>> periodMap;
   ReportViewPeriod? period = ReportViewPeriod.last7;
 
   final List<Report> reports = [];
@@ -34,6 +34,20 @@ class _ReportViewState extends State<ReportView> {
 
   List<String>? bottomTitles;
   List<FlSpot>? spots;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    if(widget.reports != null) {
+      reports.addAll(List.from(widget.reports!));
+      reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
+      
+      periodMap = createPeriodMap();
+      selected.addAll(periodMap[ReportViewPeriod.last7]!);
+      generateSpots();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +138,6 @@ class _ReportViewState extends State<ReportView> {
     final month = twoDigits(dateTime.month);
     final year = twoDigits(dateTime.year);
     
-    
     return "$day/$month/$year";
   }
 
@@ -149,20 +162,6 @@ class _ReportViewState extends State<ReportView> {
       this.bottomTitles = bottomTitles;
       this.spots = spots;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    
-    if(widget.reports != null) {
-      reports.addAll(List.from(widget.reports!));
-      reports.sort((a, b) => b.reportDate.compareTo(a.reportDate));
-      
-      periodMap = createPeriodMap();
-      selected.addAll(periodMap[ReportViewPeriod.last7]!);
-      generateSpots();
-    }
   }
 
   void onPeriodSelected(ReportViewPeriod? value) {
