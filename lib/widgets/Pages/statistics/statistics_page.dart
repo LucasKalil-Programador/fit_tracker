@@ -1,12 +1,9 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
-import 'package:fittrackr/widgets/Pages/statistics/report_table_view.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// TODO: Posição dos botoes de mudança de pagina da tabela
 
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({super.key});
@@ -247,4 +244,3 @@ class _StatisticsPageState extends State<StatisticsPage> {
     showSnackMessage(context, "Removido com sucesso!", true);
   }
 }
-

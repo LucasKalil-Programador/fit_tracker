@@ -1,6 +1,7 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/base_list_state.dart';
 
+
 // ExercisesState
 
 class ExercisesState extends BaseListState<Exercise> {
@@ -20,17 +21,16 @@ class ExercisesState extends BaseListState<Exercise> {
   }
 }
 
+
 // TrainingPlanState
 
-class TrainingPlanState extends BaseListState<TrainingPlan> {
-  
-}
+class TrainingPlanState extends BaseListState<TrainingPlan> {}
+
 
 // ReportTableState
 
-class ReportTableState extends BaseListState<ReportTable> {
-  
-}
+class ReportTableState extends BaseListState<ReportTable> {}
+
 
 // ReportState
 

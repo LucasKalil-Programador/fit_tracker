@@ -1,9 +1,8 @@
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-enum AppTheme {dark, light, system}
 
 class ConfigPage extends StatelessWidget {
   const ConfigPage({super.key});
@@ -19,19 +18,15 @@ class ConfigPage extends StatelessWidget {
       ),
       body: Consumer<MetadataState>(
         builder: (context, metadataState, child) {
-          final selectedTheme = metadataState.get(themeKey);
-          AppTheme theme = AppTheme.system;
-          if(selectedTheme != null) {
-            theme = AppTheme.values.byName(selectedTheme);
-          }
-          
           return Column(
             children: [
               DefaultDivider(),
               ThemeSelection(
-                initialValue: theme,
+                initialValue: getTheme(metadataState),
                 onThemeSelected: (theme) => onThemeSelected(context, theme),
               ),
+              DefaultDivider(),
+              DataInputOutput(),
               DefaultDivider(),
             ],
           );
@@ -40,66 +35,68 @@ class ConfigPage extends StatelessWidget {
     );
   }
 
+  AppTheme getTheme(MetadataState metadataState) {
+    final selectedTheme = metadataState.get(themeKey);
+    if(selectedTheme != null) {
+      return AppTheme.values.byName(selectedTheme);
+    }
+    return AppTheme.system;
+  }
+
   void onThemeSelected(BuildContext context, AppTheme theme) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.put(themeKey, theme.name);
   }
 }
 
-
-class ThemeSelection extends StatefulWidget {
-  final AppTheme initialValue;
-  final Function(AppTheme theme)? onThemeSelected;
-
-  const ThemeSelection({super.key, this.onThemeSelected, required this.initialValue});
-
-  @override
-  State<ThemeSelection> createState() => _ThemeSelectionState();
-}
-
-class _ThemeSelectionState extends State<ThemeSelection> {
-  AppTheme? selectedTheme;
-
-  @override
-  void initState() {
-    super.initState();
-
-    selectedTheme = widget.initialValue;
-  }
+class DataInputOutput extends StatelessWidget {
+  const DataInputOutput({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Map<AppTheme, String> themeTextMap = {AppTheme.dark: "Escuro", AppTheme.light: "Claro", AppTheme.system: "Sistema"};
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      spacing: 8,
       children: [
-        Text("Tema", style: Theme.of(context).textTheme.titleLarge),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: AppTheme.values.length,
-          itemBuilder: (context, index) {
-            final item = AppTheme.values[index];
-            final String text =
-                themeTextMap.containsKey(item) ? themeTextMap[item]! : "Default";
-            return ListTile(
-              title: Text(text),
-              leading: Radio<AppTheme>(
-                value: item,
-                groupValue: selectedTheme,
-                onChanged: (theme) {
-                  setState(() {
-                    selectedTheme = theme;
-                  });
-                  if(theme != null && widget.onThemeSelected != null) {
-                    widget.onThemeSelected!(theme);
-                  }
-                },
-              ),
-            );
-          },
+        Text("Dados", style: Theme.of(context).textTheme.titleLarge),
+        ElevatedButton.icon(
+          onPressed: onExport,
+          icon: Icon(Icons.file_upload),
+          label: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text("Exportar dados"),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: onImport,
+          icon: Icon(Icons.file_download),
+          label: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text("Importar dados"),
+          ),
+          iconAlignment: IconAlignment.start,
+        ),
+        ElevatedButton.icon(
+          onPressed: onGenerate,
+          icon: Icon(Icons.developer_mode),
+          label: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text("Gerar dados de demonstracao"),
+          ),
+          iconAlignment: IconAlignment.start,
         ),
       ],
     );
+  }
+
+  void onExport() {
+    // TODO: onExport
+  }
+
+  void onImport() {
+    // TODO: onImport
+  }
+
+  void onGenerate() {
+    // TODO: onGenerate
   }
 }
