@@ -6,7 +6,7 @@ import 'dart:convert';
 abstract class BaseEntity {
   String? id;
 
-  Map<String, Object?> toJson();
+  Map<String, Object?> toMap();
 }
 
 // Exercise
@@ -52,7 +52,7 @@ class Exercise implements BaseEntity {
   int get hashCode => Object.hash(id, name, amount, reps, sets, type);
 
   @override
-  Map<String, Object?> toJson() {
+  Map<String, Object?> toMap() {
     return {
       "uuid": id,
       "name": name,
@@ -127,7 +127,7 @@ class ReportTable implements BaseEntity {
   int get hashCode => Object.hash(id, name, description, valueSuffix, createdAt, updatedAt);
 
   @override
-  Map<String, Object?> toJson() {
+  Map<String, Object?> toMap() {
     return {
       "uuid": id,
       "name": name,
@@ -200,7 +200,7 @@ class Report implements BaseEntity {
   int get hashCode => Object.hash(id, note, reportDate, value, tableId);
 
   @override
-  Map<String, Object?> toJson() {
+  Map<String, Object?> toMap() {
     return {
       "uuid": id,
       "note": note,
@@ -261,7 +261,7 @@ class TrainingPlan implements BaseEntity {
   int get hashCode => Object.hash(id, name);
 
   @override
-  Map<String, Object?> toJson() {
+  Map<String, Object?> toMap() {
     return {
       "uuid": id,
       "name": name,
