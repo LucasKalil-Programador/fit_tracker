@@ -29,6 +29,7 @@ abstract class _Keys {
   static const selectAll = "selectAll";
 
   static const exercise = "exercise";
+  static const metadata = "metadata";
   static const trainingPlan = "training_plan";
 }
 
@@ -92,6 +93,7 @@ class DatabaseProxy {
 
   late final ProxyPart<Exercise> exercise = ExerciseProxy(this);
   late final ProxyPart<TrainingPlan> trainingPlan = TrainingPlanProxy(this);  
+  late final ProxyPart<MapEntry<String, String>> metadata = MetadataProxy(this);
 }
 
 
@@ -159,10 +161,36 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan> {
   }
 }
 
+class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
+  final DatabaseProxy _dbProxy;
+
+  MetadataProxy(this._dbProxy);
+
+  @override
+  Future<Map<String, Object>> insert(MapEntry<String, String> metadata) {
+    return _dbProxy._execute(_Keys.insert, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  }
+
+  @override
+  Future<Map<String, Object>> delete(MapEntry<String, String> metadata) {
+    return _dbProxy._execute(_Keys.delete, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  }
+
+  @override
+  Future<Map<String, Object>> update(MapEntry<String, String> metadata) {
+    return _dbProxy._execute(_Keys.update, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  }
+
+  @override
+  Future<Map<String, Object>> selectAll() {
+    return _dbProxy._execute(_Keys.selectAll, _Keys.metadata, "");
+  }
+}
+
 abstract class ProxyPart<T> {
-  Future<Map<String, Object>> insert(T exercise);
-  Future<Map<String, Object>> delete(T exercise);
-  Future<Map<String, Object>> update(T exercise);
+  Future<Map<String, Object>> insert(T element);
+  Future<Map<String, Object>> delete(T element);
+  Future<Map<String, Object>> update(T element);
   Future<Map<String, Object>> selectAll();
 }
 
@@ -228,6 +256,10 @@ abstract class _Worker {
         final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
         await db.trainingPlan.insert(plan);
         break;
+      case _Keys.metadata:
+        final map = (jsonDecode(payload) as Map).cast<String, String>();
+        await db.metadata.insert(map);
+        break;
       default:
         return {
           _Keys.id: task[_Keys.id]!,
@@ -250,6 +282,10 @@ abstract class _Worker {
       case _Keys.trainingPlan:
         final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
         await db.trainingPlan.delete(plan);
+        break;
+      case _Keys.metadata:
+        final map = (jsonDecode(payload) as Map).cast<String, String>();
+        await db.metadata.delete(map);
         break;
       default:
         return {
@@ -274,6 +310,10 @@ abstract class _Worker {
         final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
         await db.trainingPlan.update(plan);
         break;
+      case _Keys.metadata:
+        final map = (jsonDecode(payload) as Map).cast<String, String>();
+        await db.metadata.update(map);
+        break;
       default:
         return {
           _Keys.id: task[_Keys.id]!,
@@ -296,6 +336,9 @@ abstract class _Worker {
         final data = await db.trainingPlan.selectAll();
         final encodedData = data.map((e) => e.toMap()).toList();
         return {_Keys.id: task[_Keys.id]!, _Keys.success: true, _Keys.data: encodedData};
+      case _Keys.metadata:
+        final data = await db.metadata.selectAll();
+        return {_Keys.id: task[_Keys.id]!, _Keys.success: true, _Keys.data: data};
       default:
         return {
           _Keys.id: task[_Keys.id]!,

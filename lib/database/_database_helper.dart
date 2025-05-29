@@ -88,7 +88,6 @@ class ExerciseHelper implements Helper<Exercise> {
   Future<void> update(Exercise exercise) async {
     final db = await DatabaseHelper().database;
     await db.update('exercise', {
-      'uuid':   exercise.id,
       'name':   exercise.name,
       'amount': exercise.amount,
       'reps':   exercise.reps,
@@ -142,7 +141,6 @@ class TrainingPlanHelper implements Helper<TrainingPlan> {
   Future<void> update(TrainingPlan plan) async {
     final db = await DatabaseHelper().database;
     await db.update('training_plan', {
-      'uuid': plan.id,
       'name': plan.name,
       'list': jsonEncode(plan.list),
       },
@@ -180,23 +178,48 @@ class TrainingPlanHelper implements Helper<TrainingPlan> {
 
 class MetadataHelper implements Helper<Map<String, String>> {
   @override
-  Future<void> delete(Map<String, String> element) {
-    throw UnimplementedError();
+  Future<void> insert(Map<String, String> metadata) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('metadata', {
+      'key': metadata["key"],
+      'value': metadata["value"],
+    });
   }
 
   @override
-  Future<void> insert(Map<String, String> element) {
-    throw UnimplementedError();
+  Future<void> update(Map<String, String> metadata) async {
+    final db = await DatabaseHelper().database;
+    await db.update('metadata', {
+      'value': metadata["value"],
+      },
+      where: 'key = ?',
+      whereArgs: [metadata["key"]],
+    );
   }
 
   @override
-  Future<List<Map<String, String>>> selectAll() {
-    throw UnimplementedError();
+  Future<void> delete(Map<String, String> metadata) async {
+    final db = await DatabaseHelper().database;
+    await db.delete('metadata', where: 'key = ?', whereArgs: [metadata["key"]]);
   }
 
   @override
-  Future<void> update(Map<String, String> element) {
-    throw UnimplementedError();
+  Future<List<Map<String, String>>> selectAll() async {
+    final db = await DatabaseHelper().database;
+    final data = await db.queryCursor('metadata');
+
+    final List<Map<String, String>> metadata = [];
+    while (await data.moveNext()) {
+      final element = data.current;
+      final key = element["key"];
+      final value = element["value"];
+      if(key is String && value is String) {
+        final mapEntry = {"key": key, "value": value};
+        metadata.add(mapEntry);
+      }
+    }
+    
+    return metadata;
   }
 }
 
