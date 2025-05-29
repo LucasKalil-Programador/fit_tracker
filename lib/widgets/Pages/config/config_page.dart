@@ -1,3 +1,5 @@
+import 'package:fittrackr/database/generate_db.dart';
+import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -76,11 +78,11 @@ class DataInputOutput extends StatelessWidget {
           iconAlignment: IconAlignment.start,
         ),
         ElevatedButton.icon(
-          onPressed: onGenerate,
+          onPressed: () => onGenerate(context),
           icon: Icon(Icons.developer_mode),
           label: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text("Gerar dados de demonstracao"),
+            child: Text("Gerar dados de demonstração"),
           ),
           iconAlignment: IconAlignment.start,
         ),
@@ -96,7 +98,11 @@ class DataInputOutput extends StatelessWidget {
     // TODO: onImport
   }
 
-  void onGenerate() {
-    // TODO: onGenerate
+  void onGenerate(BuildContext context) {
+    final eState = Provider.of<ExercisesState>(context, listen: false);
+    final pState = Provider.of<TrainingPlanState>(context, listen: false);
+    final rState = Provider.of<ReportState>(context, listen: false);
+    final tState = Provider.of<ReportTableState>(context, listen: false);
+    generateDB(eState, pState, tState, rState);
   }
 }

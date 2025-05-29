@@ -1,3 +1,4 @@
+import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -5,11 +6,7 @@ import 'package:uuid/uuid.dart';
 enum UpdateEvent { insert, update, remove }
 
 abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
-  final Map<UpdateEvent, List<T>> _updatePatch = {
-    UpdateEvent.insert: [],
-    UpdateEvent.update: [],
-    UpdateEvent.remove: [],
-  };
+  final ProxyPart<T>? dbProxy;
   final List<T> _cache = [];
 
   List<T> get clone => List<T>.from(_cache);
@@ -17,40 +14,54 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   bool get isNotEmpty => _cache.isNotEmpty;
   int get length => _cache.length;
 
-  T get first => _cache.first;
-  T get last => _cache.last;
+  T? get firstOrNull => _cache.isNotEmpty ? _cache.first : null;
+  T? get lastOrNull => _cache.isNotEmpty ? _cache.last : null;
+
+  BaseListState(this.dbProxy);
 
   T operator [](int index) => _cache[index];
 
   void operator []=(int index, T value) {
     _cache[index] = value;
-    _updatePatch[UpdateEvent.update]!.add(value);
-    this.sort();
+    dbProxy?.update(value).then(_onDbProxyReturn);
+    this.sort(notify: true);
   }
 
   T get(int index) {
     return _cache[index];
   }
 
-  void add(T entity) {
-    entity.id = Uuid().v4();
+  bool add(T entity) {
+    if(containsId(entity)) {
+      return false;
+    }
+    entity.id ??= Uuid().v4();
+
     _cache.add(entity);
-    _updatePatch[UpdateEvent.insert]!.add(entity);
-    this.sort();
+
+    dbProxy?.insert(entity).then(_onDbProxyReturn);
+    this.sort(notify: true);
+    return true;
   }
 
-  void addAll(List<T> entities) {
-    for (var plan in entities) {
-      plan.id = Uuid().v4();
+  bool addAll(List<T> entities) {
+    if (entities.any((e) => containsId(e))) {
+      return false;
+    }
+
+    for (var entity in entities) {
+      entity.id ??= Uuid().v4();
     }
     _cache.addAll(entities);
-    _updatePatch[UpdateEvent.insert]!.addAll(entities);
-    this.sort();
+    // TODO: Proxy insert all
+    // _updatePatch[UpdateEvent.insert]!.addAll(entities);
+    this.sort(notify: true);
+    return true;
   }
 
   void remove(T entity) {
     _cache.remove(entity);
-    _updatePatch[UpdateEvent.remove]!.add(entity);
+    dbProxy?.delete(entity).then(_onDbProxyReturn);
     notifyListeners();
   }
 
@@ -61,6 +72,8 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   int indexWhere(bool Function(T entity) test, [int start = 0]) {
     return _cache.indexWhere(test, start);
   }
+
+  bool containsId(entity) => entity.id != null && getById(entity.id!) != null;
 
   T? getById(String id) {
     var min = 0;
@@ -78,9 +91,9 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return null;
   }
 
-  void sort() {
+  void sort({bool notify = false}) {
     _cache.sort((e0, e1) => e0.id!.compareTo(e1.id!));
-    notifyListeners();
+    if(notify) notifyListeners();
   }
 
   void forEach(void Function(T) action) {
@@ -88,25 +101,15 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   }
 
   void reportUpdate(T value) {
-    _updatePatch[UpdateEvent.update]!.add(value);
+    dbProxy?.update(value).then(_onDbProxyReturn);
     notifyListeners();
-  }
-
-  Map<UpdateEvent, List<T>> flushUpdatePatch() {
-    final retrMap = Map<UpdateEvent, List<T>>.from(_updatePatch);
-    _updatePatch[UpdateEvent.insert] = [];
-    _updatePatch[UpdateEvent.update] = [];
-    _updatePatch[UpdateEvent.remove] = [];
-    return retrMap;
-  }
-
-  void setList(List<T> list) {
-    _cache.clear();
-    _cache.addAll(list);
-    sort();
   }
 
   Iterable<T> where(bool Function(T) test) {  
     return _cache.where(test);
+  }
+
+  void _onDbProxyReturn(dynamic result) {
+    print(result);
   }
 }
