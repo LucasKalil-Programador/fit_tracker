@@ -49,6 +49,19 @@ class ExerciseProxy implements ProxyPart<Exercise> {
       }
     });
   }
+
+  @override
+  Future<bool> insertAll(List<Exercise> exercises, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.insertAll(exercises);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
   
   @override
   Future<List<Exercise>?> selectAll({bool printLog = true}) {
@@ -98,6 +111,19 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan> {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.insert(plan);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+  
+  @override
+  Future<bool> insertAll(List<TrainingPlan> plans, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.insertAll(plans);
         return true;
       } catch (e) {
         if(printLog) logger.e(e);
@@ -161,6 +187,19 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
       }
     });
   }
+
+  @override
+  Future<bool> insertAll(List<MapEntry<String, String>> entrys, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.insertAll(entrys);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
   
   @override
   Future<List<MapEntry<String, String>>?> selectAll({bool printLog = true}) {
@@ -190,6 +229,7 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
 
 abstract class ProxyPart<T> {
   Future<bool> insert(T element);
+  Future<bool> insertAll(List<T> elements);
   Future<bool> delete(T element);
   Future<bool> update(T element);
   Future<List<T>?> selectAll();

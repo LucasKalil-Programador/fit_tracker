@@ -79,6 +79,22 @@ void main() async {
     expect(result?.contains(exercise4), true);
   });
 
+  test('Exercise insert all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final exercises = <Exercise>[];
+    for (var i = 0; i < 100; i++) {
+      Exercise exercise = Exercise(id: Uuid().v4(), name: "test $i", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+      exercises.add(exercise);
+    }
+
+    await proxy.exercise.insertAll(exercises);
+    final result = await proxy.exercise.selectAll();
+
+    for (var exercise in exercises) {
+      expect(result?.contains(exercise), true);
+    }
+  });
+
 
   test('TrainingPlan insert test', () async {
     final proxy = DatabaseProxy.instance;
@@ -177,6 +193,27 @@ void main() async {
     expect(result.contains(trainingPlan4), true);
   });
 
+  test('TrainingPlan insert all test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test-1", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+    await proxy.exercise.insert(exercise);
+
+    final plans = <TrainingPlan>[];
+    for (var i = 0; i < 100; i++) {
+      TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A $i", list: [exercise.id!]);
+      plans.add(plan);
+    }
+    
+    await proxy.trainingPlan.insertAll(plans);
+
+    final result = await proxy.trainingPlan.selectAll();
+
+    for (var plan in plans) {
+      expect(result?.contains(plan), true);
+    }
+  });
+
 
   test('Metadata insert test', () async {
     final proxy = DatabaseProxy.instance;
@@ -256,5 +293,20 @@ void main() async {
     expect(result?.any((element) => element.key == entry3.key && element.value == entry3.value), true);   
     expect(result?.any((element) => element.key == entry4.key && element.value == entry4.value), false);   
     expect(result?.any((element) => element.key == entry5.key && element.value == entry5.value), true);
+  });
+
+  test('Metadata insert all test', () async {
+    final proxy = await DatabaseProxy.instance;
+    Map<String, String> map = {};
+    for (var i = 0; i < 100; i++) {
+      map["Configs-$i"] = "test $i";
+    }
+
+    await proxy.metadata.insertAll(map.entries.toList());
+    var result = await proxy.metadata.selectAll();  
+
+    for (var entry in map.entries) {
+      expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);  
+    }  
   });
 }

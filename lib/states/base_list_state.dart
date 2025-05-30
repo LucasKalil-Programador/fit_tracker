@@ -23,7 +23,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   void operator []=(int index, T value) {
     _cache[index] = value;
-    dbProxy?.update(value).then(_onDbProxyReturn);
+    dbProxy?.update(value);
     this.sort(notify: true);
   }
 
@@ -39,7 +39,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
     _cache.add(entity);
 
-    dbProxy?.insert(entity).then(_onDbProxyReturn);
+    dbProxy?.insert(entity);
     this.sort(notify: true);
     return true;
   }
@@ -53,15 +53,14 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
       entity.id ??= Uuid().v4();
     }
     _cache.addAll(entities);
-    // TODO: Proxy insert all
-    // _updatePatch[UpdateEvent.insert]!.addAll(entities);
+    dbProxy?.insertAll(entities);
     this.sort(notify: true);
     return true;
   }
 
   void remove(T entity) {
     _cache.remove(entity);
-    dbProxy?.delete(entity).then(_onDbProxyReturn);
+    dbProxy?.delete(entity);
     notifyListeners();
   }
 
@@ -101,15 +100,11 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   }
 
   void reportUpdate(T value) {
-    dbProxy?.update(value).then(_onDbProxyReturn);
+    dbProxy?.update(value);
     notifyListeners();
   }
 
   Iterable<T> where(bool Function(T) test) {  
     return _cache.where(test);
-  }
-
-  void _onDbProxyReturn(dynamic result) {
-    print(result);
   }
 }

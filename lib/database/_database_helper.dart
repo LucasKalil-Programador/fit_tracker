@@ -94,6 +94,25 @@ class ExerciseHelper implements Helper<Exercise> {
   }
 
   @override
+  Future<void> insertAll(List<Exercise> exercises) async {
+    final db = await DatabaseHelper().database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var exercise in exercises) {
+        batch.insert('exercise', {
+          'uuid':   exercise.id,
+          'name':   exercise.name,
+          'amount': exercise.amount,
+          'reps':   exercise.reps,
+          'sets':   exercise.sets,
+          'type':   exercise.type.name,
+        });
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
   Future<void> update(Exercise exercise) async {
     final db = await DatabaseHelper().database;
     await db.update('exercise', {
@@ -143,6 +162,22 @@ class TrainingPlanHelper implements Helper<TrainingPlan> {
       'uuid': plan.id,
       'name': plan.name,
       'list': jsonEncode(plan.list),
+    });
+  }
+  
+  @override
+  Future<void> insertAll(List<TrainingPlan> plans) async {
+    final db = await DatabaseHelper().database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var plan in plans) {
+        batch.insert('training_plan', {
+          'uuid': plan.id,
+          'name': plan.name,
+          'list': jsonEncode(plan.list),
+        });
+      }
+      await batch.commit(noResult: true);
     });
   }
 
@@ -196,6 +231,21 @@ class MetadataHelper implements Helper<MapEntry<String, String>> {
   }
 
   @override
+  Future<void> insertAll(List<MapEntry<String, String>> metadataList) async {
+    final db = await DatabaseHelper().database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var metadata in metadataList) {
+        batch.insert('metadata', {
+          'key': metadata.key,
+          'value': metadata.value,
+        });
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
   Future<void> update(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
     await db.update('metadata', {
@@ -235,6 +285,7 @@ class MetadataHelper implements Helper<MapEntry<String, String>> {
 
 abstract class Helper<T> {
   Future<void> insert(T element);
+  Future<void> insertAll(List<T> element);
   Future<void> update(T element);
   Future<void> delete(T element);
   Future<List<T>> selectAll();
