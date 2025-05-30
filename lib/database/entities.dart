@@ -144,7 +144,7 @@ class ReportTable implements BaseEntity {
     final description = map["description"];
     final valueSuffix = map["value_suffix"];
     final createdAt = map["created_at"];
-    final updatedAt = map["updatedAt"];
+    final updatedAt = map["updated_at"];
 
     if (uuid is String        && name is String   && description is String &&
         valueSuffix is String && createdAt is int && updatedAt is int) {

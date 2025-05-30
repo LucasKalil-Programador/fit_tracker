@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 enum UpdateEvent { insert, update, remove }
 
 abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
-  final ProxyPart<T>? dbProxy;
+  final ProxyPart<T, dynamic>? dbProxy;
   final List<T> _cache = [];
 
   List<T> get clone => List<T>.from(_cache);
@@ -17,7 +17,9 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   T? get firstOrNull => _cache.isNotEmpty ? _cache.first : null;
   T? get lastOrNull => _cache.isNotEmpty ? _cache.last : null;
 
-  BaseListState(this.dbProxy);
+  BaseListState(this.dbProxy, {bool loadDatabase = false}) {
+    if(loadDatabase) _loadFromDatabase();
+  }
 
   T operator [](int index) => _cache[index];
 
@@ -106,5 +108,12 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   Iterable<T> where(bool Function(T) test) {  
     return _cache.where(test);
+  }
+
+  void _loadFromDatabase() async {
+    if(dbProxy == null) return;
+    final entities = await dbProxy!.selectAll() ?? [];
+    _cache.addAll(entities);
+    notifyListeners();
   }
 }

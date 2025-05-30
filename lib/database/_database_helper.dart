@@ -13,9 +13,10 @@ import 'package:path/path.dart';
 // DB Helper
 
 class DatabaseHelper {
-  ExerciseHelper exercise = ExerciseHelper();
-  TrainingPlanHelper trainingPlan = TrainingPlanHelper();
-  MetadataHelper metadata = MetadataHelper();
+  final ExerciseHelper     exercise          = ExerciseHelper();
+  final TrainingPlanHelper trainingPlan      = TrainingPlanHelper();
+  final MetadataHelper     metadata          = MetadataHelper();
+  final ReportTableHelper  reportTableHelper = ReportTableHelper();
 
   static const exerciseSQL = '''
           CREATE TABLE exercise(
@@ -40,6 +41,17 @@ class DatabaseHelper {
           CREATE TABLE metadata(
             key TEXT PRIMARY KEY,
             value TEXT NOT NULL
+          );
+        ''';
+  
+  static const reportTableSQL = '''
+          CREATE TABLE report_table(
+            uuid TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT NOT NULL,
+            value_suffix TEXT NOT NULL,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
           );
         ''';
 
@@ -71,6 +83,7 @@ class DatabaseHelper {
         await db.execute(exerciseSQL);
         await db.execute(trainingPlanSQL);
         await db.execute(metadataSQL);
+        await db.execute(reportTableSQL);
       },
     );
   }
@@ -79,7 +92,7 @@ class DatabaseHelper {
 
 // Exercise
 
-class ExerciseHelper implements Helper<Exercise> {
+class ExerciseHelper implements Helper<Exercise, String> {
   @override
   Future<void> insert(Exercise exercise) async {
     final db = await DatabaseHelper().database;
@@ -149,12 +162,24 @@ class ExerciseHelper implements Helper<Exercise> {
 
     return exercises;
   }
+  
+  @override
+  Future<bool> existsById(String id) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'exercise',
+      where: 'uuid = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
 }
 
 
 // TrainingPlan
 
-class TrainingPlanHelper implements Helper<TrainingPlan> {
+class TrainingPlanHelper implements Helper<TrainingPlan, String> {
   @override
   Future<void> insert(TrainingPlan plan) async {
     final db = await DatabaseHelper().database;
@@ -215,12 +240,24 @@ class TrainingPlanHelper implements Helper<TrainingPlan> {
 
     return trainingPlans;
   }
+  
+  @override
+  Future<bool> existsById(String id) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'training_plan',
+      where: 'uuid = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
 }
 
 
 // Metadata
 
-class MetadataHelper implements Helper<MapEntry<String, String>> {
+class MetadataHelper implements Helper<MapEntry<String, String>, String> {
   @override
   Future<void> insert(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
@@ -279,14 +316,124 @@ class MetadataHelper implements Helper<MapEntry<String, String>> {
     
     return metadata;
   }
+  
+  @override
+  Future<bool> existsById(String key) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'metadata',
+      where: 'key = ?',
+      whereArgs: [key],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
 }
+
+
+// ReportTable
+
+class ReportTableHelper implements Helper<ReportTable, String> {
+  @override
+  Future<void> insert(ReportTable table) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('report_table', {
+      'uuid': table.id,
+      'name': table.name,
+      'description': table.description,
+      'value_suffix': table.valueSuffix,
+      'created_at': table.createdAt,
+      'updated_at': table.updatedAt
+    });
+  }
+
+  @override
+  Future<void> insertAll(List<ReportTable> tables) async {
+    final db = await DatabaseHelper().database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var table in tables) {
+        batch.insert('report_table', {
+          'uuid': table.id,
+          'name': table.name,
+          'description': table.description,
+          'value_suffix': table.valueSuffix,
+          'created_at': table.createdAt,
+          'updated_at': table.updatedAt
+        });
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
+  Future<void> update(ReportTable table) async {
+    final db = await DatabaseHelper().database;
+    await db.update('report_table', {
+      'name': table.name,
+      'description': table.description,
+      'value_suffix': table.valueSuffix,
+      'created_at': table.createdAt,
+      'updated_at': table.updatedAt
+    },
+    where: 'uuid = ?',
+    whereArgs: [table.id],
+    );
+  }
+
+  @override
+  Future<void> delete(ReportTable table) async {
+    final db = await DatabaseHelper().database;
+    await db.delete('report_table', where: 'uuid = ?', whereArgs: [table.id]);
+  }
+
+  @override
+  Future<List<ReportTable>> selectAll() async {
+    final db = await DatabaseHelper().database;
+    final data = await db.queryCursor('report_table');
+
+    final List<ReportTable> tables = [];
+    while(await data.moveNext()) {
+      final element = data.current;
+      final table = ReportTable.fromMap(element);
+      if(table != null) {
+        tables.add(table);
+      }
+    }
+
+    return tables;
+  }
+
+  @override
+  Future<bool> existsById(String id) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'report_table',
+      where: 'uuid = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
+}
+
+
+// TODO: Report Helper
 
 // Helper interface
 
-abstract class Helper<T> {
+abstract class Helper<T, TID> {
   Future<void> insert(T element);
   Future<void> insertAll(List<T> element);
+
   Future<void> update(T element);
+  // TODO: Future<void> upsert(T element);
+
+  Future<bool> existsById(TID element);
+  // Future<int> count();
+  
   Future<void> delete(T element);
+  // TODO: Future<void> deleteAll();
+
   Future<List<T>> selectAll();
 }

@@ -6,6 +6,9 @@ import 'package:uuid/uuid.dart';
 
 void main() async {
   
+
+  // Exercise
+
   test('Exercise insert test', () async {
     final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
@@ -95,6 +98,21 @@ void main() async {
     }
   });
 
+  test('Exercise exists test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+
+    await proxy.exercise.insert(exercise);
+    var result = await proxy.exercise.existsById(exercise.id!);
+    expect(result, true);
+
+    await proxy.exercise.delete(exercise);
+    result = await proxy.exercise.existsById(exercise.id!);
+    expect(result, false);
+  });
+
+
+  // TrainingPlan
 
   test('TrainingPlan insert test', () async {
     final proxy = DatabaseProxy.instance;
@@ -214,6 +232,24 @@ void main() async {
     }
   });
 
+  test('TrainingPlan exists test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+    await proxy.exercise.insert(exercise);
+    
+    TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
+
+    await proxy.trainingPlan.insert(plan);
+    var result = await proxy.trainingPlan.existsById(plan.id!);
+    expect(result, true);
+
+    await proxy.trainingPlan.delete(plan);
+    result = await proxy.trainingPlan.existsById(plan.id!);
+    expect(result, false);
+  });
+
+
+  // Metadata
 
   test('Metadata insert test', () async {
     final proxy = DatabaseProxy.instance;
@@ -253,7 +289,7 @@ void main() async {
   });
 
   test('Metadata update test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     MapEntry<String, String> entry = MapEntry("config-500", "test");
 
     await proxy.metadata.insert(entry);
@@ -268,7 +304,7 @@ void main() async {
   });
 
   test('Metadata select all test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     MapEntry<String, String> entry1 = MapEntry("config-41", "test-1");
     MapEntry<String, String> entry2 = MapEntry("config-42", "test-2");
     MapEntry<String, String> entry3 = MapEntry("config-43", "test-3");
@@ -296,7 +332,7 @@ void main() async {
   });
 
   test('Metadata insert all test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Map<String, String> map = {};
     for (var i = 0; i < 100; i++) {
       map["Configs-$i"] = "test $i";
@@ -308,5 +344,122 @@ void main() async {
     for (var entry in map.entries) {
       expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);  
     }  
+  });
+
+  test('Metadata exists test', () async {
+    final proxy = DatabaseProxy.instance;
+    MapEntry<String, String> entry = MapEntry("config-99", "test");
+
+    await proxy.metadata.insert(entry);
+    var result = await proxy.metadata.existsById(entry.key);    
+    expect(result, true);
+
+    await proxy.metadata.delete(entry);
+    result = await proxy.metadata.existsById(entry.key);    
+    expect(result, false);
+  });
+
+
+  // ReportTable
+
+  test('ReportTable insert test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    final result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), true);
+  }); 
+
+  test('ReportTable insert same id', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    var result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), true);
+
+    final reportTable2 = ReportTable(id: reportTable.id, name: "Pesagem-2", description: "BLABLABLA2", valueSuffix: "Kg2", createdAt: 13256718, updatedAt: 5757818944);
+    
+    await proxy.reportTable.insert(reportTable2, printLog: false);
+    result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable2), false);
+  });
+
+  test('ReportTable delete test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    var result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), true);
+
+    await proxy.reportTable.delete(reportTable);
+    result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), false);
+  });
+
+  test('ReportTable update test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    var result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), true);
+
+    final reportTable1 = ReportTable(id: reportTable.id, name: "Pesagem2", description: "BLABLABLA2", valueSuffix: "Kg2", createdAt: 132523678, updatedAt: 57572488944);
+
+    await proxy.reportTable.update(reportTable1);
+    result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), false);
+    expect(result?.contains(reportTable1), true);
+  });
+
+  test('ReportTable select all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable1 = ReportTable(id: Uuid().v4(), name: "Pesagem1", description: "BLABLABLA1", valueSuffix: "Kg", createdAt: 13256781, updatedAt: 5757188944);
+    final reportTable2 = ReportTable(id: Uuid().v4(), name: "Pesagem2", description: "BLABLABLA2", valueSuffix: "Kg", createdAt: 132567811, updatedAt: 5757288944);
+    final reportTable3 = ReportTable(id: Uuid().v4(), name: "Pesagem3", description: "BLABLABLA3", valueSuffix: "Kg", createdAt: 1325678111, updatedAt: 57571388944);
+    final reportTable4 = ReportTable(id: Uuid().v4(), name: "Pesagem4", description: "BLABLABLA4", valueSuffix: "Kg", createdAt: 13256781111, updatedAt: 5757488944);
+    
+    await proxy.reportTable.insert(reportTable1);
+    await proxy.reportTable.insert(reportTable2);
+    await proxy.reportTable.insert(reportTable3);
+    await proxy.reportTable.insert(reportTable4);
+
+    final result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable1), true);
+    expect(result?.contains(reportTable2), true);
+    expect(result?.contains(reportTable3), true);
+    expect(result?.contains(reportTable4), true);
+  });
+
+  test('ReportTable insert all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTableList = <ReportTable>[];
+    for (var i = 0; i < 100; i++) {
+      final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem-$i", description: "BLABLABLA-$i", valueSuffix: "Kg-$i", createdAt: 1325678, updatedAt: 575788944);
+      reportTableList.add(reportTable);
+    }
+
+    await proxy.reportTable.insertAll(reportTableList);
+    final result = await proxy.reportTable.selectAll();
+
+    for (var table in reportTableList) {
+      expect(result?.contains(table), true);
+    }
+  });
+
+  test('ReportTable exists test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    var exist = await proxy.reportTable.existsById(reportTable.id!);
+    expect(exist, true);
+
+    await proxy.reportTable.delete(reportTable);
+    exist = await proxy.reportTable.existsById(reportTable.id!);
+    expect(exist, false);
   });
 }

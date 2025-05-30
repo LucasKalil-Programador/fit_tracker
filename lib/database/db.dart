@@ -14,13 +14,14 @@ class DatabaseProxy {
   static final DatabaseProxy _instance = DatabaseProxy._internal();
   static DatabaseProxy get instance => _instance;
   
-  late final ExerciseProxy     exercise = ExerciseProxy();
-  late final TrainingPlanProxy trainingPlan = TrainingPlanProxy();  
-  late final MetadataProxy     metadata = MetadataProxy();
+  final ExerciseProxy     exercise     = ExerciseProxy();
+  final TrainingPlanProxy trainingPlan = TrainingPlanProxy();  
+  final MetadataProxy     metadata     = MetadataProxy();
+  final ReportTableProxy  reportTable  = ReportTableProxy();
 }
 
 
-class ExerciseProxy implements ProxyPart<Exercise> {
+class ExerciseProxy implements ProxyPart<Exercise, String> {
   final _lock = Lock();
   final db = DatabaseHelper();
 
@@ -87,9 +88,21 @@ class ExerciseProxy implements ProxyPart<Exercise> {
       }
     });
   }
+  
+  @override
+  Future<bool?> existsById(String id, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.exercise.existsById(id);
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
 }
 
-class TrainingPlanProxy implements ProxyPart<TrainingPlan> {
+class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
   final _lock = Lock();
   final db = DatabaseHelper();
 
@@ -156,9 +169,21 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan> {
       }
     });
   }
+  
+  @override
+  Future<bool?> existsById(String id, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.trainingPlan.existsById(id);
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
 }
 
-class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
+class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
   final _lock = Lock();
   final db = DatabaseHelper();
 
@@ -189,10 +214,10 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
   }
 
   @override
-  Future<bool> insertAll(List<MapEntry<String, String>> entrys, {bool printLog = true}) {
+  Future<bool> insertAll(List<MapEntry<String, String>> entries, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        await db.metadata.insertAll(entrys);
+        await db.metadata.insertAll(entries);
         return true;
       } catch (e) {
         if(printLog) logger.e(e);
@@ -225,12 +250,106 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
       }
     });
   }
+  
+  @override
+  Future<bool?> existsById(String key, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.metadata.existsById(key);
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
 }
 
-abstract class ProxyPart<T> {
+class ReportTableProxy implements ProxyPart<ReportTable, String> {
+  final _lock = Lock();
+  final db = DatabaseHelper();
+
+  @override
+  Future<bool> delete(ReportTable table, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.delete(table);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool> insert(ReportTable table, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.insert(table);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool> insertAll(List<ReportTable> tables, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.insertAll(tables);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<List<ReportTable>?> selectAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.reportTableHelper.selectAll();
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
+
+  @override
+  Future<bool> update(ReportTable table, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.update(table);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool?> existsById(String id, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.reportTableHelper.existsById(id);
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
+}
+
+abstract class ProxyPart<T, TID> {
   Future<bool> insert(T element);
   Future<bool> insertAll(List<T> elements);
   Future<bool> delete(T element);
   Future<bool> update(T element);
   Future<List<T>?> selectAll();
+  Future<bool?> existsById(TID id);
 }

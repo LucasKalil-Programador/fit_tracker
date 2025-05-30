@@ -5,7 +5,7 @@ import 'package:fittrackr/states/base_list_state.dart';
 // ExercisesState
 
 class ExercisesState extends BaseListState<Exercise> {
-  ExercisesState(super.dbProxy);
+  ExercisesState(super.dbProxy, {super.loadDatabase});
 
   List<Exercise> sorted() {
     final sortedList = super.clone;
@@ -27,21 +27,21 @@ class ExercisesState extends BaseListState<Exercise> {
 // TrainingPlanState
 
 class TrainingPlanState extends BaseListState<TrainingPlan> {
-  TrainingPlanState(super.dbProxy);
+  TrainingPlanState(super.dbProxy, {super.loadDatabase});
 }
 
 
 // ReportTableState
 
 class ReportTableState extends BaseListState<ReportTable> {
-  ReportTableState(super.dbProxy);
+  ReportTableState(super.dbProxy, {super.loadDatabase});
 }
 
 
 // ReportState
 
 class ReportState extends BaseListState<Report> {
-  ReportState(super.dbProxy);
+  ReportState(super.dbProxy, {super.loadDatabase});
 
   List<Report> getByTable(String tableId) {
     return where((e) => e.tableId == tableId)

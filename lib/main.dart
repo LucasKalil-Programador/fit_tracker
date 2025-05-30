@@ -11,9 +11,9 @@ void main() async {
   final db = DatabaseProxy.instance;
   
   // instantiates States 
-  final trainingPlanState = TrainingPlanState(db.trainingPlan);
-  final exercisesState    = ExercisesState(db.exercise);
-  final metadataState     = MetadataState();
+  final trainingPlanState = TrainingPlanState(db.trainingPlan, loadDatabase: true);
+  final exercisesState    = ExercisesState   (db.exercise,     loadDatabase: true);
+  final metadataState     = MetadataState    (db.metadata,     loadDatabase: true);
   final reportTableState  = ReportTableState(null);
   final reportState       = ReportState(null);
   
