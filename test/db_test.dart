@@ -7,50 +7,58 @@ import 'package:uuid/uuid.dart';
 void main() async {
   
   test('Exercise insert test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
 
-    final result = await proxy.exercise.insert(exercise);
-    expect(result.containsKey("success"), true);
+    await proxy.exercise.insert(exercise);
+    final result = await proxy.exercise.selectAll();
+    expect(result?.contains(exercise), true);
   });
 
   test('Exercise insert error same id', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
 
     var result = await proxy.exercise.insert(exercise);
-    expect(result.containsKey("success"), true);
+    expect(result, true);
 
-    result = await proxy.exercise.insert(exercise);
-    expect(result.containsKey("error"), true);
+    result = await proxy.exercise.insert(exercise, printLog: false);
+    expect(result, false);
   });
 
-  test('Exercise delete test', () async {
-    final proxy = await DatabaseProxy.instance;
+ test('Exercise delete test', () async {
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
 
-    var result = await proxy.exercise.insert(exercise);
-    expect(result.containsKey("success"), true);
+    await proxy.exercise.insert(exercise);
+    var result = await proxy.exercise.selectAll();
 
-    result = await proxy.exercise.delete(exercise);
-    expect(result.containsKey("success"), true);
+    expect(result?.contains(exercise), true);
+
+    await proxy.exercise.delete(exercise);
+    result = await proxy.exercise.selectAll();
+
+    expect(result?.contains(exercise), false);
   });
 
   test('Exercise update test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
 
-    var result = await proxy.exercise.insert(exercise);
-    expect(result.containsKey("success"), true);
+    await proxy.exercise.insert(exercise);
+    var result = await proxy.exercise.selectAll();
+    expect(result?.contains(exercise), true);
 
     Exercise exercise1 = Exercise(id: exercise.id, name: "test 2", amount: 20, reps: 25, sets: 411, type: ExerciseType.cardio);
 
-    result = await proxy.exercise.update(exercise1);
-    expect(result.containsKey("success"), true);
+    await proxy.exercise.update(exercise1);
+    result = await proxy.exercise.selectAll();
+    expect(result?.contains(exercise1), true);
+    expect(result?.contains(exercise), false);
   });
 
   test('Exercise select all test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise1 = Exercise(id: Uuid().v4(), name: "test-1", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     Exercise exercise2 = Exercise(id: Uuid().v4(), name: "test-2", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     Exercise exercise3 = Exercise(id: Uuid().v4(), name: "test-3", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
@@ -63,76 +71,78 @@ void main() async {
     await proxy.exercise.update(exercise4);
 
     final result = await proxy.exercise.selectAll();
-    expect(result.containsKey("success"), true);
-    expect(result.containsKey("data"), true);
-
-    final exercises = result["data"] as List<Exercise?>;
     
-    expect(exercises.isNotEmpty, true);
-    expect(exercises.contains(exercise1), false);
-    expect(exercises.contains(exercise2), true);
-    expect(exercises.contains(exercise3), true);
-    expect(exercises.contains(exercise4), true);
+    expect(result?.isNotEmpty, true);
+    expect(result?.contains(exercise1), false);
+    expect(result?.contains(exercise2), true);
+    expect(result?.contains(exercise3), true);
+    expect(result?.contains(exercise4), true);
   });
 
 
   test('TrainingPlan insert test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     await proxy.exercise.insert(exercise);
     
     TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
-    final result = await proxy.trainingPlan.insert(plan);
+    await proxy.trainingPlan.insert(plan);
+    final result = await proxy.trainingPlan.selectAll();
 
-    expect(result.containsKey("success"), true);
+    expect(result?.contains(plan), true);
   });
 
   test('TrainingPlan insert error same id', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     await proxy.exercise.insert(exercise);
     
     TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
     
     var result = await proxy.trainingPlan.insert(plan);
-    expect(result.containsKey("success"), true);
+    expect(result, true);
 
-    result = await proxy.trainingPlan.insert(plan);
-    expect(result.containsKey("error"), true);
+    result = await proxy.trainingPlan.insert(plan, printLog: false);
+    expect(result, false);
   });
 
   test('TrainingPlan delete test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     await proxy.exercise.insert(exercise);
     
     TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
     
-    var result = await proxy.trainingPlan.insert(plan);
-    expect(result.containsKey("success"), true);
+    await proxy.trainingPlan.insert(plan);
+    var result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan), true);
 
-    result = await proxy.trainingPlan.delete(plan);
-    expect(result.containsKey("success"), true);
+    await proxy.trainingPlan.delete(plan);
+    result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan), false);
   });
 
   test('TrainingPlan update test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     await proxy.exercise.insert(exercise);
     
     TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
     
-    var result = await proxy.trainingPlan.insert(plan);
-    expect(result.containsKey("success"), true);
+    await proxy.trainingPlan.insert(plan);
+    var result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan), true);
 
     TrainingPlan plan1 = TrainingPlan(id: plan.id, name: "Treino B", list: plan.list);
 
-    result = await proxy.trainingPlan.update(plan1);
-    expect(result.containsKey("success"), true);
+    await proxy.trainingPlan.update(plan1);
+    result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan1), true);
+    expect(result?.contains(plan), false);
   });
 
   test('TrainingPlan select all test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     Exercise exercise1 = Exercise(id: Uuid().v4(), name: "test-1", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     Exercise exercise2 = Exercise(id: Uuid().v4(), name: "test-2", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
     Exercise exercise3 = Exercise(id: Uuid().v4(), name: "test-3", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
@@ -157,63 +167,67 @@ void main() async {
     await proxy.trainingPlan.update(trainingPlan4);
     await proxy.trainingPlan.delete(trainingPlan5);
 
-    final result = await proxy.trainingPlan.selectAll();
-    expect(result.containsKey("success"), true);
-    expect(result.containsKey("data"), true);
+    final result = await proxy.trainingPlan.selectAll() ?? [];
 
-    final exercises = result["data"] as List<TrainingPlan?>;
-    
-    expect(exercises.isNotEmpty, true);
-    expect(exercises.contains(trainingPlan3), false);
-    expect(exercises.contains(trainingPlan5), false);
-    expect(exercises.contains(trainingPlan1), true);
-    expect(exercises.contains(trainingPlan2), true);
-    expect(exercises.contains(trainingPlan4), true);
+    expect(result.isNotEmpty, true);
+    expect(result.contains(trainingPlan3), false);
+    expect(result.contains(trainingPlan5), false);
+    expect(result.contains(trainingPlan1), true);
+    expect(result.contains(trainingPlan2), true);
+    expect(result.contains(trainingPlan4), true);
   });
 
 
   test('Metadata insert test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     MapEntry<String, String> entry = MapEntry("config", "test");
-    final result = await proxy.metadata.insert(entry);
+    await proxy.metadata.insert(entry);
     
-    expect(result.containsKey("success"), true);
+    final result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);
   });
 
   test('Metadata insert same id', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     MapEntry<String, String> entry = MapEntry("config-3", "test");
 
-    var result = await proxy.metadata.insert(entry);
-    expect(result.containsKey("success"), true);
+    await proxy.metadata.insert(entry);
+    var result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);
 
     entry = MapEntry(entry.key, "test-2");
 
-    result = await proxy.metadata.insert(entry);
-    expect(result.containsKey("error"), true);
+    await proxy.metadata.insert(entry, printLog: false);
+    result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), false);
   });
 
   test('Metadata delete test', () async {
-    final proxy = await DatabaseProxy.instance;
+    final proxy = DatabaseProxy.instance;
     MapEntry<String, String> entry = MapEntry("config-2", "test");
 
-    var result = await proxy.metadata.insert(entry);
-    expect(result.containsKey("success"), true);
+    await proxy.metadata.insert(entry);
+    var result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);
 
-    result = await proxy.metadata.delete(entry);
-    expect(result.containsKey("success"), true);
+    await proxy.metadata.delete(entry);
+    result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), false);
   });
 
   test('Metadata update test', () async {
     final proxy = await DatabaseProxy.instance;
     MapEntry<String, String> entry = MapEntry("config-500", "test");
 
-    var result = await proxy.metadata.insert(entry);
-    expect(result.containsKey("success"), true);
+    await proxy.metadata.insert(entry);
+    var result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);
 
-    entry = MapEntry(entry.key, "test-500");
-    result = await proxy.metadata.update(entry);
-    expect(result.containsKey("success"), true);
+    final entry1 = MapEntry(entry.key, "test-500");
+    await proxy.metadata.update(entry1);
+    result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), false);
+    expect(result?.any((element) => element.key == entry1.key && element.value == entry1.value), true);
   });
 
   test('Metadata select all test', () async {
@@ -235,17 +249,12 @@ void main() async {
 
     await proxy.metadata.delete(entry4);
 
-    final result = await proxy.metadata.selectAll();
-    
-    expect(result.containsKey("success"), true);
-    expect(result.containsKey("data"), true);
+    var result = await proxy.metadata.selectAll();    
 
-    final data = (result["data"] as List<Map<String, String>>).map((e) => e.toString(),);
-    
-    expect(data.contains({"key": entry1.key, "value": entry1.value}.toString()), true);
-    expect(data.contains({"key": entry2.key, "value": entry2.value}.toString()), true);
-    expect(data.contains({"key": entry3.key, "value": entry3.value}.toString()), true);
-    expect(data.contains({"key": entry4.key, "value": entry4.value}.toString()), false);
-    expect(data.contains({"key": entry5.key, "value": entry5.value}.toString()), true);
+    expect(result?.any((element) => element.key == entry1.key && element.value == entry1.value), true);  
+    expect(result?.any((element) => element.key == entry2.key && element.value == entry2.value), true);
+    expect(result?.any((element) => element.key == entry3.key && element.value == entry3.value), true);   
+    expect(result?.any((element) => element.key == entry4.key && element.value == entry4.value), false);   
+    expect(result?.any((element) => element.key == entry5.key && element.value == entry5.value), true);
   });
 }

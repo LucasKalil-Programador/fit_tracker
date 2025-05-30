@@ -1,349 +1,196 @@
-import 'package:fittrackr/database/_database_helper.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'dart:convert';
-
-import 'package:fittrackr/database/entities.dart';
-// import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:synchronized/synchronized.dart';
-
 import 'dart:async';
-import 'dart:isolate';
-import 'package:uuid/uuid.dart';
 
-
-abstract class _Keys {
-  static const id = "id";
-  static const task = "task";
-  static const table = "table";
-  static const payload = "payload";
-
-  static const success = "success";
-  static const data = "data";
-  static const error = "error";
-  static const stack = "stack";
-
-  static const insert = "insert";
-  static const delete = "delete";
-  static const update = "update";
-  static const selectAll = "selectAll";
-
-  static const exercise = "exercise";
-  static const metadata = "metadata";
-  static const trainingPlan = "training_plan";
-}
+import 'package:fittrackr/database/_database_helper.dart';
+import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/logger.dart';
+import 'package:synchronized/synchronized.dart';
 
 
 // Proxy
 
-enum ProxyStatus {notInitiated, operational}
-
 class DatabaseProxy {
-  ProxyStatus _status = ProxyStatus.notInitiated;
-  late final ReceivePort _mainReceivePort;
-  late final SendPort _workerSendPort;
-
-  final Map<String, Completer<Map<String, Object>>> completerMap = {};
-
   DatabaseProxy._internal();
+
   static final DatabaseProxy _instance = DatabaseProxy._internal();
-  factory DatabaseProxy() => _instance;
-
-  ProxyStatus get status => _status;
+  static DatabaseProxy get instance => _instance;
   
-  static Future<DatabaseProxy> get instance async {
-    if(_instance._status == ProxyStatus.operational) {
-      return _instance;
-    }
-    await _instance._initWorker();
-    return _instance;
-  }
-
-  Future<void> _initWorker() async {
-    _mainReceivePort = ReceivePort();
-    await Isolate.spawn(_Worker.run, _mainReceivePort.sendPort);
-    final broadcastStream = _mainReceivePort.asBroadcastStream();
-
-    _workerSendPort = await broadcastStream.first as SendPort;
-    broadcastStream.listen(_onData);
-
-    _status = ProxyStatus.operational;
-  }
-
-  void _onData(dynamic data) {
-    if(data is Map<String, Object>) {
-      Object? completerID = data[_Keys.id];
-      if(completerMap.containsKey(completerID)) {
-        data.remove(_Keys.id);
-        completerMap[completerID]!.complete(data);
-        completerMap.remove(completerID);
-      }
-    }
-  }
-
-  Future<Map<String, Object>> _execute(String task, String table, String payload) {
-    final taskID = Uuid().v4();
-    final completer = Completer<Map<String, Object>>();
-    completerMap[taskID] = completer;
-
-    _workerSendPort.send({_Keys.id: taskID, _Keys.task: task, _Keys.table: table, _Keys.payload: payload});
-
-    return completer.future;
-  }
-
-  late final ProxyPart<Exercise> exercise = ExerciseProxy(this);
-  late final ProxyPart<TrainingPlan> trainingPlan = TrainingPlanProxy(this);  
-  late final ProxyPart<MapEntry<String, String>> metadata = MetadataProxy(this);
+  late final ExerciseProxy     exercise = ExerciseProxy();
+  late final TrainingPlanProxy trainingPlan = TrainingPlanProxy();  
+  late final MetadataProxy     metadata = MetadataProxy();
 }
 
 
 class ExerciseProxy implements ProxyPart<Exercise> {
-  final DatabaseProxy _dbProxy;
-
-  ExerciseProxy(this._dbProxy);
+  final _lock = Lock();
+  final db = DatabaseHelper();
 
   @override
-  Future<Map<String, Object>> insert(Exercise exercise) {
-    return _dbProxy._execute(_Keys.insert, _Keys.exercise, jsonEncode(exercise.toMap()));
+  Future<bool> delete(Exercise exercise, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.delete(exercise);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> delete(Exercise exercise) {
-    return _dbProxy._execute(_Keys.delete, _Keys.exercise, jsonEncode(exercise.toMap()));
+  Future<bool> insert(Exercise exercise, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.insert(exercise);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> update(Exercise exercise) {
-    return _dbProxy._execute(_Keys.update, _Keys.exercise, jsonEncode(exercise.toMap()));
+  Future<List<Exercise>?> selectAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.exercise.selectAll();
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> selectAll() async {
-    final result = await _dbProxy._execute(_Keys.selectAll, _Keys.exercise, "");
-    if(result.containsKey(_Keys.data)) {
-      result[_Keys.data] = (result["data"] as List<Map<String, Object?>>)
-              .map(Exercise.fromMap)
-              .toList();
-    } 
-    return result;
+  Future<bool> update(Exercise exercise, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.update(exercise);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
 }
 
 class TrainingPlanProxy implements ProxyPart<TrainingPlan> {
-  final DatabaseProxy _dbProxy;
-
-  TrainingPlanProxy(this._dbProxy);
+  final _lock = Lock();
+  final db = DatabaseHelper();
 
   @override
-  Future<Map<String, Object>> insert(TrainingPlan plan) {
-    return _dbProxy._execute(_Keys.insert, _Keys.trainingPlan, jsonEncode(plan.toMap()));
+  Future<bool> delete(TrainingPlan plan, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.delete(plan);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> delete(TrainingPlan plan) {
-    return _dbProxy._execute(_Keys.delete, _Keys.trainingPlan, jsonEncode(plan.toMap()));
+  Future<bool> insert(TrainingPlan plan, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.insert(plan);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> update(TrainingPlan plan) {
-    return _dbProxy._execute(_Keys.update, _Keys.trainingPlan, jsonEncode(plan.toMap()));
+  Future<List<TrainingPlan>?> selectAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.trainingPlan.selectAll();
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> selectAll() async {
-    final result = await _dbProxy._execute(_Keys.selectAll, _Keys.trainingPlan, "");
-    if(result.containsKey(_Keys.data)) {
-      result[_Keys.data] = (result["data"] as List<Map<String, Object?>>)
-              .map(TrainingPlan.fromMap)
-              .toList();
-    } 
-    return result;
+  Future<bool> update(TrainingPlan plan, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.update(plan);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
 }
 
 class MetadataProxy implements ProxyPart<MapEntry<String, String>> {
-  final DatabaseProxy _dbProxy;
-
-  MetadataProxy(this._dbProxy);
+  final _lock = Lock();
+  final db = DatabaseHelper();
 
   @override
-  Future<Map<String, Object>> insert(MapEntry<String, String> metadata) {
-    return _dbProxy._execute(_Keys.insert, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  Future<bool> delete(MapEntry<String, String> entry, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.delete(entry);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> delete(MapEntry<String, String> metadata) {
-    return _dbProxy._execute(_Keys.delete, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  Future<bool> insert(MapEntry<String, String> entry, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.insert(entry);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> update(MapEntry<String, String> metadata) {
-    return _dbProxy._execute(_Keys.update, _Keys.metadata, jsonEncode({"key": metadata.key, "value": metadata.value}));
+  Future<List<MapEntry<String, String>>?> selectAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.metadata.selectAll();
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
   }
-
+  
   @override
-  Future<Map<String, Object>> selectAll() {
-    return _dbProxy._execute(_Keys.selectAll, _Keys.metadata, "");
+  Future<bool> update(MapEntry<String, String> entry, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.update(entry);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
   }
 }
 
 abstract class ProxyPart<T> {
-  Future<Map<String, Object>> insert(T element);
-  Future<Map<String, Object>> delete(T element);
-  Future<Map<String, Object>> update(T element);
-  Future<Map<String, Object>> selectAll();
-}
-
-
-// Worker
-
-abstract class _Worker {
-
-  static void run(SendPort mainSendPort) {
-    final workerPort = ReceivePort();
-    final lock = Lock();
-
-    mainSendPort.send(workerPort.sendPort);
-
-    workerPort.listen((task) {
-      if (task is Map<String, Object>) {
-        lock.synchronized(() async {
-          try {
-            final result = await _doWork(task);
-            mainSendPort.send(result);
-          } catch (e, stack) {
-            mainSendPort.send({
-              _Keys.id: task[_Keys.id]!, 
-              _Keys.error: e.toString(), 
-              _Keys.stack: stack.toString()
-            });
-          }
-        });
-      }
-    });
-  }
-
-  static Future<Map<String, Object>> _doWork(Map<String, Object> task) async {
-    switch (task[_Keys.task]) {
-      case _Keys.insert:
-        return await _insert(task);
-      case _Keys.delete:
-        return await _delete(task);
-      case _Keys.update:
-        return await _update(task);
-      case _Keys.selectAll:
-        return await _selectAll(task);
-      default:
-        return {
-          _Keys.id: task[_Keys.id]!,
-          _Keys.error: "key error task[_Keys.task] = ${task[_Keys.task]}",
-        };
-    }
-  }
-
-// jobs
-
-  static Future<Map<String, Object>> _insert(Map<String, Object> task) async {
-    final db = DatabaseHelper();
-    final payload = task[_Keys.payload] as String;
-    
-    switch (task[_Keys.table]) {
-      case _Keys.exercise:
-        final exercise = Exercise.fromMap(jsonDecode(payload))!;
-        await db.exercise.insert(exercise);
-        break;
-      case _Keys.trainingPlan:
-        final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
-        await db.trainingPlan.insert(plan);
-        break;
-      case _Keys.metadata:
-        final map = (jsonDecode(payload) as Map).cast<String, String>();
-        await db.metadata.insert(map);
-        break;
-      default:
-        return {
-          _Keys.id: task[_Keys.id]!,
-          _Keys.error: "key error task[_Keys.table] = ${task[_Keys.table]}",
-        };
-    }
-
-    return {_Keys.id: task[_Keys.id]!, _Keys.success: true};
-  }
-
-  static Future<Map<String, Object>> _delete(Map<String, Object> task) async {
-    final db = DatabaseHelper();
-    final payload = task[_Keys.payload] as String;
-
-    switch (task[_Keys.table]) {
-      case _Keys.exercise:
-        final exercise = Exercise.fromMap(jsonDecode(payload))!;
-        await db.exercise.delete(exercise);
-        break;
-      case _Keys.trainingPlan:
-        final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
-        await db.trainingPlan.delete(plan);
-        break;
-      case _Keys.metadata:
-        final map = (jsonDecode(payload) as Map).cast<String, String>();
-        await db.metadata.delete(map);
-        break;
-      default:
-        return {
-          _Keys.id: task[_Keys.id]!,
-          _Keys.error: "key error task[_Keys.table] = ${task[_Keys.table]}",
-        };
-    }
-
-    return {_Keys.id: task[_Keys.id]!, _Keys.success: true};
-  }
-
-  static Future<Map<String, Object>> _update(Map<String, Object> task) async {
-    final db = DatabaseHelper();
-    final payload = task[_Keys.payload] as String;
-
-    switch (task[_Keys.table]) {
-      case _Keys.exercise:
-        final exercise = Exercise.fromMap(jsonDecode(payload))!;
-        await db.exercise.update(exercise);
-        break;
-      case _Keys.trainingPlan:
-        final plan = TrainingPlan.fromMap(jsonDecode(payload))!;
-        await db.trainingPlan.update(plan);
-        break;
-      case _Keys.metadata:
-        final map = (jsonDecode(payload) as Map).cast<String, String>();
-        await db.metadata.update(map);
-        break;
-      default:
-        return {
-          _Keys.id: task[_Keys.id]!,
-          _Keys.error: "key error task[_Keys.table] = ${task[_Keys.table]}",
-        };
-    }
-
-    return {_Keys.id: task[_Keys.id]!, _Keys.success: true};
-  }
-
-  static Future<Map<String, Object>> _selectAll(Map<String, Object> task) async {
-    final db = DatabaseHelper();
-
-    switch (task[_Keys.table]) {
-      case _Keys.exercise:
-        final data = await db.exercise.selectAll();
-        final encodedData = data.map((e) => e.toMap()).toList();
-        return {_Keys.id: task[_Keys.id]!, _Keys.success: true, _Keys.data: encodedData};
-      case _Keys.trainingPlan:
-        final data = await db.trainingPlan.selectAll();
-        final encodedData = data.map((e) => e.toMap()).toList();
-        return {_Keys.id: task[_Keys.id]!, _Keys.success: true, _Keys.data: encodedData};
-      case _Keys.metadata:
-        final data = await db.metadata.selectAll();
-        return {_Keys.id: task[_Keys.id]!, _Keys.success: true, _Keys.data: data};
-      default:
-        return {
-          _Keys.id: task[_Keys.id]!,
-          _Keys.error: "key error task[_Keys.table] = ${task[_Keys.table]}",
-        };
-    }
-  }
+  Future<bool> insert(T element);
+  Future<bool> delete(T element);
+  Future<bool> update(T element);
+  Future<List<T>?> selectAll();
 }

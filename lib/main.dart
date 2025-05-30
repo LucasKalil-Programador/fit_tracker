@@ -8,8 +8,8 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final db = await DatabaseProxy.instance;
- 
+  final db = DatabaseProxy.instance;
+  
   // instantiates States 
   final trainingPlanState = TrainingPlanState(db.trainingPlan);
   final exercisesState    = ExercisesState(db.exercise);

@@ -1,7 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:fittrackr/database/entities.dart';
+
+// ignore: unnecessary_import
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:path/path.dart';
 
 
 // DB Helper
@@ -50,10 +56,13 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDb() async {
-    // final path = join(await getDatabasesPath(), 'fittracker.db');
-    
-    databaseFactory = databaseFactoryFfi;
-    final path = ":memory:";
+    late final String path;
+    if(Platform.isAndroid) {
+      path = join(await getDatabasesPath(), 'fittracker.db');
+    } else if(Platform.isWindows) {
+      path = ":memory:";
+      databaseFactory = databaseFactoryFfi;
+    }
 
     return await openDatabase(
       path, 
@@ -176,46 +185,45 @@ class TrainingPlanHelper implements Helper<TrainingPlan> {
 
 // Metadata
 
-class MetadataHelper implements Helper<Map<String, String>> {
+class MetadataHelper implements Helper<MapEntry<String, String>> {
   @override
-  Future<void> insert(Map<String, String> metadata) async {
+  Future<void> insert(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
     await db.insert('metadata', {
-      'key': metadata["key"],
-      'value': metadata["value"],
+      'key': metadata.key,
+      'value': metadata.value,
     });
   }
 
   @override
-  Future<void> update(Map<String, String> metadata) async {
+  Future<void> update(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
     await db.update('metadata', {
-      'value': metadata["value"],
+      'value': metadata.value,
       },
       where: 'key = ?',
-      whereArgs: [metadata["key"]],
+      whereArgs: [metadata.key],
     );
   }
 
   @override
-  Future<void> delete(Map<String, String> metadata) async {
+  Future<void> delete(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
-    await db.delete('metadata', where: 'key = ?', whereArgs: [metadata["key"]]);
+    await db.delete('metadata', where: 'key = ?', whereArgs: [metadata.key]);
   }
 
   @override
-  Future<List<Map<String, String>>> selectAll() async {
+  Future<List<MapEntry<String, String>>> selectAll() async {
     final db = await DatabaseHelper().database;
     final data = await db.queryCursor('metadata');
 
-    final List<Map<String, String>> metadata = [];
+    final List<MapEntry<String, String>> metadata = [];
     while (await data.moveNext()) {
       final element = data.current;
       final key = element["key"];
       final value = element["value"];
       if(key is String && value is String) {
-        final mapEntry = {"key": key, "value": value};
-        metadata.add(mapEntry);
+        metadata.add(MapEntry(key, value));
       }
     }
     
