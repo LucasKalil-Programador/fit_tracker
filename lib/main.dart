@@ -1,12 +1,13 @@
 import 'package:fittrackr/app.dart';
 
 import 'package:fittrackr/database/db.dart';
+import 'package:fittrackr/logger.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final db = DatabaseProxy.instance;
   
@@ -14,9 +15,9 @@ void main() async {
   final trainingPlanState = TrainingPlanState(db.trainingPlan, loadDatabase: true);
   final exercisesState    = ExercisesState   (db.exercise,     loadDatabase: true);
   final metadataState     = MetadataState    (db.metadata,     loadDatabase: true);
-  final reportTableState  = ReportTableState(null);
-  final reportState       = ReportState(null);
-  
+  final reportTableState  = ReportTableState (db.reportTable,  loadDatabase: true);
+  final reportState       = ReportState      (db.report,       loadDatabase: true);
+
   runApp(
     MultiProvider(
       providers: [
@@ -29,4 +30,12 @@ void main() async {
       child: App(),
     ),
   );
+
+  Future.wait([
+    trainingPlanState.waitLoaded(), exercisesState.waitLoaded(),
+    metadataState.waitLoaded(), reportTableState.waitLoaded(),
+    reportState.waitLoaded(),
+  ]).then((value) {
+    logger.i("All States is Loaded");
+  },);
 }

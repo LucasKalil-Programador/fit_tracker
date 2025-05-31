@@ -139,6 +139,19 @@ class ExerciseHelper implements Helper<Exercise, String> {
   }
 
   @override
+  Future<void> upsert(Exercise exercise) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('exercise', {
+      'uuid':   exercise.id,
+      'name':   exercise.name,
+      'amount': exercise.amount,
+      'reps':   exercise.reps,
+      'sets':   exercise.sets,
+      'type':   exercise.type.name,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
   Future<void> update(Exercise exercise) async {
     final db = await DatabaseHelper().database;
     await db.update('exercise', {
@@ -220,6 +233,16 @@ class TrainingPlanHelper implements Helper<TrainingPlan, String> {
   }
 
   @override
+  Future<void> upsert(TrainingPlan plan) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('training_plan', {
+      'uuid': plan.id,
+      'name': plan.name,
+      'list': jsonEncode(plan.list),
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
   Future<void> update(TrainingPlan plan) async {
     final db = await DatabaseHelper().database;
     await db.update('training_plan', {
@@ -293,6 +316,15 @@ class MetadataHelper implements Helper<MapEntry<String, String>, String> {
       }
       await batch.commit(noResult: true);
     });
+  }
+
+  @override
+  Future<void> upsert(MapEntry<String, String> metadata) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('metadata', {
+      'key': metadata.key,
+      'value': metadata.value,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
@@ -377,6 +409,19 @@ class ReportTableHelper implements Helper<ReportTable, String> {
       }
       await batch.commit(noResult: true);
     });
+  }
+
+  @override
+  Future<void> upsert(ReportTable table) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('report_table', {
+      'uuid': table.id,
+      'name': table.name,
+      'description': table.description,
+      'value_suffix': table.valueSuffix,
+      'created_at': table.createdAt,
+      'updated_at': table.updatedAt
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
@@ -465,6 +510,18 @@ class ReportHelper implements Helper<Report, String> {
   }
 
   @override
+  Future<void> upsert(Report report) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('report', {
+      'uuid': report.id,
+      'note': report.note,
+      'report_date': report.reportDate,
+      'value': report.value,
+      'report_table_uuid': report.tableId,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  @override
   Future<void> update(Report report) async {
     final db = await DatabaseHelper().database;
     await db.update('report', {
@@ -520,9 +577,8 @@ class ReportHelper implements Helper<Report, String> {
 abstract class Helper<T, TID> {
   Future<void> insert(T element);
   Future<void> insertAll(List<T> element);
-
+  Future<void> upsert(T element);
   Future<void> update(T element);
-  // Future<void> upsert(T element);
 
   Future<bool> existsById(TID element);
   // Future<int> count();

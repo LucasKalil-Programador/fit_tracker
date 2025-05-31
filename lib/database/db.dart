@@ -103,6 +103,19 @@ class ExerciseProxy implements ProxyPart<Exercise, String> {
       }
     });
   }
+  
+  @override
+  Future<bool> upsert(Exercise exercise, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.upsert(exercise);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
 }
 
 class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
@@ -184,6 +197,19 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
       }
     });
   }
+  
+  @override
+  Future<bool> upsert(TrainingPlan plan, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.upsert(plan);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
 }
 
 class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
@@ -262,6 +288,19 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
       } catch (e) {
         if(printLog) logger.e(e);
         return null;
+      }
+    });
+  }
+  
+  @override
+  Future<bool> upsert(MapEntry<String, String> entry, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.upsert(entry);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
       }
     });
   }
@@ -348,6 +387,19 @@ class ReportTableProxy implements ProxyPart<ReportTable, String> {
       }
     });
   }
+  
+  @override
+  Future<bool> upsert(ReportTable table, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.upsert(table);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
 }
 
 class ReportProxy implements ProxyPart<Report, String> {
@@ -431,13 +483,27 @@ class ReportProxy implements ProxyPart<Report, String> {
       }
     });
   }
+  
+  @override
+  Future<bool> upsert(Report report, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.upsert(report);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
 }
 
 abstract class ProxyPart<T, TID> {
-  Future<bool> insert(T element);
-  Future<bool> insertAll(List<T> elements);
-  Future<bool> delete(T element);
-  Future<bool> update(T element);
-  Future<List<T>?> selectAll();
-  Future<bool?> existsById(TID id);
+  Future<bool> insert(T element, {bool printLog = true});
+  Future<bool> insertAll(List<T> elements, {bool printLog = true});
+  Future<bool> upsert(T element, {bool printLog = true});
+  Future<bool> delete(T element, {bool printLog = true});
+  Future<bool> update(T element, {bool printLog = true});
+  Future<List<T>?> selectAll({bool printLog = true});
+  Future<bool?> existsById(TID id, {bool printLog = true});
 }

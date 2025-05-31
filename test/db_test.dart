@@ -143,6 +143,25 @@ void reportTest() {
     final result = await proxy.report.existsById(report.id!);
     expect(result, true);
   });
+
+  test('Report upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    await proxy.reportTable.insert(reportTable);
+
+    final report = Report(id: Uuid().v4(), note: "Semana-0", reportDate: 1256, value: 110, tableId: reportTable.id!);
+
+    await proxy.report.upsert(report);
+    var result = await proxy.report.selectAll();
+    expect(result?.contains(report), true);
+
+    final report2 = Report(id: report.id, note: "Semana-1", reportDate: 12562, value: 1102, tableId: reportTable.id!);
+    await proxy.report.upsert(report2);
+
+    result = await proxy.report.selectAll();
+    expect(result?.contains(report), false);
+    expect(result?.contains(report2), true);
+  });
 }
 
 void exerciseTest() {
@@ -246,6 +265,21 @@ void exerciseTest() {
     await proxy.exercise.delete(exercise);
     result = await proxy.exercise.existsById(exercise.id!);
     expect(result, false);
+  });
+
+  test('Exercise upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+  
+    await proxy.exercise.upsert(exercise);
+    var result = await proxy.exercise.selectAll();
+    expect(result?.contains(exercise), true);
+
+    final exercise2 = Exercise(id: exercise.id, name: "test-2", amount: 152, reps: 152, sets: 42, type: ExerciseType.cardio);
+    await proxy.exercise.upsert(exercise2);
+    result = await proxy.exercise.selectAll();
+    expect(result?.contains(exercise), false);
+    expect(result?.contains(exercise2), true);
   });
 }
 
@@ -357,6 +391,21 @@ void metadataTest() {
     result = await proxy.metadata.existsById(entry.key);    
     expect(result, false);
   });
+
+  test('Metadata upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+    MapEntry<String, String> entry = MapEntry("config", "test");
+
+    await proxy.metadata.upsert(entry);
+    var result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), true);
+
+    MapEntry<String, String> entry2 = MapEntry(entry.key, "test-2");
+    await proxy.metadata.upsert(entry2);
+    result = await proxy.metadata.selectAll();    
+    expect(result?.any((element) => element.key == entry.key && element.value == entry.value), false);
+    expect(result?.any((element) => element.key == entry2.key && element.value == entry2.value), true);
+  });
 }
 
 void reportTableTest() {
@@ -460,6 +509,21 @@ void reportTableTest() {
     exist = await proxy.reportTable.existsById(reportTable.id!);
     expect(exist, false);
   });
+
+  test('ReportTable upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.upsert(reportTable);
+    var result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), true);
+
+    final reportTable2 = ReportTable(id: reportTable.id, name: "Pesagem-2", description: "BLABLABLA-2", valueSuffix: "Kg-2", createdAt: 13256782, updatedAt: 5757889442);
+    await proxy.reportTable.upsert(reportTable2);
+    result = await proxy.reportTable.selectAll();
+    expect(result?.contains(reportTable), false);
+    expect(result?.contains(reportTable2), true);
+  }); 
 }
 
 void trainingPlanTest() {
@@ -595,5 +659,22 @@ void trainingPlanTest() {
     await proxy.trainingPlan.delete(plan);
     result = await proxy.trainingPlan.existsById(plan.id!);
     expect(result, false);
+  });
+
+  test('TrainingPlan upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+    await proxy.exercise.insert(exercise);
+    
+    TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
+    await proxy.trainingPlan.upsert(plan);
+    var result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan), true);
+
+    TrainingPlan plan2 = TrainingPlan(id: plan.id, name: "Treino AA", list: [exercise.id!, exercise.id!]);
+    await proxy.trainingPlan.upsert(plan2);
+    result = await proxy.trainingPlan.selectAll();
+    expect(result?.contains(plan), false);
+    expect(result?.contains(plan2), true);
   });
 }
