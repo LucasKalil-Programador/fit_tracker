@@ -13,10 +13,11 @@ import 'package:path/path.dart';
 // DB Helper
 
 class DatabaseHelper {
-  final ExerciseHelper     exercise          = ExerciseHelper();
-  final TrainingPlanHelper trainingPlan      = TrainingPlanHelper();
-  final MetadataHelper     metadata          = MetadataHelper();
-  final ReportTableHelper  reportTableHelper = ReportTableHelper();
+  final exercise          = ExerciseHelper();
+  final trainingPlan      = TrainingPlanHelper();
+  final metadata          = MetadataHelper();
+  final reportTableHelper = ReportTableHelper();
+  final reportHelper      = ReportHelper();
 
   static const exerciseSQL = '''
           CREATE TABLE exercise(
@@ -54,6 +55,17 @@ class DatabaseHelper {
             updated_at INTEGER NOT NULL
           );
         ''';
+  
+  static const reportSQL = '''
+          CREATE TABLE report(
+            uuid TEXT PRIMARY KEY,
+            note TEXT NOT NULL,
+            report_date INTEGER NOT NULL,
+            value REAL NOT NULL,
+            report_table_uuid TEXT NOT NULL,
+            FOREIGN KEY (report_table_uuid) REFERENCES report_table(uuid) ON DELETE CASCADE
+          );
+        ''';
 
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
@@ -84,6 +96,7 @@ class DatabaseHelper {
         await db.execute(trainingPlanSQL);
         await db.execute(metadataSQL);
         await db.execute(reportTableSQL);
+        await db.execute(reportSQL);
       },
     );
   }
@@ -418,7 +431,89 @@ class ReportTableHelper implements Helper<ReportTable, String> {
 }
 
 
-// TODO: Report Helper
+// Report
+
+class ReportHelper implements Helper<Report, String> {
+  @override
+  Future<void> insert(Report report) async {
+    final db = await DatabaseHelper().database;
+    await db.insert('report', {
+      'uuid': report.id,
+      'note': report.note,
+      'report_date': report.reportDate,
+      'value': report.value,
+      'report_table_uuid': report.tableId,
+    });
+  }
+
+  @override
+  Future<void> insertAll(List<Report> reports) async {
+    final db = await DatabaseHelper().database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var report in reports) {
+        batch.insert('report', {
+          'uuid': report.id,
+          'note': report.note,
+          'report_date': report.reportDate,
+          'value': report.value,
+          'report_table_uuid': report.tableId,
+        });
+      }
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
+  Future<void> update(Report report) async {
+    final db = await DatabaseHelper().database;
+    await db.update('report', {
+      'uuid': report.id,
+      'note': report.note,
+      'report_date': report.reportDate,
+      'value': report.value,
+      'report_table_uuid': report.tableId,
+    },
+    where: 'uuid = ?',
+    whereArgs: [report.id],
+    );
+  }
+
+  @override
+  Future<void> delete(Report report) async {
+    final db = await DatabaseHelper().database;
+    await db.delete('report', where: 'uuid = ?', whereArgs: [report.id]);
+  }
+
+  @override
+  Future<List<Report>> selectAll() async {
+    final db = await DatabaseHelper().database;
+    final data = await db.queryCursor('report');
+
+    final List<Report> tables = [];
+    while(await data.moveNext()) {
+      final element = data.current;
+      final table = Report.fromMap(element);
+      if(table != null) {
+        tables.add(table);
+      }
+    }
+
+    return tables;
+  }
+
+  @override
+  Future<bool> existsById(String id) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'report',
+      where: 'uuid = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    return result.isNotEmpty;
+  }
+}
 
 // Helper interface
 
@@ -427,13 +522,13 @@ abstract class Helper<T, TID> {
   Future<void> insertAll(List<T> element);
 
   Future<void> update(T element);
-  // TODO: Future<void> upsert(T element);
+  // Future<void> upsert(T element);
 
   Future<bool> existsById(TID element);
   // Future<int> count();
   
   Future<void> delete(T element);
-  // TODO: Future<void> deleteAll();
+  // Future<void> deleteAll();
 
   Future<List<T>> selectAll();
 }

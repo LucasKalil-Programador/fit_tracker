@@ -206,7 +206,7 @@ class Report implements BaseEntity {
       "note": note,
       "report_date": reportDate,
       "value": value,
-      "table_id": tableId,
+      "report_table_uuid": tableId,
     };
   }
 
@@ -215,7 +215,7 @@ class Report implements BaseEntity {
     final note = map["note"];
     final reportDate = map["report_date"];
     final value = map["value"];
-    final tableId = map["table_id"];
+    final tableId = map["report_table_uuid"];
 
     if (uuid is String    && note is String &&
         reportDate is int && value is double   && tableId is String) {

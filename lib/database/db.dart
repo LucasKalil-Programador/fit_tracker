@@ -14,16 +14,19 @@ class DatabaseProxy {
   static final DatabaseProxy _instance = DatabaseProxy._internal();
   static DatabaseProxy get instance => _instance;
   
-  final ExerciseProxy     exercise     = ExerciseProxy();
-  final TrainingPlanProxy trainingPlan = TrainingPlanProxy();  
-  final MetadataProxy     metadata     = MetadataProxy();
-  final ReportTableProxy  reportTable  = ReportTableProxy();
+  final sharedLock = Lock();
+
+  final exercise         = ExerciseProxy();
+  final trainingPlan     = TrainingPlanProxy();  
+  final metadata         = MetadataProxy();
+  late final reportTable = ReportTableProxy(sharedLock);
+  late final report      = ReportProxy(sharedLock);
 }
 
 
 class ExerciseProxy implements ProxyPart<Exercise, String> {
-  final _lock = Lock();
   final db = DatabaseHelper();
+  final _lock = Lock();
 
   @override
   Future<bool> delete(Exercise exercise, {bool printLog = true}) {
@@ -103,8 +106,8 @@ class ExerciseProxy implements ProxyPart<Exercise, String> {
 }
 
 class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
-  final _lock = Lock();
   final db = DatabaseHelper();
+  final _lock = Lock();
 
   @override
   Future<bool> delete(TrainingPlan plan, {bool printLog = true}) {
@@ -184,8 +187,8 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
 }
 
 class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
-  final _lock = Lock();
   final db = DatabaseHelper();
+  final _lock = Lock();
 
   @override
   Future<bool> delete(MapEntry<String, String> entry, {bool printLog = true}) {
@@ -265,8 +268,10 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
 }
 
 class ReportTableProxy implements ProxyPart<ReportTable, String> {
-  final _lock = Lock();
   final db = DatabaseHelper();
+  final Lock _lock;
+
+  ReportTableProxy(this._lock);
 
   @override
   Future<bool> delete(ReportTable table, {bool printLog = true}) {
@@ -337,6 +342,89 @@ class ReportTableProxy implements ProxyPart<ReportTable, String> {
     return _lock.synchronized(() async {
       try {
         return await db.reportTableHelper.existsById(id);
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
+}
+
+class ReportProxy implements ProxyPart<Report, String> {
+  final db = DatabaseHelper();
+  final Lock _lock;
+
+  ReportProxy(this._lock);
+
+  @override
+  Future<bool> delete(Report report, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.delete(report);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool> insert(Report report, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.insert(report);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool> insertAll(List<Report> reports, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.insertAll(reports);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<List<Report>?> selectAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.reportHelper.selectAll();
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return null;
+      }
+    });
+  }
+
+  @override
+  Future<bool> update(Report report, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.update(report);
+        return true;
+      } catch (e) {
+        if(printLog) logger.e(e);
+        return false;
+      }
+    });
+  }
+
+  @override
+  Future<bool?> existsById(String id, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        return await db.reportHelper.existsById(id);
       } catch (e) {
         if(printLog) logger.e(e);
         return null;
