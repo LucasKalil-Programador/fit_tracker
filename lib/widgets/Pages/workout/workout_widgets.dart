@@ -97,11 +97,10 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
   List<String> exercisesId = [];
   List<String> donelist = [];
   
-  double get progress => donelist.length / exercises.length;
+  double get progress => exercises.isEmpty ? 1 : donelist.length / exercises.length;
 
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
