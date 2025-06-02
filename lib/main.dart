@@ -32,10 +32,10 @@ void main() {
   );
 
   Future.wait([
-    trainingPlanState.waitLoaded(), exercisesState.waitLoaded(),
-    metadataState.waitLoaded(), reportTableState.waitLoaded(),
+    trainingPlanState.waitLoaded(),
+    exercisesState.waitLoaded(),
+    metadataState.waitLoaded(),
+    reportTableState.waitLoaded(),
     reportState.waitLoaded(),
-  ]).then((value) {
-    logger.i("All States is Loaded");
-  },);
+  ]).then((value) => logger.i("All States is Loaded"));
 }

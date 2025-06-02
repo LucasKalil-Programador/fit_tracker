@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:fittrackr/database/db.dart';
+import 'package:fittrackr/logger.dart';
 import 'package:flutter/material.dart';
 
 const themeKey = "Config:key";
@@ -9,17 +10,14 @@ const themeKey = "Config:key";
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;
   final Map<String, String> _cache = {};
-  final completer = Completer<bool>();
+  final _completer = Completer<bool>();
 
   MetadataState(this.dbProxy, {bool loadDatabase = false}) {
-    if(loadDatabase) {
-      completer.complete(_loadFromDatabase());
-    } else {
-      completer.complete(true);
-    }
+    _completer.complete(loadDatabase ? _loadFromDatabase() : true);
   }
 
   int get length => _cache.length;
+  void forEach(void Function(String, String) action) => _cache.forEach(action);
   bool containsKey(String key) => _cache.containsKey(key);
   String? get(String key) => _cache[key];
 
@@ -37,17 +35,7 @@ class MetadataState extends ChangeNotifier {
 
   void put(String key, String value) {
     final entry = MapEntry(key, value);
-    
-    dbProxy?.existsById(key).then((exists) async {
-      if(exists == null) {
-        return false;
-      } else if(exists) {
-        return dbProxy?.update(entry);
-      } else {
-        return dbProxy?.insert(entry);
-      }
-    });
-
+    dbProxy?.upsert(entry).then(handleProxyResult);
     _cache[key] = value;
     notifyListeners();
   }
@@ -61,33 +49,33 @@ class MetadataState extends ChangeNotifier {
   }
 
   void remove(String key) {
-    dbProxy?.delete(MapEntry(key, _cache[key]!));
+    dbProxy?.delete(MapEntry(key, _cache[key]!)).then(handleProxyResult);
     if(_cache.containsKey(key)) {
       _cache.remove(key);
       notifyListeners();
     }
   }
 
-  void forEach(void Function(String, String) action) {
-    _cache.forEach(action);
-  }
-
-  Map<String, String> clone() {
-    return Map<String, String>.from(_cache);
-  }
-
-  Future<bool> waitLoadComplete() => completer.future;
+  Future<bool> waitLoaded() => _completer.future;
 
   Future<bool> _loadFromDatabase() async {
     if(dbProxy == null) return true;
-    final entries = await dbProxy!.selectAll();
-    if(entries == null) return false;
+    final entries = await dbProxy!.selectAll()
+    .then((value) {
+      handleProxyResult(value);
+      return value;
+    },);
+    if(entries.result == null) return false;
     
-    for (final entry in entries) {
+    for (final entry in entries.result!) {
       _cache[entry.key] = entry.value;
     }
     
     notifyListeners();
     return true;
+  }
+
+  FutureOr<void> handleProxyResult(dynamic value) {
+    logger.i("Metadata db result $value");
   }
 }

@@ -29,90 +29,92 @@ class ExerciseProxy implements ProxyPart<Exercise, String> {
   final _lock = Lock();
 
   @override
-  Future<bool> delete(Exercise exercise, {bool printLog = true}) {
+  Future<ProxyResult<bool>> delete(Exercise exercise, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.exercise.delete(exercise);
-        return true;
+        return ProxyResult(ProxyMethods.delete, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
-      }
-    });
-  }
-  
-  @override
-  Future<bool> insert(Exercise exercise, {bool printLog = true}) {
-    return _lock.synchronized(() async {
-      try {
-        await db.exercise.insert(exercise);
-        return true;
-      } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.delete, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insertAll(List<Exercise> exercises, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insert(Exercise exercise, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.insert(exercise);
+        return ProxyResult(ProxyMethods.insert, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insert, false, error: e);
+      }
+    });
+  }
+
+  @override
+  Future<ProxyResult<bool>> insertAll(List<Exercise> exercises, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.exercise.insertAll(exercises);
-        return true;
+        return ProxyResult(ProxyMethods.insertAll, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insertAll, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<List<Exercise>?> selectAll({bool printLog = true}) {
+  Future<ProxyResult<List<Exercise>?>> selectAll({bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.exercise.selectAll();
+        final result = await db.exercise.selectAll();
+        return ProxyResult(ProxyMethods.selectAll, result);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.selectAll, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> update(Exercise exercise, {bool printLog = true}) {
+  Future<ProxyResult<bool>> update(Exercise exercise, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.exercise.update(exercise);
-        return true;
+        return ProxyResult(ProxyMethods.update, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.update, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool?> existsById(String id, {bool printLog = true}) {
+  Future<ProxyResult<bool?>> existsById(String id, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.exercise.existsById(id);
+        final exists = await db.exercise.existsById(id);
+        return ProxyResult(ProxyMethods.existsById, exists);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.existsById, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> upsert(Exercise exercise, {bool printLog = true}) {
+  Future<ProxyResult<bool>> upsert(Exercise exercise, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.exercise.upsert(exercise);
-        return true;
+        return ProxyResult(ProxyMethods.upsert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.upsert, false, error: e);
       }
     });
   }
@@ -123,90 +125,92 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
   final _lock = Lock();
 
   @override
-  Future<bool> delete(TrainingPlan plan, {bool printLog = true}) {
+  Future<ProxyResult<bool>> delete(TrainingPlan plan, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.delete(plan);
-        return true;
+        return ProxyResult(ProxyMethods.delete, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.delete, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> insert(TrainingPlan plan, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insert(TrainingPlan plan, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.insert(plan);
-        return true;
+        return ProxyResult(ProxyMethods.insert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insert, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> insertAll(List<TrainingPlan> plans, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insertAll(List<TrainingPlan> plans, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.insertAll(plans);
-        return true;
+        return ProxyResult(ProxyMethods.insertAll, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insertAll, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<List<TrainingPlan>?> selectAll({bool printLog = true}) {
+  Future<ProxyResult<List<TrainingPlan>?>> selectAll({bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.trainingPlan.selectAll();
+        final result = await db.trainingPlan.selectAll();
+        return ProxyResult(ProxyMethods.selectAll, result);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.selectAll, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> update(TrainingPlan plan, {bool printLog = true}) {
+  Future<ProxyResult<bool>> update(TrainingPlan plan, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.update(plan);
-        return true;
+        return ProxyResult(ProxyMethods.update, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.update, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool?> existsById(String id, {bool printLog = true}) {
+  Future<ProxyResult<bool?>> existsById(String id, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.trainingPlan.existsById(id);
+        final exists = await db.trainingPlan.existsById(id);
+        return ProxyResult(ProxyMethods.existsById, exists);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.existsById, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> upsert(TrainingPlan plan, {bool printLog = true}) {
+  Future<ProxyResult<bool>> upsert(TrainingPlan plan, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.trainingPlan.upsert(plan);
-        return true;
+        return ProxyResult(ProxyMethods.upsert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.upsert, false, error: e);
       }
     });
   }
@@ -217,90 +221,92 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
   final _lock = Lock();
 
   @override
-  Future<bool> delete(MapEntry<String, String> entry, {bool printLog = true}) {
+  Future<ProxyResult<bool>> delete(MapEntry<String, String> entry, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.metadata.delete(entry);
-        return true;
+        return ProxyResult(ProxyMethods.delete, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
-      }
-    });
-  }
-  
-  @override
-  Future<bool> insert(MapEntry<String, String> entry, {bool printLog = true}) {
-    return _lock.synchronized(() async {
-      try {
-        await db.metadata.insert(entry);
-        return true;
-      } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.delete, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insertAll(List<MapEntry<String, String>> entries, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insert(MapEntry<String, String> entry, {bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.insert(entry);
+        return ProxyResult(ProxyMethods.insert, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insert, false, error: e);
+      }
+    });
+  }
+
+  @override
+  Future<ProxyResult<bool>> insertAll(List<MapEntry<String, String>> entries, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.metadata.insertAll(entries);
-        return true;
+        return ProxyResult(ProxyMethods.insertAll, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insertAll, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<List<MapEntry<String, String>>?> selectAll({bool printLog = true}) {
+  Future<ProxyResult<List<MapEntry<String, String>>?>> selectAll({bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.metadata.selectAll();
+        final result = await db.metadata.selectAll();
+        return ProxyResult(ProxyMethods.selectAll, result);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.selectAll, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> update(MapEntry<String, String> entry, {bool printLog = true}) {
+  Future<ProxyResult<bool>> update(MapEntry<String, String> entry, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.metadata.update(entry);
-        return true;
+        return ProxyResult(ProxyMethods.update, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.update, false, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool?> existsById(String key, {bool printLog = true}) {
+  Future<ProxyResult<bool?>> existsById(String key, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.metadata.existsById(key);
+        final exists = await db.metadata.existsById(key);
+        return ProxyResult(ProxyMethods.existsById, exists);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.existsById, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> upsert(MapEntry<String, String> entry, {bool printLog = true}) {
+  Future<ProxyResult<bool>> upsert(MapEntry<String, String> entry, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.metadata.upsert(entry);
-        return true;
+        return ProxyResult(ProxyMethods.upsert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.upsert, false, error: e);
       }
     });
   }
@@ -313,90 +319,92 @@ class ReportTableProxy implements ProxyPart<ReportTable, String> {
   ReportTableProxy(this._lock);
 
   @override
-  Future<bool> delete(ReportTable table, {bool printLog = true}) {
+  Future<ProxyResult<bool>> delete(ReportTable table, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportTableHelper.delete(table);
-        return true;
+        return ProxyResult(ProxyMethods.delete, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.delete, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insert(ReportTable table, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insert(ReportTable table, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportTableHelper.insert(table);
-        return true;
+        return ProxyResult(ProxyMethods.insert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insert, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insertAll(List<ReportTable> tables, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insertAll(List<ReportTable> tables, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportTableHelper.insertAll(tables);
-        return true;
+        return ProxyResult(ProxyMethods.insertAll, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insertAll, false, error: e);
       }
     });
   }
 
   @override
-  Future<List<ReportTable>?> selectAll({bool printLog = true}) {
+  Future<ProxyResult<List<ReportTable>?>> selectAll({bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.reportTableHelper.selectAll();
+        final result = await db.reportTableHelper.selectAll();
+        return ProxyResult(ProxyMethods.selectAll, result);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.selectAll, null, error: e);
       }
     });
   }
 
   @override
-  Future<bool> update(ReportTable table, {bool printLog = true}) {
+  Future<ProxyResult<bool>> update(ReportTable table, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportTableHelper.update(table);
-        return true;
+        return ProxyResult(ProxyMethods.update, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.update, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool?> existsById(String id, {bool printLog = true}) {
+  Future<ProxyResult<bool?>> existsById(String id, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.reportTableHelper.existsById(id);
+        final exists = await db.reportTableHelper.existsById(id);
+        return ProxyResult(ProxyMethods.existsById, exists);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.existsById, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> upsert(ReportTable table, {bool printLog = true}) {
+  Future<ProxyResult<bool>> upsert(ReportTable table, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportTableHelper.upsert(table);
-        return true;
+        return ProxyResult(ProxyMethods.upsert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.upsert, false, error: e);
       }
     });
   }
@@ -409,101 +417,115 @@ class ReportProxy implements ProxyPart<Report, String> {
   ReportProxy(this._lock);
 
   @override
-  Future<bool> delete(Report report, {bool printLog = true}) {
+  Future<ProxyResult<bool>> delete(Report report, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportHelper.delete(report);
-        return true;
+        return ProxyResult(ProxyMethods.delete, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.delete, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insert(Report report, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insert(Report report, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportHelper.insert(report);
-        return true;
+        return ProxyResult(ProxyMethods.insert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insert, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool> insertAll(List<Report> reports, {bool printLog = true}) {
+  Future<ProxyResult<bool>> insertAll(List<Report> reports, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportHelper.insertAll(reports);
-        return true;
+        return ProxyResult(ProxyMethods.insertAll, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.insertAll, false, error: e);
       }
     });
   }
 
   @override
-  Future<List<Report>?> selectAll({bool printLog = true}) {
+  Future<ProxyResult<List<Report>?>> selectAll({bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.reportHelper.selectAll();
+        final result = await db.reportHelper.selectAll();
+        return ProxyResult(ProxyMethods.selectAll, result);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.selectAll, null, error: e);
       }
     });
   }
 
   @override
-  Future<bool> update(Report report, {bool printLog = true}) {
+  Future<ProxyResult<bool>> update(Report report, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportHelper.update(report);
-        return true;
+        return ProxyResult(ProxyMethods.update, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.update, false, error: e);
       }
     });
   }
 
   @override
-  Future<bool?> existsById(String id, {bool printLog = true}) {
+  Future<ProxyResult<bool?>> existsById(String id, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
-        return await db.reportHelper.existsById(id);
+        final exists = await db.reportHelper.existsById(id);
+        return ProxyResult(ProxyMethods.existsById, exists);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return null;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.existsById, null, error: e);
       }
     });
   }
-  
+
   @override
-  Future<bool> upsert(Report report, {bool printLog = true}) {
+  Future<ProxyResult<bool>> upsert(Report report, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
         await db.reportHelper.upsert(report);
-        return true;
+        return ProxyResult(ProxyMethods.upsert, true);
       } catch (e) {
-        if(printLog) logger.e(e);
-        return false;
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.upsert, false, error: e);
       }
     });
   }
 }
 
+enum ProxyMethods {insert, insertAll, upsert, delete, update, selectAll, existsById}
+
+class ProxyResult<T> {
+  final Object? error;
+  final ProxyMethods method;
+  final T result;
+
+  ProxyResult(this.method, this.result, {this.error});
+
+  bool get hasError => error != null;
+}
+
 abstract class ProxyPart<T, TID> {
-  Future<bool> insert(T element, {bool printLog = true});
-  Future<bool> insertAll(List<T> elements, {bool printLog = true});
-  Future<bool> upsert(T element, {bool printLog = true});
-  Future<bool> delete(T element, {bool printLog = true});
-  Future<bool> update(T element, {bool printLog = true});
-  Future<List<T>?> selectAll({bool printLog = true});
-  Future<bool?> existsById(TID id, {bool printLog = true});
+  Future<ProxyResult<bool>> insert(T element, {bool printLog = true});
+  Future<ProxyResult<bool>> insertAll(List<T> elements, {bool printLog = true});
+  Future<ProxyResult<bool>> upsert(T element, {bool printLog = true});
+  Future<ProxyResult<bool>> delete(T element, {bool printLog = true});
+  Future<ProxyResult<bool>> update(T element, {bool printLog = true});
+  Future<ProxyResult<List<T>?>> selectAll({bool printLog = true});
+  Future<ProxyResult<bool?>> existsById(TID id, {bool printLog = true});
 }

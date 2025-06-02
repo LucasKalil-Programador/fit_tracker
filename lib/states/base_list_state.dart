@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -7,6 +10,7 @@ enum UpdateEvent { insert, update, remove }
 
 abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   final ProxyPart<T, dynamic>? dbProxy;
+  final _completer = Completer<bool>();
   final List<T> _cache = [];
 
   List<T> get clone => List<T>.from(_cache);
@@ -18,14 +22,18 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   T? get lastOrNull => _cache.isNotEmpty ? _cache.last : null;
 
   BaseListState(this.dbProxy, {bool loadDatabase = false}) {
-    if(loadDatabase) _loadFromDatabase();
+    if(loadDatabase) {
+      _completer.complete(_loadFromDatabase());
+    } else {
+      _completer.complete(true);
+    }
   }
 
   T operator [](int index) => _cache[index];
 
   void operator []=(int index, T value) {
     _cache[index] = value;
-    dbProxy?.update(value);
+    dbProxy?.update(value).then(handleProxyResult);
     this.sort(notify: true);
   }
 
@@ -41,7 +49,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
     _cache.add(entity);
 
-    dbProxy?.insert(entity);
+    dbProxy?.insert(entity).then(handleProxyResult);
     this.sort(notify: true);
     return true;
   }
@@ -55,14 +63,14 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
       entity.id ??= Uuid().v4();
     }
     _cache.addAll(entities);
-    dbProxy?.insertAll(entities);
+    dbProxy?.insertAll(entities).then(handleProxyResult);
     this.sort(notify: true);
     return true;
   }
 
   void remove(T entity) {
     _cache.remove(entity);
-    dbProxy?.delete(entity);
+    dbProxy?.delete(entity).then(handleProxyResult);
     notifyListeners();
   }
 
@@ -102,7 +110,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   }
 
   void reportUpdate(T value) {
-    dbProxy?.update(value);
+    dbProxy?.update(value).then(handleProxyResult);
     notifyListeners();
   }
 
@@ -110,10 +118,23 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return _cache.where(test);
   }
 
-  void _loadFromDatabase() async {
-    if(dbProxy == null) return;
-    final entities = await dbProxy!.selectAll() ?? [];
-    _cache.addAll(entities);
-    notifyListeners();
+  Future<bool> waitLoaded() => _completer.future;
+
+  Future<bool> _loadFromDatabase() async {
+    if(dbProxy == null) return true;
+    final entities = await dbProxy!.selectAll()
+    .then((value) {
+      handleProxyResult(value);
+      return value;
+    },);
+    if(entities.result == null) return false;
+
+    _cache.addAll(entities.result!);
+    sort(notify: true);
+    return true;
+  }
+
+  FutureOr<void> handleProxyResult(dynamic value) {
+    logger.i("BaseList of $T db result $value");
   }
 }
