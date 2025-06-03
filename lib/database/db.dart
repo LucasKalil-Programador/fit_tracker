@@ -42,6 +42,19 @@ class ExerciseProxy implements ProxyPart<Exercise, String> {
   }
 
   @override
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.exercise.deleteAll();
+        return ProxyResult(ProxyMethods.deleteAll, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.deleteAll, false, error: e);
+      }
+    });
+  }
+
+  @override
   Future<ProxyResult<bool>> insert(Exercise exercise, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
@@ -138,6 +151,19 @@ class TrainingPlanProxy implements ProxyPart<TrainingPlan, String> {
   }
 
   @override
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.trainingPlan.deleteAll();
+        return ProxyResult(ProxyMethods.deleteAll, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.deleteAll, false, error: e);
+      }
+    });
+  }
+
+  @override
   Future<ProxyResult<bool>> insert(TrainingPlan plan, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
@@ -229,6 +255,19 @@ class MetadataProxy implements ProxyPart<MapEntry<String, String>, String> {
       } catch (e) {
         if (printLog) logger.e(e);
         return ProxyResult(ProxyMethods.delete, false, error: e);
+      }
+    });
+  }
+
+  @override
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.metadata.deleteAll();
+        return ProxyResult(ProxyMethods.deleteAll, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.deleteAll, false, error: e);
       }
     });
   }
@@ -332,6 +371,19 @@ class ReportTableProxy implements ProxyPart<ReportTable, String> {
   }
 
   @override
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportTableHelper.deleteAll();
+        return ProxyResult(ProxyMethods.deleteAll, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.deleteAll, false, error: e);
+      }
+    });
+  }
+
+  @override
   Future<ProxyResult<bool>> insert(ReportTable table, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
@@ -430,6 +482,19 @@ class ReportProxy implements ProxyPart<Report, String> {
   }
 
   @override
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true}) {
+    return _lock.synchronized(() async {
+      try {
+        await db.reportHelper.deleteAll();
+        return ProxyResult(ProxyMethods.deleteAll, true);
+      } catch (e) {
+        if (printLog) logger.e(e);
+        return ProxyResult(ProxyMethods.deleteAll, false, error: e);
+      }
+    });
+  }
+
+  @override
   Future<ProxyResult<bool>> insert(Report report, {bool printLog = true}) {
     return _lock.synchronized(() async {
       try {
@@ -508,7 +573,7 @@ class ReportProxy implements ProxyPart<Report, String> {
   }
 }
 
-enum ProxyMethods {insert, insertAll, upsert, delete, update, selectAll, existsById}
+enum ProxyMethods {insert, insertAll, upsert, delete, deleteAll, update, selectAll, existsById}
 
 class ProxyResult<T> {
   final Object? error;
@@ -518,14 +583,19 @@ class ProxyResult<T> {
   ProxyResult(this.method, this.result, {this.error});
 
   bool get hasError => error != null;
+  bool get notHasError => error == null;
 }
 
 abstract class ProxyPart<T, TID> {
   Future<ProxyResult<bool>> insert(T element, {bool printLog = true});
   Future<ProxyResult<bool>> insertAll(List<T> elements, {bool printLog = true});
   Future<ProxyResult<bool>> upsert(T element, {bool printLog = true});
-  Future<ProxyResult<bool>> delete(T element, {bool printLog = true});
   Future<ProxyResult<bool>> update(T element, {bool printLog = true});
-  Future<ProxyResult<List<T>?>> selectAll({bool printLog = true});
+
+  Future<ProxyResult<bool>> delete(T element, {bool printLog = true});
+  Future<ProxyResult<bool>> deleteAll({bool printLog = true});
+
   Future<ProxyResult<bool?>> existsById(TID id, {bool printLog = true});
+
+  Future<ProxyResult<List<T>?>> selectAll({bool printLog = true});
 }

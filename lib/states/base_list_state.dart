@@ -32,7 +32,6 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   Future<bool> waitLoaded() => _completer.future;
 
-  
 
   BaseListState({this.dbProxy, bool loadDatabase = false, this.useRollback = false}) {
     if(loadDatabase) {
@@ -112,6 +111,21 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
           logger.i('Rollback: restored entity after failed delete.');
         }
       },);
+  }
+
+  void clear() {
+    if(dbProxy == null) {
+      _cache.clear();
+      notifyListeners();
+    } else {
+      dbProxy?.deleteAll()
+        .then((proxyResult) {
+          if(proxyResult.notHasError) {
+            _cache.clear();
+            notifyListeners();
+          }
+        },);
+    }
   }
 
 

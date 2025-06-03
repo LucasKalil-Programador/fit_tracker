@@ -56,6 +56,22 @@ void reportTest() {
     proxyResult = await proxy.report.selectAll();
     expect(proxyResult.result?.contains(report), false);
   });
+
+  test('Report delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    await proxy.reportTable.insert(reportTable);
+
+    final report = Report(id: Uuid().v4(), note: "Semana-0", reportDate: 1256, value: 110, tableId: reportTable.id!);
+    await proxy.report.insert(report);
+
+    var proxyResult = await proxy.report.selectAll();
+    expect(proxyResult.result?.contains(report), true);
+
+    await proxy.report.deleteAll();
+    proxyResult = await proxy.report.selectAll();
+    expect(proxyResult.result?.isEmpty, true);
+  });
   
   test('Report update test', () async {
     final proxy = DatabaseProxy.instance;
@@ -199,6 +215,20 @@ void exerciseTest() {
   
     expect(proxyResult.result?.contains(exercise), false);
   });
+
+  test('Exercise delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+  
+    await proxy.exercise.insert(exercise);
+    var proxyResult = await proxy.exercise.selectAll();
+    expect(proxyResult.result?.contains(exercise), true);
+  
+    await proxy.exercise.deleteAll();
+    proxyResult = await proxy.exercise.selectAll();
+  
+    expect(proxyResult.result?.isEmpty, true);
+  });
   
   test('Exercise update test', () async {
     final proxy = DatabaseProxy.instance;
@@ -319,6 +349,19 @@ void metadataTest() {
     await proxy.metadata.delete(entry);
     proxyResult = await proxy.metadata.selectAll();    
     expect(proxyResult.result?.any((element) => element.key == entry.key && element.value == entry.value), false);
+  });
+
+  test('Metadata delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+    MapEntry<String, String> entry = MapEntry("config-2", "test");
+  
+    await proxy.metadata.insert(entry);
+    var proxyResult = await proxy.metadata.selectAll();    
+    expect(proxyResult.result?.any((element) => element.key == entry.key && element.value == entry.value), true);
+  
+    await proxy.metadata.deleteAll();
+    proxyResult = await proxy.metadata.selectAll();    
+    expect(proxyResult.result?.isEmpty, true);
   });
   
   test('Metadata update test', () async {
@@ -445,6 +488,19 @@ void reportTableTest() {
     proxyResult = await proxy.reportTable.selectAll();
     expect(proxyResult.result?.contains(reportTable), false);
   });
+
+  test('ReportTable delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final reportTable = ReportTable(id: Uuid().v4(), name: "Pesagem", description: "BLABLABLA", valueSuffix: "Kg", createdAt: 1325678, updatedAt: 575788944);
+    
+    await proxy.reportTable.insert(reportTable);
+    var proxyResult = await proxy.reportTable.selectAll();
+    expect(proxyResult.result?.contains(reportTable), true);
+  
+    await proxy.reportTable.deleteAll();
+    proxyResult = await proxy.reportTable.selectAll();
+    expect(proxyResult.result?.isEmpty, true);
+  });
   
   test('ReportTable update test', () async {
     final proxy = DatabaseProxy.instance;
@@ -567,6 +623,22 @@ void trainingPlanTest() {
     await proxy.trainingPlan.delete(plan);
     proxyResult = await proxy.trainingPlan.selectAll();
     expect(proxyResult.result?.contains(plan), false);
+  });
+
+  test('TrainingPlan delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "test", amount: 15, reps: 15, sets: 4, type: ExerciseType.musclework);
+    await proxy.exercise.insert(exercise);
+    
+    TrainingPlan plan = TrainingPlan(id: Uuid().v4(), name: "Treino A", list: [exercise.id!]);
+    
+    await proxy.trainingPlan.insert(plan);
+    var proxyResult = await proxy.trainingPlan.selectAll();
+    expect(proxyResult.result?.contains(plan), true);
+  
+    await proxy.trainingPlan.deleteAll();
+    proxyResult = await proxy.trainingPlan.selectAll();
+    expect(proxyResult.result?.isEmpty, true);
   });
   
   test('TrainingPlan update test', () async {

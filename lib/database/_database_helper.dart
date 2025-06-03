@@ -62,8 +62,7 @@ class DatabaseHelper {
             note TEXT NOT NULL,
             report_date INTEGER NOT NULL,
             value REAL NOT NULL,
-            report_table_uuid TEXT NOT NULL,
-            FOREIGN KEY (report_table_uuid) REFERENCES report_table(uuid) ON DELETE CASCADE
+            report_table_uuid TEXT NOT NULL
           );
         ''';
 
@@ -173,6 +172,12 @@ class ExerciseHelper implements Helper<Exercise, String> {
   }
 
   @override
+  Future<void> deleteAll() async {
+    final db = await DatabaseHelper().database;
+    await db.delete('exercise');
+  }
+
+  @override
   Future<List<Exercise>> selectAll() async {
     final db = await DatabaseHelper().database;
     final data = await db.queryCursor('exercise');
@@ -261,6 +266,12 @@ class TrainingPlanHelper implements Helper<TrainingPlan, String> {
   }
 
   @override
+  Future<void> deleteAll() async {
+    final db = await DatabaseHelper().database;
+    await db.delete('training_plan');
+  }
+
+  @override
   Future<List<TrainingPlan>> selectAll() async {
     final db = await DatabaseHelper().database;
     final data = await db.queryCursor('training_plan');
@@ -342,6 +353,12 @@ class MetadataHelper implements Helper<MapEntry<String, String>, String> {
   Future<void> delete(MapEntry<String, String> metadata) async {
     final db = await DatabaseHelper().database;
     await db.delete('metadata', where: 'key = ?', whereArgs: [metadata.key]);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    final db = await DatabaseHelper().database;
+    await db.delete('metadata');
   }
 
   @override
@@ -446,6 +463,12 @@ class ReportTableHelper implements Helper<ReportTable, String> {
   }
 
   @override
+  Future<void> deleteAll() async {
+    final db = await DatabaseHelper().database;
+    await db.delete('report_table');
+  }
+
+  @override
   Future<List<ReportTable>> selectAll() async {
     final db = await DatabaseHelper().database;
     final data = await db.queryCursor('report_table');
@@ -543,6 +566,12 @@ class ReportHelper implements Helper<Report, String> {
   }
 
   @override
+  Future<void> deleteAll() async {
+    final db = await DatabaseHelper().database;
+    await db.delete('report');
+  }
+
+  @override
   Future<List<Report>> selectAll() async {
     final db = await DatabaseHelper().database;
     final data = await db.queryCursor('report');
@@ -584,7 +613,7 @@ abstract class Helper<T, TID> {
   // Future<int> count();
   
   Future<void> delete(T element);
-  // Future<void> deleteAll();
-
+  Future<void> deleteAll();
+  
   Future<List<T>> selectAll();
 }

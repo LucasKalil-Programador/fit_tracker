@@ -69,11 +69,11 @@ class DataInputOutput extends StatelessWidget {
           ),
         ),
         ElevatedButton.icon(
-          onPressed: onImport,
-          icon: Icon(Icons.file_download),
+          onPressed: () => onClear(context),
+          icon: Icon(Icons.clear),
           label: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text("Importar dados"),
+            child: Text("Limpar TODOS os dados"),
           ),
           iconAlignment: IconAlignment.start,
         ),
@@ -94,8 +94,11 @@ class DataInputOutput extends StatelessWidget {
     // TODO: onExport
   }
 
-  void onImport() {
-    // TODO: onImport
+  void onClear(BuildContext context) {
+    Provider.of<ExercisesState>(context, listen: false)   .clear();
+    Provider.of<TrainingPlanState>(context, listen: false).clear();
+    Provider.of<ReportState>(context, listen: false)      .clear();
+    Provider.of<ReportTableState>(context, listen: false) .clear();
   }
 
   void onGenerate(BuildContext context) {
