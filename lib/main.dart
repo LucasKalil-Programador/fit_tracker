@@ -12,11 +12,11 @@ void main() {
   final db = DatabaseProxy.instance;
   
   // instantiates States 
-  final trainingPlanState = TrainingPlanState(db.trainingPlan, loadDatabase: true);
-  final exercisesState    = ExercisesState   (db.exercise,     loadDatabase: true);
-  final metadataState     = MetadataState    (db.metadata,     loadDatabase: true);
-  final reportTableState  = ReportTableState (db.reportTable,  loadDatabase: true);
-  final reportState       = ReportState      (db.report,       loadDatabase: true);
+  final trainingPlanState = TrainingPlanState(dbProxy: db.trainingPlan, loadDatabase: true);
+  final exercisesState    = ExercisesState   (dbProxy: db.exercise,     loadDatabase: true);
+  final metadataState     = MetadataState    (dbProxy: db.metadata,     loadDatabase: true);
+  final reportTableState  = ReportTableState (dbProxy: db.reportTable,  loadDatabase: true);
+  final reportState       = ReportState      (dbProxy: db.report,       loadDatabase: true);
 
   runApp(
     MultiProvider(
