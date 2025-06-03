@@ -79,26 +79,6 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return true;
   }
 
-  bool addAll(List<T> entities) {
-    if (entities.any((e) => containsId(e))) return false;
-
-    for (var entity in entities) {
-      entity.id ??= Uuid().v4();
-    }
-    _cache.addAll(entities);
-    this.sort(notify: true);
-  
-    dbProxy?.insertAll(entities)
-      .then((value) {
-        if(value.hasError) {
-          _cache.removeWhere((element) => entities.contains(element),);
-          notifyListeners();
-          logger.i('Rollback: removed entities after failed batch insert.');
-        }
-      },);
-    return true;
-  }
-
   void remove(T entity) {
     _cache.remove(entity);
     notifyListeners();
@@ -113,19 +93,42 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
       },);
   }
 
-  void clear() {
-    if(dbProxy == null) {
+
+  Future<bool> addAll(List<T> entities) async {
+    if (entities.any((e) => containsId(e))) return false;
+
+    for (var entity in entities) {
+      entity.id ??= Uuid().v4();
+    }
+
+    if (dbProxy == null) {
+      _cache.addAll(entities);
+      this.sort(notify: true);
+      return true;
+    }
+
+    final result = await dbProxy!.insertAll(entities);
+    if(result.notHasError) {
+      _cache.addAll(entities);
+      this.sort(notify: true);
+    }
+    return result.notHasError;
+  }
+
+  Future<bool> clear() async {
+    if (dbProxy == null) {
       _cache.clear();
       notifyListeners();
-    } else {
-      dbProxy?.deleteAll()
-        .then((proxyResult) {
-          if(proxyResult.notHasError) {
-            _cache.clear();
-            notifyListeners();
-          }
-        },);
+      return true;
     }
+    
+    final result = await dbProxy!.deleteAll();
+    if(result.notHasError) {
+      _cache.clear();
+      notifyListeners();
+    }
+
+    return result.notHasError;
   }
 
 

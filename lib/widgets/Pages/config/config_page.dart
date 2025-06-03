@@ -28,7 +28,7 @@ class ConfigPage extends StatelessWidget {
                 onThemeSelected: (theme) => onThemeSelected(context, theme),
               ),
               DefaultDivider(),
-              DataInputOutput(),
+              DevTools(),
               DefaultDivider(),
             ],
           );
@@ -51,61 +51,60 @@ class ConfigPage extends StatelessWidget {
   }
 }
 
-class DataInputOutput extends StatelessWidget {
-  const DataInputOutput({super.key});
+class DevTools extends StatelessWidget {
+  const DevTools({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
-        Text("Dados", style: Theme.of(context).textTheme.titleLarge),
-        ElevatedButton.icon(
-          onPressed: onExport,
-          icon: Icon(Icons.file_upload),
-          label: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text("Exportar dados"),
+        Center(child: Text("Dev tools", style: Theme.of(context).textTheme.titleLarge)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ElevatedButton.icon(
+            onPressed: () async => onClear(context),
+            icon: Icon(Icons.clear),
+            label: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text("Limpar TODOS os dados", softWrap: false,),
+            ),
+            iconAlignment: IconAlignment.start,
           ),
         ),
-        ElevatedButton.icon(
-          onPressed: () => onClear(context),
-          icon: Icon(Icons.clear),
-          label: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text("Limpar TODOS os dados"),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ElevatedButton.icon(
+            onPressed: () async => onGenerate(context),
+            icon: Icon(Icons.developer_mode),
+            label: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text("Gerar dados de demonstração"),
+            ),
+            iconAlignment: IconAlignment.start,
           ),
-          iconAlignment: IconAlignment.start,
-        ),
-        ElevatedButton.icon(
-          onPressed: () => onGenerate(context),
-          icon: Icon(Icons.developer_mode),
-          label: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text("Gerar dados de demonstração"),
-          ),
-          iconAlignment: IconAlignment.start,
         ),
       ],
     );
   }
 
-  void onExport() {
-    // TODO: onExport
-  }
-
-  void onClear(BuildContext context) {
-    Provider.of<ExercisesState>(context, listen: false)   .clear();
-    Provider.of<TrainingPlanState>(context, listen: false).clear();
-    Provider.of<ReportState>(context, listen: false)      .clear();
-    Provider.of<ReportTableState>(context, listen: false) .clear();
-  }
-
-  void onGenerate(BuildContext context) {
+  Future<void> onClear(BuildContext context) async {
     final eState = Provider.of<ExercisesState>(context, listen: false);
     final pState = Provider.of<TrainingPlanState>(context, listen: false);
     final rState = Provider.of<ReportState>(context, listen: false);
     final tState = Provider.of<ReportTableState>(context, listen: false);
-    generateDB(eState, pState, tState, rState);
+    await eState.clear();
+    await pState.clear();
+    await rState.clear();
+    await tState.clear();
+  }
+
+  Future<void> onGenerate(BuildContext context) async {
+    final eState = Provider.of<ExercisesState>(context, listen: false);
+    final pState = Provider.of<TrainingPlanState>(context, listen: false);
+    final rState = Provider.of<ReportState>(context, listen: false);
+    final tState = Provider.of<ReportTableState>(context, listen: false);
+    await generateDB(eState, pState, tState, rState);
   }
 }
