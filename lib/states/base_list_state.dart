@@ -154,6 +154,10 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return null;
   }
 
+  // internals
+
+  List<Map<String, Object?>> toJson() => _cache.map((e) => e.toMap()).toList();
+
   int _binarySearch(String id) {
     int min = 0;
     int max = _cache.length;

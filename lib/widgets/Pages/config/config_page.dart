@@ -1,4 +1,8 @@
-import 'package:fittrackr/database/generate_db.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
@@ -28,6 +32,8 @@ class ConfigPage extends StatelessWidget {
                 onThemeSelected: (theme) => onThemeSelected(context, theme),
               ),
               DefaultDivider(),
+              DataImportExport(),
+              DefaultDivider(),
               DevTools(),
               DefaultDivider(),
             ],
@@ -51,8 +57,9 @@ class ConfigPage extends StatelessWidget {
   }
 }
 
-class DevTools extends StatelessWidget {
-  const DevTools({super.key});
+
+class DataImportExport extends StatelessWidget {
+  const DataImportExport({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +67,15 @@ class DevTools extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
-        Center(child: Text("Dev tools", style: Theme.of(context).textTheme.titleLarge)),
+        Center(child: Text("Dados", style: Theme.of(context).textTheme.titleLarge)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
-            onPressed: () async => onClear(context),
-            icon: Icon(Icons.clear),
+            onPressed: onExport,
+            icon: Icon(Icons.file_upload),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Limpar TODOS os dados", softWrap: false,),
+              child: Text("Exportar dados", softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),
@@ -76,11 +83,11 @@ class DevTools extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
-            onPressed: () async => onGenerate(context),
-            icon: Icon(Icons.developer_mode),
+            onPressed: () => onImport(context),
+            icon: Icon(Icons.file_download),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Gerar dados de demonstração"),
+              child: Text("Importar dados", softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),
@@ -89,22 +96,28 @@ class DevTools extends StatelessWidget {
     );
   }
 
-  Future<void> onClear(BuildContext context) async {
+  void onImport(context) async {
     final eState = Provider.of<ExercisesState>(context, listen: false);
     final pState = Provider.of<TrainingPlanState>(context, listen: false);
     final rState = Provider.of<ReportState>(context, listen: false);
     final tState = Provider.of<ReportTableState>(context, listen: false);
-    await eState.clear();
-    await pState.clear();
-    await rState.clear();
-    await tState.clear();
+    final output = {
+      "Exercises": eState.toJson(),
+      "Plans":     pState.toJson(),
+      "Table":     tState.toJson(),
+      "Reports":   rState.toJson(),
+    };
+    final json = jsonEncode(output);
+    final dir = await getTemporaryDirectory();
+    final file = File("${dir.path}/fittracker_backup.json");
+    await file.writeAsString(json);
+
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(file.path)], text: "fittracker backup")
+    );
   }
 
-  Future<void> onGenerate(BuildContext context) async {
-    final eState = Provider.of<ExercisesState>(context, listen: false);
-    final pState = Provider.of<TrainingPlanState>(context, listen: false);
-    final rState = Provider.of<ReportState>(context, listen: false);
-    final tState = Provider.of<ReportTableState>(context, listen: false);
-    await generateDB(eState, pState, tState, rState);
+  void onExport() {
+    // TODO: onExport
   }
 }
