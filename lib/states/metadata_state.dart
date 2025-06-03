@@ -12,7 +12,7 @@ class MetadataState extends ChangeNotifier {
   final Map<String, String> _cache = {};
   final _completer = Completer<bool>();
 
-  MetadataState(this.dbProxy, {bool loadDatabase = false}) {
+  MetadataState({this.dbProxy, bool loadDatabase = false}) {
     _completer.complete(loadDatabase ? _loadFromDatabase() : true);
   }
 
@@ -34,10 +34,16 @@ class MetadataState extends ChangeNotifier {
   }
 
   void put(String key, String value) {
+    String? oldValue = _cache[key];
     final entry = MapEntry(key, value);
-    dbProxy?.upsert(entry).then(handleProxyResult);
+
     _cache[key] = value;
     notifyListeners();
+
+    dbProxy?.upsert(entry)
+      .then((value) {
+        if (value.hasError) _rollback(key, oldValue);
+      });
   }
 
   void putList(String key, List<String> list) {
@@ -49,22 +55,25 @@ class MetadataState extends ChangeNotifier {
   }
 
   void remove(String key) {
-    dbProxy?.delete(MapEntry(key, _cache[key]!)).then(handleProxyResult);
-    if(_cache.containsKey(key)) {
-      _cache.remove(key);
-      notifyListeners();
-    }
+    if (!_cache.containsKey(key)) return;
+
+    String? oldValue = _cache[key];
+    final entry = MapEntry(key, oldValue!);
+
+    _cache.remove(key);
+    notifyListeners();
+
+    dbProxy?.delete(entry)
+      .then((value) {
+        if (value.hasError) _rollback(key, oldValue);
+      });
   }
 
   Future<bool> waitLoaded() => _completer.future;
 
   Future<bool> _loadFromDatabase() async {
     if(dbProxy == null) return true;
-    final entries = await dbProxy!.selectAll()
-    .then((value) {
-      handleProxyResult(value);
-      return value;
-    },);
+    final entries = await dbProxy!.selectAll();
     if(entries.result == null) return false;
     
     for (final entry in entries.result!) {
@@ -75,7 +84,16 @@ class MetadataState extends ChangeNotifier {
     return true;
   }
 
-  FutureOr<void> handleProxyResult(dynamic value) {
-    logger.i("Metadata db result $value");
+  void _rollback(String key, String? oldValue) {
+    if(oldValue != null) {
+      _cache[key] = oldValue;
+      logger.i('Rollback: restored "$key" to previous value.');
+    } else {
+      _cache.remove(key);
+      logger.i('Rollback: removed "$key" after failed operation.');
+    }
+    if (oldValue != _cache[key]) {
+      notifyListeners();
+    }
   }
 }

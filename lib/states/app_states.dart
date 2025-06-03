@@ -1,11 +1,8 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/base_list_state.dart';
 
-
-// ExercisesState
-
 class ExercisesState extends BaseListState<Exercise> {
-  ExercisesState(super.dbProxy, {super.loadDatabase});
+  ExercisesState({super.dbProxy, super.loadDatabase, super.useRollback});
 
   List<Exercise> sorted() {
     final sortedList = super.clone;
@@ -23,28 +20,12 @@ class ExercisesState extends BaseListState<Exercise> {
   }
 }
 
-
-// TrainingPlanState
-
-class TrainingPlanState extends BaseListState<TrainingPlan> {
-  TrainingPlanState(super.dbProxy, {super.loadDatabase});
-}
-
-
-// ReportTableState
-
-class ReportTableState extends BaseListState<ReportTable> {
-  ReportTableState(super.dbProxy, {super.loadDatabase});
-}
-
-
-// ReportState
-
 class ReportState extends BaseListState<Report> {
-  ReportState(super.dbProxy, {super.loadDatabase});
+  ReportState({super.dbProxy, super.loadDatabase, super.useRollback});
 
-  List<Report> getByTable(String tableId) {
-    return where((e) => e.tableId == tableId)
-    .toList();
-  }
+  List<Report> getByTable(String tableId) => where((e) => e.tableId == tableId).toList();
 }
+
+class TrainingPlanState extends BaseListState<TrainingPlan> { TrainingPlanState({super.dbProxy, super.loadDatabase, super.useRollback}); }
+
+class ReportTableState extends BaseListState<ReportTable> { ReportTableState({super.dbProxy, super.loadDatabase, super.useRollback}); }
