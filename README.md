@@ -23,6 +23,7 @@
 - [🧪 Testes](#-testes)
 - [📈 Roadmap](#-roadmap)
 - [📄 Licença](#-licença)
+- [✒️ Autor](#️-autor)
 
 # 📸 Demonstrações
 
@@ -175,3 +176,10 @@ flutter test
 
 MIT © Lucas Guimarães Kalil
 
+# ✒️ Autor
+
+Lucas Guimarães Kalil 
+
+E-Mail - lucas.prokalil2020@outlook.com
+
+[Linkedin](https://www.linkedin.com/in/lucas-kalil-436a6220a/) | [GitHub](https://github.com/LucasKalil-Programador)
