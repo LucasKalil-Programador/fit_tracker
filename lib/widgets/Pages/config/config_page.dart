@@ -71,7 +71,7 @@ class DataImportExport extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
-            onPressed: onExport,
+            onPressed: () => onExport(context),
             icon: Icon(Icons.file_upload),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -83,7 +83,7 @@ class DataImportExport extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
-            onPressed: () => onImport(context),
+            onPressed: () => onImport(),
             icon: Icon(Icons.file_download),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -96,7 +96,8 @@ class DataImportExport extends StatelessWidget {
     );
   }
 
-  void onImport(context) async {
+  // TODO: Download do backup para a pasta downloads
+  void onExport(context) async {
     final eState = Provider.of<ExercisesState>(context, listen: false);
     final pState = Provider.of<TrainingPlanState>(context, listen: false);
     final rState = Provider.of<ReportState>(context, listen: false);
@@ -117,7 +118,7 @@ class DataImportExport extends StatelessWidget {
     );
   }
 
-  void onExport() {
+  void onImport() {
     // TODO: onExport
   }
 }

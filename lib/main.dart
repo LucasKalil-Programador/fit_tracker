@@ -1,7 +1,7 @@
 import 'package:fittrackr/app.dart';
 
 import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/logger.dart';
+import 'package:fittrackr/utils/logger.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:flutter/material.dart';

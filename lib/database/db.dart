@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fittrackr/database/_database_helper.dart';
 import 'package:fittrackr/database/entities.dart';
-import 'package:fittrackr/logger.dart';
+import 'package:fittrackr/utils/logger.dart';
 import 'package:synchronized/synchronized.dart';
 
 

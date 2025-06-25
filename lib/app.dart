@@ -1,5 +1,5 @@
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/themes.dart';
+import 'package:fittrackr/utils/themes.dart';
 import 'package:fittrackr/widgets/Pages/config/config_page.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_list_page.dart';
 import 'package:fittrackr/widgets/Pages/home/home_page.dart';
