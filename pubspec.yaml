@@ -48,6 +48,7 @@ dependencies:
   logger: ^2.5.0
   share_plus: ^11.0.0
   path_provider: ^2.1.5
+  receive_sharing_intent: ^1.8.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
