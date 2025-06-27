@@ -1,14 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ConfigPage extends StatelessWidget {
   const ConfigPage({super.key});
@@ -96,19 +95,8 @@ class DataImportExport extends StatelessWidget {
     );
   }
 
-  // TODO: Download do backup para a pasta downloads
-  void onExport(context) async {
-    final eState = Provider.of<ExercisesState>(context, listen: false);
-    final pState = Provider.of<TrainingPlanState>(context, listen: false);
-    final rState = Provider.of<ReportState>(context, listen: false);
-    final tState = Provider.of<ReportTableState>(context, listen: false);
-    final output = {
-      "Exercises": eState.toJson(),
-      "Plans":     pState.toJson(),
-      "Table":     tState.toJson(),
-      "Reports":   rState.toJson(),
-    };
-    final json = jsonEncode(output);
+  void onExport(BuildContext context) async {
+    final json = contextToJson(context);
     final dir = await getTemporaryDirectory();
     final file = File("${dir.path}/fittracker_backup.json");
     await file.writeAsString(json);
@@ -119,6 +107,6 @@ class DataImportExport extends StatelessWidget {
   }
 
   void onImport() {
-    // TODO: onExport
+    // TODO: onImport
   }
 }

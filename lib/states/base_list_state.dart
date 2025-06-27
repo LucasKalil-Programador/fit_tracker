@@ -23,7 +23,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   T operator [](int index) => _cache[index];
   T get(int index) => _cache[index];
 
-  bool containsId(entity) => entity.id != null && getById(entity.id!) != null;
+  bool containsId(T entity) => entity.id != null && getById(entity.id!) != null;
   Iterable<T> where(bool Function(T) test) => _cache.where(test);
   int indexWhere(bool Function(T entity) test, [int start = 0]) => _cache.indexWhere(test, start);
   int indexOf(T entity) => _cache.indexOf(entity);

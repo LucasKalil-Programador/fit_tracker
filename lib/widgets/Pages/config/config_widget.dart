@@ -1,5 +1,6 @@
 import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/states/app_states.dart';
+import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -106,14 +107,7 @@ class DevTools extends StatelessWidget {
   }
 
   Future<void> onClear(BuildContext context) async {
-    final eState = Provider.of<ExercisesState>(context, listen: false);
-    final pState = Provider.of<TrainingPlanState>(context, listen: false);
-    final rState = Provider.of<ReportState>(context, listen: false);
-    final tState = Provider.of<ReportTableState>(context, listen: false);
-    await eState.clear();
-    await pState.clear();
-    await rState.clear();
-    await tState.clear();
+    clearContext(context);
   }
 
   Future<void> onGenerate(BuildContext context) async {

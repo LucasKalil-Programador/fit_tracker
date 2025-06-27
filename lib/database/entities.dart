@@ -7,6 +7,8 @@ abstract class BaseEntity {
   String? id;
 
   Map<String, Object?> toMap();
+
+  bool get isValid;
 }
 
 // Exercise
@@ -84,6 +86,10 @@ class Exercise implements BaseEntity {
 
     return null;
   }
+  
+  @override
+  // TODO: implement isValid
+  bool get isValid => true;
 }
 
 // ReportTable
@@ -160,6 +166,10 @@ class ReportTable implements BaseEntity {
 
     return null;
   }
+  
+  @override
+  // TODO: implement isValid
+  bool get isValid => true;
 }
 
 // Report
@@ -230,6 +240,10 @@ class Report implements BaseEntity {
 
     return null;
   }
+  
+  @override
+  // TODO: implement isValid
+  bool get isValid => true;
 }
 
 // TrainingPlan
@@ -283,4 +297,8 @@ class TrainingPlan implements BaseEntity {
     }
     return null;
   }
+  
+  @override
+  // TODO: implement isValid
+  bool get isValid => true;
 }
