@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ValueInputDoubleWidget extends StatefulWidget {
   final ValueChanged<double>? onChanged;
 
-  final String label, suffix;
+  final String? label, suffix;
   final double minValue, maxValue;
   final double? initialValue;
 
   const ValueInputDoubleWidget({
     super.key,
-    this.label = "Peso",
-    this.suffix = "Kg",
+    this.label,
+    this.suffix,
     this.initialValue,
     this.minValue = 1,
     this.maxValue = 32,
@@ -24,6 +24,7 @@ class ValueInputDoubleWidget extends StatefulWidget {
 }
 
 class _ValueInputDoubleWidgetState extends State<ValueInputDoubleWidget> {
+  late final localization = AppLocalizations.of(context)!;
   final TextEditingController _controller = TextEditingController(text: '1');
 
   double _value = 1;
@@ -64,10 +65,10 @@ class _ValueInputDoubleWidgetState extends State<ValueInputDoubleWidget> {
             controller: _controller,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
-            decoration: InputDecoration(labelText: widget.label, suffixText: widget.suffix),
+            decoration: InputDecoration(labelText: widget.label ?? localization.weight, suffixText: widget.suffix ?? localization.kg),
             validator: (value) {
               if (_value < widget.minValue || _value > widget.maxValue) {
-                  return 'Valor invalido';
+                  return localization.invalidValue;
                 }
                 return null;
             },

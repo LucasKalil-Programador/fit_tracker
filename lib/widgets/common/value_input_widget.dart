@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ValueInputWidget extends StatefulWidget {
   final ValueChanged<int>? onChanged;
 
-  final String label, suffix;
+  final String? label, suffix;
   final int minValue, maxValue;
   final int? initialValue;
 
   const ValueInputWidget({
     super.key,
-    this.label = "Peso",
-    this.suffix = "Kg",
+    this.label,
+    this.suffix,
     this.initialValue,
     this.minValue = 1,
     this.maxValue = 32,
@@ -24,6 +24,7 @@ class ValueInputWidget extends StatefulWidget {
 }
 
 class _ValueInputWidgetState extends State<ValueInputWidget> {
+  late final localization = AppLocalizations.of(context)!;
   final TextEditingController _controller = TextEditingController(text: '1');
 
   int _value = 1;
@@ -64,10 +65,10 @@ class _ValueInputWidgetState extends State<ValueInputWidget> {
             controller: _controller,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(labelText: widget.label, suffixText: widget.suffix),
+            decoration: InputDecoration(labelText: widget.label ?? localization.weight, suffixText: widget.suffix ?? localization.kg),
             validator: (value) {
               if (_value < widget.minValue || _value > widget.maxValue) {
-                  return 'Valor invalido';
+                  return localization.invalidValue;
                 }
                 return null;
             },

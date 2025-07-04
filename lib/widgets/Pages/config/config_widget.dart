@@ -2,6 +2,7 @@ import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 
@@ -20,6 +21,7 @@ class ThemeSelection extends StatefulWidget {
 }
 
 class _ThemeSelectionState extends State<ThemeSelection> {
+  late final localization = AppLocalizations.of(context)!;
   AppTheme? selectedTheme;
 
   @override
@@ -31,11 +33,11 @@ class _ThemeSelectionState extends State<ThemeSelection> {
 
   @override
   Widget build(BuildContext context) {
-    Map<AppTheme, String> themeTextMap = {AppTheme.dark: "Escuro", AppTheme.light: "Claro", AppTheme.system: "Sistema"};
+    Map<AppTheme, String> themeTextMap = {AppTheme.dark: localization.dark, AppTheme.light: localization.light, AppTheme.system: localization.system};
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Tema", style: Theme.of(context).textTheme.titleLarge),
+        Text(localization.theme, style: Theme.of(context).textTheme.titleLarge),
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -43,7 +45,7 @@ class _ThemeSelectionState extends State<ThemeSelection> {
           itemBuilder: (context, index) {
             final item = AppTheme.values[index];
             final String text =
-                themeTextMap.containsKey(item) ? themeTextMap[item]! : "Default";
+                themeTextMap.containsKey(item) ? themeTextMap[item]! : localization.defaultOption;
             return ListTile(
               title: Text(text),
               leading: Radio<AppTheme>(
@@ -73,11 +75,12 @@ class DevTools extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
-        Center(child: Text("Dev tools", style: Theme.of(context).textTheme.titleLarge)),
+        Center(child: Text(localization.devTools, style: Theme.of(context).textTheme.titleLarge)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
@@ -85,7 +88,7 @@ class DevTools extends StatelessWidget {
             icon: Icon(Icons.clear),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Limpar TODOS os dados", softWrap: false),
+              child: Text(localization.clearAllData, softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),
@@ -97,7 +100,7 @@ class DevTools extends StatelessWidget {
             icon: Icon(Icons.developer_mode),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Gerar dados de demonstração", softWrap: false),
+              child: Text(localization.generateDemoData, softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),

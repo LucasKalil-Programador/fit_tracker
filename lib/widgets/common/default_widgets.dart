@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 void showSnackMessage(BuildContext context, String message, bool sucess) {
@@ -41,7 +42,8 @@ class DefaultExerciseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final typeStr = exercise.type == ExerciseType.musclework ? "Kg" : "Minutos";
+    final localization = AppLocalizations.of(context)!;
+    final typeStr = exercise.type == ExerciseType.musclework ? localization.kg : localization.minutes;
     return Card(
       key: super.key,
       //color: Theme.of(context).colorScheme.primaryContainer,
@@ -68,9 +70,12 @@ class DefaultTrainingPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> subtitleList = [];
     final exerciseState = Provider.of<ExercisesState>(context);
-    String substring = "Exercícios: ";
+    final localization = AppLocalizations.of(context)!;
+
+    String substring = localization.exercisesLabel;
+    List<String> subtitleList = [];
+
     if (plan.list != null && plan.list!.isNotEmpty) {
       for (int i = 0; i < min(plan.list!.length, 6); i++) {
         final exercise = exerciseState.getById(plan.list![i]);
@@ -81,7 +86,7 @@ class DefaultTrainingPlanCard extends StatelessWidget {
         substring = "$substring...";
       }
     } else {
-      substring = "Lista vazia";
+      substring = localization.emptyList;
     }
 
     return Card(

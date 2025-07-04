@@ -1,6 +1,7 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ExerciseListView extends StatelessWidget {
@@ -41,6 +42,8 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final localization = AppLocalizations.of(context)!;
+
     return Slidable(
       startActionPane: ActionPane(
         motion: const BehindMotion(),
@@ -51,14 +54,14 @@ class ExerciseCard extends StatelessWidget {
             backgroundColor: colorScheme.secondaryContainer,
             foregroundColor: colorScheme.onSecondaryContainer,
             icon: Icons.edit,
-            label: 'Editar',
+            label: localization.edit,
           ),
           SlidableAction(
             onPressed: (_) {if(onDelete != null) onDelete!();},
             backgroundColor: colorScheme.errorContainer,
             foregroundColor: colorScheme.onErrorContainer,
             icon: Icons.delete,
-            label: 'Delete',
+            label: localization.delete,
           ),
         ],
       ),

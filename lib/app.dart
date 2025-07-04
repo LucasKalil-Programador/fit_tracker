@@ -13,6 +13,7 @@ import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -27,6 +28,9 @@ class App extends StatelessWidget {
         return MaterialApp(
           title: "Fit Tracker",
           home: MainWidget(),
+          locale: const Locale('en'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           theme: lightTheme(),
           darkTheme: darkTheme(),
           themeMode: resolveTheme(selectedTheme),
@@ -34,7 +38,7 @@ class App extends StatelessWidget {
       },
     );
   }
-
+  
   ThemeMode resolveTheme(String? theme) {
     ThemeMode themeMode;
     switch (theme) {

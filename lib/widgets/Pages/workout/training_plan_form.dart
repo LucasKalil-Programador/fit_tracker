@@ -2,6 +2,7 @@ import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class TrainingPlanFormMode {
@@ -21,6 +22,7 @@ class TrainingPlanForm extends StatefulWidget {
 }
 
 class _TrainingPlanFormState extends State<TrainingPlanForm> {
+  late final localization = AppLocalizations.of(context)!;
   TextEditingController nameController = TextEditingController(text: "");
   List<String> selected = [];
   String searchStr = "";
@@ -43,7 +45,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Criação de plano de treino",
+          localization.createPlan,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -60,18 +62,18 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: submit, 
-                  child: Text(widget.mode == TrainingPlanFormMode.creation ? "Criar treino" : "Editar treino"),
+                  child: Text(widget.mode == TrainingPlanFormMode.creation ? localization.createWorkout : localization.editWorkout),
                 ),
               ),
               DefaultDivider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Selecione os exercícios", style: const TextStyle(fontWeight: FontWeight.bold),),
+                child: Text(localization.selectExercises, style: const TextStyle(fontWeight: FontWeight.bold),),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  decoration: const InputDecoration(labelText: "Pesquisa"),
+                  decoration: InputDecoration(labelText: localization.search),
                   onChanged: (value) {
                     setState(() {
                       searchStr = value;
@@ -93,15 +95,13 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
     );
   }
 
-  
-
   Widget nameInput() {
     return TextFormField(
       controller: nameController,
-      decoration: const InputDecoration(labelText: "Nome"),
+      decoration: InputDecoration(labelText: localization.name),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Nome Invalido';
+          return localization.invalidName;
         }
         return null;
       },

@@ -5,6 +5,7 @@ import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,10 +15,11 @@ class ConfigPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Configurações",
+        title: Text(
+          localization.settings,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -62,11 +64,12 @@ class DataImportExport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
-        Center(child: Text("Dados", style: Theme.of(context).textTheme.titleLarge)),
+        Center(child: Text(localization.data, style: Theme.of(context).textTheme.titleLarge)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: ElevatedButton.icon(
@@ -74,7 +77,7 @@ class DataImportExport extends StatelessWidget {
             icon: Icon(Icons.file_upload),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Exportar dados", softWrap: false),
+              child: Text(localization.exportData, softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),
@@ -86,7 +89,7 @@ class DataImportExport extends StatelessWidget {
             icon: Icon(Icons.file_download),
             label: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text("Importar dados", softWrap: false),
+              child: Text(localization.importData, softWrap: false),
             ),
             iconAlignment: IconAlignment.start,
           ),
@@ -96,13 +99,14 @@ class DataImportExport extends StatelessWidget {
   }
 
   void onExport(BuildContext context) async {
+    final localization = AppLocalizations.of(context)!;
     final json = contextToJson(context);
     final dir = await getTemporaryDirectory();
     final file = File("${dir.path}/fittracker_backup.json");
     await file.writeAsString(json);
 
     await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], text: "fittracker backup")
+      ShareParams(files: [XFile(file.path)], text: localization.fittrackerBackup)
     );
   }
 

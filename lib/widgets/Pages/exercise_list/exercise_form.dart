@@ -1,6 +1,7 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/widgets/common/value_input_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ExerciseFormMode {
   static const int creation = 0;
@@ -19,7 +20,9 @@ class ExerciseForm extends StatefulWidget {
 }
 
 class _ExerciseFormState extends State<ExerciseForm> {
+  late final localization = AppLocalizations.of(context)!;
   final _nameController = TextEditingController(text: "");
+
   ExerciseType type = ExerciseType.musclework;
   int amount = 1;
   int reps = 1;
@@ -43,7 +46,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.mode == 0 ? "Criação de exercicio" : "Editar exercicio",
+          widget.mode == 0 ? localization.createExercise : localization.editExercise,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -87,7 +90,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
     return Column(
       children: [
         ListTile(
-          title: const Text("Musculação"),
+          title: Text(localization.strength),
           leading: Radio<ExerciseType>(
             value: ExerciseType.musclework,
             groupValue: type,
@@ -99,7 +102,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
           ),
         ),
         ListTile(
-          title: const Text("Cardio"),
+          title: Text(localization.cardio),
           leading: Radio<ExerciseType>(
             value: ExerciseType.cardio,
             groupValue: type,
@@ -117,10 +120,10 @@ class _ExerciseFormState extends State<ExerciseForm> {
   Widget nameInput() {
     return TextFormField(
       controller: _nameController,
-      decoration: const InputDecoration(labelText: "Nome"),
+      decoration: InputDecoration(labelText: localization.name),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Nome Invalido';
+          return localization.invalidName;
         }
         return null;
       },
@@ -129,8 +132,8 @@ class _ExerciseFormState extends State<ExerciseForm> {
 
   Widget amountInput() {
     return ValueInputWidget(
-      label: type == ExerciseType.musclework ? "Carga" : "Tempo",
-      suffix: type == ExerciseType.musclework ? "Kg" : "Minutos",
+      label: type == ExerciseType.musclework ? localization.weightLoad : localization.time,
+      suffix: type == ExerciseType.musclework ? localization.kg : localization.minutes,
       initialValue: widget.baseExercise?.amount,
       maxValue: 500,
       onChanged: (value) => amount = value,
@@ -139,7 +142,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
 
   Widget repsInput() {
     return ValueInputWidget(
-      label: "Qtd. de repetições",
+      label: localization.reps,
       suffix: "",
       initialValue: widget.baseExercise?.reps,
       maxValue: 50,
@@ -149,7 +152,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
 
   Widget setsInput() {
     return ValueInputWidget(
-              label: "Qtd. de series",
+              label: localization.sets,
               suffix: "",
               initialValue: widget.baseExercise?.sets,
               maxValue: 50,
@@ -176,7 +179,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
           widget.onSubmit?.call(exercise);
         }
       },
-      child: Text(widget.mode == 0 ? "Adicionar" : "Editar"),
+      child: Text(widget.mode == 0 ? localization.add : localization.edit),
     );
   }
 }

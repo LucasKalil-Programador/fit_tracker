@@ -5,6 +5,7 @@ import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,8 @@ class TrainingPlanCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final localization = AppLocalizations.of(context)!;
+
     return Slidable(
       startActionPane: ActionPane(
         motion: const BehindMotion(),
@@ -56,21 +59,21 @@ class TrainingPlanCardWidget extends StatelessWidget {
             backgroundColor: colorScheme.primaryContainer,
             foregroundColor: colorScheme.onPrimaryContainer,
             icon: Icons.edit,
-            label: 'Editar',
+            label: localization.edit,
           ),
           SlidableAction(
             onPressed: (_) {if(onStart != null) onStart!();},
             backgroundColor: colorScheme.secondaryContainer, 
             foregroundColor: colorScheme.onSecondaryContainer,
             icon: Icons.play_arrow,
-            label: 'Iniciar',
+            label: localization.start,
           ),
           SlidableAction(
             onPressed: (_) {if(onDelete != null) onDelete!();},
             backgroundColor: colorScheme.errorContainer,
             foregroundColor: colorScheme.onErrorContainer,
             icon: Icons.delete,
-            label: 'Delete',
+            label: localization.delete,
           ),
         ],
       ),
@@ -98,6 +101,7 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
   List<String> donelist = [];
   
   double get progress => exercises.isEmpty ? 1 : donelist.length / exercises.length;
+  String get progressString => "${(progress * 100).toInt().toString()}%";
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +124,7 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
                 lineHeight: 30.0,
                 percent: progress,
                 center: Text(
-                  "${(progress * 100).toInt().toString()}%",
+                  progressString,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -163,8 +167,9 @@ class _TrainingPlanWidgetState extends State<TrainingPlanWidget> {
     }
     
     SchedulerBinding.instance.addPostFrameCallback((_) {
+      final localization = AppLocalizations.of(context)!;
       if (exercises.length != exercisesId.length) {
-        showSnackMessage(context, "Erro ao carregar o treino", false);
+        showSnackMessage(context, localization.loadWorkoutError, false);
         exercisesId = [];
         exercises = [];
       }

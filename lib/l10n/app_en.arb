@@ -1,0 +1,230 @@
+{
+  "progressStats": "Progress & Statistics",
+  "@progressStats": {
+    "description": "Section title for progress and statistics"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Label for edit button"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Label for delete button"
+  },
+  "selectOrCreateTable": "Select a table or create one",
+  "@selectOrCreateTable": {
+    "description": "Instruction to select or create a new table"
+  },
+  "createNewTable": "Create new table",
+  "@createNewTable": {
+    "description": "Button to create a new table"
+  },
+  "selectTable": "Select a table",
+  "@selectTable": {
+    "description": "Instruction to select an existing table"
+  },
+  "addedSuccess": "Added successfully!",
+  "@addedSuccess": {
+    "description": "Success message after adding"
+  },
+  "deletedSuccess": "Deleted successfully",
+  "@deletedSuccess": {
+    "description": "Success message after deleting"
+  },
+  "removedSuccess": "Removed successfully!",
+  "@removedSuccess": {
+    "description": "Success message after removing"
+  },
+  "timer": "Timer",
+  "@timer": {
+    "description": "Label for the timer screen or feature"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "Button label to reset the timer"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Button label to start the timer"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "Button label to resume the paused timer"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Button label to pause the timer"
+  },
+  "exerciseList": "Exercise List",
+  "@exerciseList": {
+    "description": "Title for the exercise list screen"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Label for the search input or button"
+  },
+  "editedSuccess": "Edited successfully!",
+  "@editedSuccess": {
+    "description": "Success message after editing"
+  },
+  "editError": "Error while editing!",
+  "@editError": {
+    "description": "Error message shown when edit fails"
+  },
+  "createPlan": "Workout plan creation",
+  "@createPlan": {
+    "description": "Title for the workout plan creation screen"
+  },
+  "createWorkout": "Create workout",
+  "@createWorkout": {
+    "description": "Button or title for creating a workout"
+  },
+  "editWorkout": "Edit workout",
+  "@editWorkout": {
+    "description": "Button or title for editing a workout"
+  },
+  "selectExercises": "Select exercises",
+  "@selectExercises": {
+    "description": "Instruction to select exercises for a workout"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Label for a name input field"
+  },
+  "invalidName": "Invalid name",
+  "@invalidName": {
+    "description": "Validation message when a name is not acceptable"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Theme option: dark mode"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Theme option: light mode"
+  },
+  "system": "System",
+  "@system": {
+    "description": "Theme option that follows system settings"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Label for theme selection section"
+  },
+  "defaultOption": "Default",
+  "@default": {
+    "description": "Label for default option"
+  },
+  "devTools": "Dev tools",
+  "@devTools": {
+    "description": "Label for development tools section"
+  },
+  "clearAllData": "Clear ALL data",
+  "@clearAllData": {
+    "description": "Button to delete all user data"
+  },
+  "generateDemoData": "Generate demonstration data",
+  "@generateDemoData": {
+    "description": "Button to generate fake/demo data"
+  },
+  "loadWorkoutError": "Error loading workout",
+  "@loadWorkoutError": {
+    "description": "Error message when a workout fails to load"
+  },
+  "workout": "Workout",
+  "@workout": {
+    "description": "Label or title for a workout"
+  },
+  "createPlanButton": "Create plan",
+  "@createPlanButton": {
+    "description": "Button to start creating a workout plan"
+  },
+  "finishPlan": "Finish plan",
+  "@finishPlan": {
+    "description": "Button to finalize a workout plan"
+  },
+  "noPlansMessage": "You don’t have any workout plans yet.\nTap 'Create plan' to get started.",
+  "@noPlansMessage": {
+    "description": "Message shown when no workout plans exist"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Title or label for the settings section"
+  },
+  "data": "Data",
+  "@data": {
+    "description": "Label for data section or menu"
+  },
+  "exportData": "Export data",
+  "@exportData": {
+    "description": "Button or option to export user data"
+  },
+  "importData": "Import data",
+  "@importData": {
+    "description": "Button or option to import user data"
+  },
+  "fittrackerBackup": "fittracker backup",
+  "@fittrackerBackup": {
+    "description": "Label or filename used for FitTracker backups"
+  },
+  "weight": "Weight",
+  "@weight": {
+    "description": "Label for weight input or display"
+  },
+  "kg": "Kg",
+  "@kg": {
+    "description": "Unit for kilograms"
+  },
+  "invalidValue": "Invalid value",
+  "@invalidValue": {
+    "description": "Validation message for invalid input value"
+  },
+  "minutes": "Minutes",
+  "@minutes": {
+    "description": "Label for duration in minutes"
+  },
+  "exercisesLabel": "Exercises: ",
+  "@exercisesLabel": {
+    "description": "Prefix label before listing exercises"
+  },
+  "emptyList": "Empty list",
+  "@emptyList": {
+    "description": "Message shown when a list has no items"
+  },
+  "createExercise": "Exercise creation",
+  "@createExercise": {
+    "description": "Title for the exercise creation screen"
+  },
+  "editExercise": "Edit exercise",
+  "@editExercise": {
+    "description": "Title for editing an exercise"
+  },
+  "strength": "Strength training",
+  "@strength": {
+    "description": "Category: strength/muscle training"
+  },
+  "cardio": "Cardio",
+  "@cardio": {
+    "description": "Category: cardio exercises"
+  },
+  "weightLoad": "Load",
+  "@weightLoad": {
+    "description": "Label for weight/load used in exercise"
+  },
+  "time": "Time",
+  "@time": {
+    "description": "Label for time-based exercises"
+  },
+  "reps": "Number of repetitions",
+  "@reps": {
+    "description": "Label for the number of repetitions in a set"
+  },
+  "sets": "Number of sets",
+  "@sets": {
+    "description": "Label for the number of sets"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Label for add button"
+  }
+}

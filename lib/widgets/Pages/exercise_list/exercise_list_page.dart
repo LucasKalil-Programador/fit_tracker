@@ -1,9 +1,10 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_card_widget.dart';
-import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_form.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class ExerciseListPage extends StatefulWidget {
@@ -15,14 +16,15 @@ class ExerciseListPage extends StatefulWidget {
 }
 
 class _ExerciseListPageState extends State<ExerciseListPage> {
+  late final localization = AppLocalizations.of(context)!;
   String searchStr = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Lista de Exercicio",
+        title: Text(
+          localization.exerciseList,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -32,7 +34,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
-              decoration: const InputDecoration(labelText: "Pesquisa"),
+              decoration: InputDecoration(labelText: localization.search),
               onChanged: (value) => setState(() => searchStr = value),
             ),
           ),
@@ -70,18 +72,18 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
 
               if(mode == ExerciseFormMode.creation) {
                 listState.add(newExercise);
-                showSnackMessage(context, "Adicionado com sucesso!", true);
+                showSnackMessage(context, localization.addedSuccess, true);
               } else {
                 if(newExercise.id != null) {
                   int index = listState.indexWhere((entity) => entity.id == newExercise.id);
                   
                   if(index >= 0) {
                     listState[index] = newExercise;
-                    showSnackMessage(context, "Editado com sucesso!", true);
+                    showSnackMessage(context, localization.editedSuccess, true);
                     return;
                   }
                 }
-                showSnackMessage(context, "Error ao editar!", false);
+                showSnackMessage(context, localization.editError, false);
               }
             },
             mode: mode,
@@ -105,7 +107,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
       trainingPlanState.reportUpdate(trainingPlanState[index]);
     }
             
-    showSnackMessage(context, "Removido com sucesso!", true);
+    showSnackMessage(context, localization.removedSuccess, true);
   }
 }
 

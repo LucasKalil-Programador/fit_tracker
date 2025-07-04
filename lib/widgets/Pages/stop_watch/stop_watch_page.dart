@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class StopWatchPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class StopWatchPage extends StatefulWidget {
 }
 
 class _StopWatchPageState extends State<StopWatchPage> with TickerProviderStateMixin {
+  late final localization = AppLocalizations.of(context)!;
   late List<StopWatchController> controllers;
   late TabController tabController;
   late PageController pageController;
@@ -36,8 +38,8 @@ class _StopWatchPageState extends State<StopWatchPage> with TickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Cronômetro",
+        title: Text(
+          localization.timer,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -230,6 +232,7 @@ class StopWatchBody extends StatefulWidget {
 }
 
 class _StopWatchBodyState extends State<StopWatchBody> {
+  late final localization = AppLocalizations.of(context)!;
   late StopWatchController controller;
 
   @override
@@ -287,7 +290,7 @@ class _StopWatchBodyState extends State<StopWatchBody> {
           controller.reset();
         });
       },
-      label: const Text("Reiniciar", softWrap: false),
+      label: Text(localization.reset, softWrap: false),
       icon: const Icon(Icons.refresh),
     );
   }
@@ -295,9 +298,9 @@ class _StopWatchBodyState extends State<StopWatchBody> {
   ElevatedButton playPausedButton() {
     final label = controller.isPaused
             ? (controller.isZeroed
-                ? const Text("Iniciar", softWrap: false)
-                : const Text("Retomar", softWrap: false))
-            : const Text("Pausar", softWrap: false);
+                ? Text(localization.start, softWrap: false)
+                : Text(localization.resume, softWrap: false))
+            : Text(localization.pause, softWrap: false);
 
     var icon = controller.isPaused
               ? const Icon(Icons.play_arrow)

@@ -3,6 +3,7 @@ import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class StatisticsPage extends StatefulWidget {
@@ -13,17 +14,17 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
+  late final localization = AppLocalizations.of(context)!;
   List<Report>? reports;
   ReportTable? activatedTable;
-
   String? selectedId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Progresso & Estatistica",
+        title: Text(
+          localization.progressStats,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -60,6 +61,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   Widget deleteAndEditButton() {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -70,7 +72,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 backgroundColor: activatedTable != null ? null : Colors.grey,
               ),
               onPressed: onEditTable,
-              label: const Text("Editar"),
+              label: Text(localization.edit),
               icon: Icon(Icons.edit),
             ),
           ),
@@ -84,7 +86,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
               onPressed: onDeleteTable,
               label: Text(
-                "Deletar",
+                localization.delete,
                 style: TextStyle(color: colorScheme.onErrorContainer),
               ),
               icon: Icon(Icons.delete),
@@ -99,10 +101,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
     return LayoutBuilder(builder: (context, constraints) {
         return DropdownMenu<String?>(
           initialSelection: selectedId,
-          label: const Text("Selecione uma tabela ou crie uma"),
+          label: Text(localization.selectOrCreateTable),
           width: constraints.maxWidth,
           dropdownMenuEntries: [
-            DropdownMenuEntry<String>(value: "new", label: "Criar nova tabela"),
+            DropdownMenuEntry<String>(value: "new", label: localization.createNewTable),
             for (int i = 0; i < tableState.length; i++)
               DropdownMenuEntry<String>(
                 value: tableState[i].id!,
@@ -158,7 +160,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         },
       );
     } else {
-      showSnackMessage(context, "Selecione uma tabela", false);
+      showSnackMessage(context, localization.selectTable, false);
     }
   }
 
@@ -190,7 +192,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     selectedId = table.id;
     
     loadReports(reportTableState, reportState, activatedTable!.id!);
-    showSnackMessage(context, "Adicionado com sucesso!", true);
+    showSnackMessage(context, localization.addedSuccess, true);
   }
 
   void onDeleteTable() {
@@ -208,9 +210,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
         reports = null;
       });
 
-      showSnackMessage(context, "Deletado com sucesso", true);
+      showSnackMessage(context, localization.deletedSuccess, true);
     } else {
-      showSnackMessage(context, "Selecione uma tabela", false);
+      showSnackMessage(context, localization.selectTable, false);
     }
   }
 
@@ -218,7 +220,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     if(activatedTable != null) {
       // TODO: editar tabela
     } else {
-      showSnackMessage(context, "Selecione uma tabela", false);
+      showSnackMessage(context, localization.selectTable, false);
     }
   }
 
@@ -232,7 +234,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     if(activatedTable != null) {
       loadReports(reportTableState, reportState, activatedTable!.id!);
     }
-    showSnackMessage(context, "Adicionado com sucesso!", true);
+    showSnackMessage(context, localization.addedSuccess, true);
   }
 
   void onDeleteReport(Report r) {
@@ -241,6 +243,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
       reportState.remove(r);
       if(reports != null) reports!.remove(r);
     });
-    showSnackMessage(context, "Removido com sucesso!", true);
+    showSnackMessage(context, localization.removedSuccess, true);
   }
 }

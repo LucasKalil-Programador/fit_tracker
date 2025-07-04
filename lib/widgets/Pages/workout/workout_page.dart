@@ -1,10 +1,11 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/widgets/Pages/workout/training_plan_form.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:fittrackr/widgets/Pages/workout/training_plan_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
+  late final localization = AppLocalizations.of(context)!;
 
   @override
   void initState() {
@@ -28,8 +30,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Treino",
+        title: Text(
+          localization.workout,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -63,7 +65,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   saveDoneList(donelist);
                 }
               },
-              child: Text(activatedPlan == null ? "Criar plano" : "Finalizar plano"),
+              child: Text(activatedPlan == null ? localization.createPlanButton : localization.finishPlan),
             ),
           ),
         ],
@@ -83,7 +85,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       onDelete: (plan) {
         final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
         trainingPlanState.remove(plan);     
-        showSnackMessage(context, "Removido com sucesso!", true);
+        showSnackMessage(context, localization.removedSuccess, true);
       },
       onEdit: (plan) => showEditModalBottom(context, plan, TrainingPlanFormMode.edit),
     );
@@ -93,7 +95,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return Center(
       child: Text(
         style: const TextStyle(fontWeight: FontWeight.bold),
-        "Você ainda não tem nenhum plano de treino. \nToque em 'Criar plano' para começar.",
+        localization.noPlansMessage,
         textAlign: TextAlign.center,
       ),
     );
@@ -115,18 +117,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
               
               if(mode == TrainingPlanFormMode.creation) {
                 plansState.add(newPlan);
-                showSnackMessage(context, "Adicionado com sucesso!", true);
+                showSnackMessage(context, localization.addedSuccess, true);
               } else {
                 if(newPlan.id != null) {
                   int index = plansState.indexWhere((entity) => entity.id == newPlan.id);
                   
                   if(index >= 0) {
                     plansState[index] = newPlan;
-                    showSnackMessage(context, "Editado com sucesso!", true);
+                    showSnackMessage(context, localization.editedSuccess, true);
                     return;
                   }
                 }
-                showSnackMessage(context, "Error ao editar!", false);
+                showSnackMessage(context, localization.editError, false);
               }
             },
           ),
