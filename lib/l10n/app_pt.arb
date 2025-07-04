@@ -55,5 +55,52 @@
   "time": "Tempo",
   "reps": "Qtd. de repetições",
   "sets": "Qtd. de séries",
-  "add": "Adicionar"
+  "add": "Adicionar",
+  "fullTable": "Tabela completa",
+  "chartSelectionInfo": "Os itens selecionados serão exibidos no gráfico",
+  "date": "Data",
+  "dateHint": "Data em que o valor foi registrado",
+  "value": "Valor",
+  "valueHint": "Valor registrado",
+  "note": "Anotação",
+  "noteHint": "Observação adicionada pelo usuário",
+  "deleteReport": "Deleta o reporte",
+  "fullNote": "Anotação completa",
+  "close": "Fechar",
+  "reportValue": "Reportar valor",
+  "notes": "Notas",
+  "invalidNote": "Nota Invalida",
+  "createProgressTable": "Criar tabela de progresso",
+  "description": "Descrição",
+  "invalidDescription": "Descrição invalida",
+  "valueSuffix": "Sufixo do valor exemplo: (15 Kg)",
+  "invalidSuffix": "Sufixo Invalido",
+  "interactiveChart": "Gráfico interativo",
+  "last7Days": "Últimos 7 dias",
+  "last30Days": "Últimos 30 dias",
+  "sinceBeginning": "Desde o início",
+  "importError": "Erro ao tentar importar dados",
+  "dataLoadedSuccess": "Dados carregados com sucesso!\n\n",
+  "totalData": "Total de dados:\n",
+  "importReplace": "Importar substituir",
+  "importMerge": "Importar adicionar",
+  "cancel": "Cancelar",
+  "importSummary": "• Exercícios: {exercises}\n• Planos: {plans}\n• Tabelas: {tables}\n• Relatórios: {reports}",
+
+  "homeNavBar": "Home",
+  "timerNavBar": "Timer",
+  "trainNavBar": "Treinar",
+  "exercisesNavBar": "Exercícios",
+  "progressNavBar": "Progresso",
+  "configNavBar": "Config",
+  
+  "@importSummary": {
+    "description": "Resumo da quantidade de dados importados",
+    "placeholders": {
+      "exercises": {},
+      "plans": {},
+      "tables": {},
+      "reports": {}
+    }
+  }
 }

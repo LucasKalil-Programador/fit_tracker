@@ -66,6 +66,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
+  late final localization = AppLocalizations.of(context)!;
   StreamSubscription? streamSubscription;
   int currentPageIndex = 0;
 
@@ -79,13 +80,13 @@ class _MainWidgetState extends State<MainWidget> {
           });
         },
         selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.alarm), label: 'Timer'),
-          NavigationDestination(icon: Icon(Icons.fitness_center), label: 'Treinar'),
-          NavigationDestination(icon: Icon(Icons.format_list_bulleted), label: 'Exercícios'),
-          NavigationDestination(icon: Icon(Icons.insights), label: "Progresso"),
-          NavigationDestination(icon: Icon(Icons.settings), label: "Config")
+        destinations: <Widget>[
+          NavigationDestination(icon: Icon(Icons.home), label: localization.homeNavBar),
+          NavigationDestination(icon: Icon(Icons.alarm), label: localization.timerNavBar),
+          NavigationDestination(icon: Icon(Icons.fitness_center), label: localization.trainNavBar),
+          NavigationDestination(icon: Icon(Icons.format_list_bulleted), label: localization.exercisesNavBar),
+          NavigationDestination(icon: Icon(Icons.insights), label: localization.progressNavBar),
+          NavigationDestination(icon: Icon(Icons.settings), label: localization.configNavBar)
         ],
       ),
       body:
@@ -115,7 +116,7 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   void onReceiveEvent(List<SharedMediaFile> events) async {
-    logger.i("Recebido input {$events}");
+    logger.i("onReceiveEvent: {$events}");
     try {
       if (events.isEmpty) return;
       final event = events.first;
@@ -130,7 +131,7 @@ class _MainWidgetState extends State<MainWidget> {
       }
     } catch (e) {
       if(mounted) {
-        showSnackMessage(context, "Erro ao tentar importar dados", false);
+        showSnackMessage(context, localization.importError, false);
       }
       logger.w(e);
     }
@@ -141,7 +142,7 @@ class _MainWidgetState extends State<MainWidget> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text("Importar dados"),
+            title: Text(localization.importData),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -149,24 +150,25 @@ class _MainWidgetState extends State<MainWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Text(
-                    'Dados carregados com sucesso!\n\n'
-                    'Total de dados:\n'
-                    '• Exercícios: ${(importedData.exercises ?? []).length}\n'
-                    '• Planos: ${(importedData.plans ?? []).length}\n'
-                    '• Tabelas: ${(importedData.tables ?? []).length}\n'
-                    '• Relatórios: ${(importedData.reports ?? []).length}',
+                    '${localization.dataLoadedSuccess}'
+                    '${localization.totalData}'
+                    '${localization.importSummary(
+                    (importedData.exercises ?? []).length, 
+                    (importedData.plans ?? []).length, 
+                    (importedData.tables ?? []).length, 
+                    (importedData.reports ?? []).length)}',
                   ),
                 ),
                 ElevatedButton(
-                  child: Text("Importar substituir"),
+                  child: Text(localization.importReplace),
                   onPressed: () => Navigator.pop(context, 0),
                 ),
                 ElevatedButton(
-                  child: Text("Importar adicionar"),
+                  child: Text(localization.importMerge),
                   onPressed: () => Navigator.pop(context, 1),
                 ),
                 ElevatedButton(
-                  child: Text("Cancelar"),
+                  child: Text(localization.cancel),
                   onPressed: () => Navigator.pop(context, 2),
                 )
               ],

@@ -4,9 +4,9 @@ import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Default Graph
 
@@ -205,7 +205,7 @@ class _DefaultGraphState extends State<DefaultGraph> {
   Widget getTitle(double value, TitleMeta meta) {
     final style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontFamily: 'Digital',
+      fontFamily: "Digital",
       color: widget.textColor,
     );
     
@@ -246,6 +246,7 @@ class ReportTableView extends StatefulWidget {
 }
 
 class _ReportTableViewState extends State<ReportTableView> {
+  late final localization = AppLocalizations.of(context)!;
   bool sortAscending = false;
   int? sortColumnIndex;
 
@@ -271,7 +272,7 @@ class _ReportTableViewState extends State<ReportTableView> {
     );
 
     return PaginatedDataTable(
-      header: const Text("Tabela completa"),
+      header: Text(localization.fullTable),
       sortAscending: sortAscending,
       sortColumnIndex: sortColumnIndex,
       columns: [
@@ -295,12 +296,12 @@ class _ReportTableViewState extends State<ReportTableView> {
               );
             },
           ),
-          tooltip: "Os itens selecionados serão exibidos no gráfico"
+          tooltip: localization.chartSelectionInfo
         ),
-        DataColumn(label: Text("Data"), onSort: sortByDate, tooltip: "Data em que o valor foi registrado"),
-        DataColumn(label: Text("Valor"), numeric: true, onSort: sortByValue, tooltip: "Valor registrado"),
-        DataColumn(label: Text("Anotação"), onSort: sortByNote, tooltip: "Observação adicionada pelo usuário"),
-        DataColumn(label: Text("Deletar"), tooltip: "Deleta o reporte"),
+        DataColumn(label: Text(localization.date), onSort: sortByDate, tooltip: localization.dateHint),
+        DataColumn(label: Text(localization.value), numeric: true, onSort: sortByValue, tooltip: localization.valueHint),
+        DataColumn(label: Text(localization.note), onSort: sortByNote, tooltip: localization.noteHint),
+        DataColumn(label: Text(localization.delete), tooltip: localization.deleteReport),
       ],
       source: reportSource,
     );
@@ -350,12 +351,12 @@ class _ReportTableViewState extends State<ReportTableView> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('Anotação completa'),
+            title: Text(localization.fullNote),
             content: Text(report.note),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Feichar'),
+                child: Text(localization.close),
               ),
             ],
           ),
@@ -472,6 +473,7 @@ class ReportForm extends StatefulWidget {
 }
 
 class _ReportFormState extends State<ReportForm> {
+  late final localization = AppLocalizations.of(context)!;
   final _noteController = TextEditingController(text: "");
 
   double value = 0;
@@ -482,8 +484,8 @@ class _ReportFormState extends State<ReportForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Reportar valor",
+        title: Text(
+          localization.reportValue,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -499,7 +501,7 @@ class _ReportFormState extends State<ReportForm> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ValueInputDoubleWidget(
-                  label: "Valor",
+                  label: localization.value,
                   suffix: widget.table.valueSuffix,
                   minValue: -1_000_000_000,
                   maxValue: 1_000_000_000,
@@ -520,11 +522,11 @@ class _ReportFormState extends State<ReportForm> {
   Widget noteInput() {
     return TextFormField(
       controller: _noteController,
-      decoration: const InputDecoration(labelText: "Notas"),
+      decoration: InputDecoration(labelText: localization.notes),
       maxLines: 6,
       validator: (value) {
         if (value == null || value.length > 500) {
-          return 'Nota Invalida';
+          return localization.invalidNote;
         }
         return null;
       },
@@ -544,7 +546,7 @@ class _ReportFormState extends State<ReportForm> {
           if(widget.onSubmit != null) widget.onSubmit!(report);
         }
       },
-      child: Text("Adicionar"),
+      child: Text(localization.add),
     );
   }
 }
@@ -564,6 +566,8 @@ class ReportTableForm extends StatefulWidget {
 }
 
 class _ReportTableFormState extends State<ReportTableForm> {
+  late final localization = AppLocalizations.of(context)!;
+
   final _desctiptionController = TextEditingController(text: "");
   final _nameController = TextEditingController(text: "");
   final _suffixController = TextEditingController(text: "");
@@ -574,8 +578,8 @@ class _ReportTableFormState extends State<ReportTableForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Criar tabela de progresso",
+        title: Text(
+          localization.createProgressTable,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -596,10 +600,10 @@ class _ReportTableFormState extends State<ReportTableForm> {
   Widget nameInput() {
     return TextFormField(
       controller: _nameController,
-      decoration: const InputDecoration(labelText: "Nome"),
+      decoration: InputDecoration(labelText: localization.name),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Nome Invalido';
+          return localization.invalidName;
         }
         return null;
       },
@@ -609,11 +613,11 @@ class _ReportTableFormState extends State<ReportTableForm> {
   Widget noteInput() {
     return TextFormField(
       controller: _desctiptionController,
-      decoration: const InputDecoration(labelText: "Descrição"),
+      decoration: InputDecoration(labelText: localization.description),
       maxLines: 8,
       validator: (value) {
         if (value == null || value.length > 500) {
-          return 'Descrição invalida';
+          return localization.invalidDescription;
         }
         return null;
       },
@@ -623,10 +627,10 @@ class _ReportTableFormState extends State<ReportTableForm> {
   Widget suffixInput() {
     return TextFormField(
       controller: _suffixController,
-      decoration: const InputDecoration(labelText: "Sufixo do valor exemplo: (15 Kg)"),
+      decoration: InputDecoration(labelText: localization.valueSuffix),
       validator: (value) {
         if (value == null || value.length > 10) {
-          return 'Sufixo Invalido';
+          return localization.invalidSuffix;
         }
         return null;
       },
@@ -647,7 +651,7 @@ class _ReportTableFormState extends State<ReportTableForm> {
           if(widget.onSubmit != null) widget.onSubmit!(table);
         }
       },
-      child: Text("Adicionar"),
+      child: Text(localization.add),
     );
   }
 }
@@ -675,6 +679,7 @@ class ReportView extends StatefulWidget {
 }
 
 class _ReportViewState extends State<ReportView> {
+  late final localization = AppLocalizations.of(context)!;
   Map<_ReportViewPeriod, List<String>> periodMap = {};
   _ReportViewPeriod? period = _ReportViewPeriod.last7;
 
@@ -714,7 +719,7 @@ class _ReportViewState extends State<ReportView> {
               borderColor: colorScheme.onPrimaryContainer,
               tooltipBackground: colorScheme.primaryContainer,
               textColor: colorScheme.onSurface,
-              topTitle: "Gráfico interativo",
+              topTitle: localization.interactiveChart,
               rightTitle: widget.table == null ? "" : widget.table!.valueSuffix,
               leftTitle: widget.table == null ? "" : widget.table!.valueSuffix,
             ),
@@ -724,7 +729,7 @@ class _ReportViewState extends State<ReportView> {
         Column(
           children: [
             ListTile(
-              title: const Text("Ultimos 7 dias"),
+              title: Text(localization.last7Days),
               leading: Radio(
                 value: _ReportViewPeriod.last7,
                 groupValue: period,
@@ -732,7 +737,7 @@ class _ReportViewState extends State<ReportView> {
               ),
             ),
             ListTile(
-              title: const Text("Ultimos 30 dias"),
+              title: Text(localization.last30Days),
               leading: Radio(
                 value: _ReportViewPeriod.last30,
                 groupValue: period,
@@ -740,7 +745,7 @@ class _ReportViewState extends State<ReportView> {
               ),
             ),
             ListTile(
-              title: const Text("Desde o início"),
+              title: Text(localization.sinceBeginning),
               leading: Radio(
                 value: _ReportViewPeriod.lifeTime,
                 groupValue: period,
