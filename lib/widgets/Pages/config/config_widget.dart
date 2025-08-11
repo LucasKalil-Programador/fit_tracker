@@ -2,7 +2,7 @@ import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 

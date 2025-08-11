@@ -6,7 +6,7 @@ import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 
 // Default Graph
 

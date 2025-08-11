@@ -1,7 +1,7 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/widgets/common/value_input_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 
 class ExerciseFormMode {
   static const int creation = 0;

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class StopWatchPage extends StatefulWidget {

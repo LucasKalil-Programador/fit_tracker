@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:fittrackr/utils/logger.dart';
@@ -13,7 +14,6 @@ import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 

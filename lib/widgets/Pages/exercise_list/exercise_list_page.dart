@@ -4,7 +4,7 @@ import 'package:fittrackr/widgets/Pages/exercise_list/exercise_card_widget.dart'
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_form.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class ExerciseListPage extends StatefulWidget {
