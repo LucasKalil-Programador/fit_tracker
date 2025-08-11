@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/utils/logger.dart';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // ignore: unnecessary_import
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import 'package:path/path.dart';
-
+import 'package:synchronized/synchronized.dart';
 
 // DB Helper
 
@@ -72,15 +76,22 @@ class DatabaseHelper {
 
   static Database? _database;
 
+  static final _initLocker = Lock();
   Future<Database> get database async {
-    if(_database != null) return _database!;
-    _database = await _initDb();
-    return _database!;
+    return _initLocker.synchronized(() async {
+      if (_database != null) return _database!;
+      _database = await _initDb();
+      return _database!;
+    });
   }
 
   Future<Database> _initDb() async {
+    logger.i("starting Database");
     late final String path;
-    if(Platform.isAndroid) {
+    if(kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+      path = 'fittracker.db';
+    } else if(Platform.isAndroid) {
       path = join(await getDatabasesPath(), 'fittracker.db');
     } else if(Platform.isWindows) {
       path = ":memory:";

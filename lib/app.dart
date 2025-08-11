@@ -13,6 +13,7 @@ import 'package:fittrackr/widgets/Pages/statistics/statistics_page.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -103,9 +104,12 @@ class _MainWidgetState extends State<MainWidget> {
   @override
   void initState() {
     super.initState();
-
-    streamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(onReceiveEvent);
-    ReceiveSharingIntent.instance.getInitialMedia().then(onReceiveEvent);
+    if(kIsWeb) {
+      logger.i("Web not support ReceiveSharingIntent");
+    } else if(Platform.isAndroid) {
+      streamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(onReceiveEvent);
+      ReceiveSharingIntent.instance.getInitialMedia().then(onReceiveEvent);
+    }
   }
 
   @override
