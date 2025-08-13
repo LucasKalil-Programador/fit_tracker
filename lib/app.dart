@@ -17,24 +17,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:tuple/tuple.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Selector<MetadataState, String?>(
-      selector: (_, metadataState) => metadataState.get(themeKey),
-      builder: (context, selectedTheme, child) {
+    return Selector2<MetadataState, MetadataState, Tuple2<String?, String?>>(
+      selector: (_, _, metadataState) => Tuple2(metadataState.get(themeKey), metadataState.get(localeKey)),
+      builder: (context, configTuple, child) {
         return MaterialApp(
           title: "Fit Tracker",
           home: MainWidget(),
-          locale: const Locale('en'),
+          locale: resolveLocale(configTuple.item2, context),
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           theme: lightTheme(),
           darkTheme: darkTheme(),
-          themeMode: resolveTheme(selectedTheme),
+          themeMode: resolveTheme(configTuple.item1),
         );
       },
     );
@@ -57,6 +58,24 @@ class App extends StatelessWidget {
     }
     return themeMode;
   }
+
+  Locale? resolveLocale(String? localeCode, BuildContext context) {
+    Locale? locale;
+    switch (localeCode) {
+      case "en":
+        locale = Locale("en");
+        break;
+      case "pt":
+        locale = Locale("pt");
+        break;
+      case "sys":
+        locale = null;
+        break;
+      default: 
+        locale = null;
+    }
+    return locale;
+  }
 }
 
 class MainWidget extends StatefulWidget {
@@ -67,12 +86,13 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  late final localization = AppLocalizations.of(context)!;
+  late final AppLocalizations localization;
   StreamSubscription? streamSubscription;
   int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (value) {

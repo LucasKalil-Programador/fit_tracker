@@ -5,7 +5,8 @@ import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
 
-const themeKey = "Config:key";
+const themeKey = "Theme:key";
+const localeKey = "Locale:key";
 
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;

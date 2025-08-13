@@ -86,14 +86,12 @@
   "importMerge": "Importar adicionar",
   "cancel": "Cancelar",
   "importSummary": "• Exercícios: {exercises}\n• Planos: {plans}\n• Tabelas: {tables}\n• Relatórios: {reports}",
-
   "homeNavBar": "Home",
   "timerNavBar": "Timer",
   "trainNavBar": "Treinar",
   "exercisesNavBar": "Exercícios",
   "progressNavBar": "Progresso",
   "configNavBar": "Config",
-  
   "@importSummary": {
     "description": "Resumo da quantidade de dados importados",
     "placeholders": {
@@ -102,5 +100,8 @@
       "tables": {},
       "reports": {}
     }
-  }
+  },
+  "languageTitle": "Idioma",
+  "portugueseLanguage": "Português",
+  "englishLanguage": "Inglês"
 }

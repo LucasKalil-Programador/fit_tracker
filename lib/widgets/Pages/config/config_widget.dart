@@ -21,7 +21,6 @@ class ThemeSelection extends StatefulWidget {
 }
 
 class _ThemeSelectionState extends State<ThemeSelection> {
-  late final localization = AppLocalizations.of(context)!;
   AppTheme? selectedTheme;
 
   @override
@@ -33,6 +32,7 @@ class _ThemeSelectionState extends State<ThemeSelection> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     Map<AppTheme, String> themeTextMap = {AppTheme.dark: localization.dark, AppTheme.light: localization.light, AppTheme.system: localization.system};
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -65,6 +65,58 @@ class _ThemeSelectionState extends State<ThemeSelection> {
         ),
       ],
     );
+  }
+}
+
+// Locale Selector
+
+class LocateSelector extends StatelessWidget {
+  final String selectedLocale;
+  final Function(Locale locale) onLocaleSelected;
+
+  const LocateSelector({super.key, required this.selectedLocale, required this.onLocaleSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
+      children: [
+        Center(child: Text(localization.languageTitle, style: Theme.of(context).textTheme.titleLarge)),
+        LayoutBuilder(builder: (context, constraints) => 
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: DropdownMenu(
+                initialSelection: selectedLocale,
+                width: constraints.maxWidth,
+                dropdownMenuEntries: [
+                  for (var locale in AppLocalizations.supportedLocales)
+                    DropdownMenuEntry<String>(value: locale.languageCode, label: getLanguageByCode(localization, locale.languageCode)),
+                  DropdownMenuEntry<String>(value: "sys", label: getLanguageByCode(localization, "sys"))
+                ],
+                onSelected: (value) {
+                  if(value != null) {
+                    onLocaleSelected(Locale(value));
+                  }
+                },
+              )
+            ),
+        ),
+      ],
+    );
+  }
+
+  String getLanguageByCode(AppLocalizations localization, String languageCode) {
+    switch (languageCode) {
+      case "pt":
+        return localization.portugueseLanguage;
+      case "en":
+        return localization.englishLanguage;
+      default:
+        return localization.system;
+    }
   }
 }
 

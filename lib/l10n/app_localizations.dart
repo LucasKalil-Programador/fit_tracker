@@ -652,6 +652,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• Exercises: {exercises}\n• Plans: {plans}\n• Tables: {tables}\n• Reports: {reports}'**
   String importSummary(Object exercises, Object plans, Object tables, Object reports);
+
+  /// Label for language selection screen
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTitle;
+
+  /// Option to select Portuguese language
+  ///
+  /// In en, this message translates to:
+  /// **'Portuguese'**
+  String get portugueseLanguage;
+
+  /// Option to select English language
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishLanguage;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

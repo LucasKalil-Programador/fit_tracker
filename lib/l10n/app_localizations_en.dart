@@ -288,4 +288,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String importSummary(Object exercises, Object plans, Object tables, Object reports) {
     return '• Exercises: $exercises\n• Plans: $plans\n• Tables: $tables\n• Reports: $reports';
   }
+
+  @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get portugueseLanguage => 'Portuguese';
+
+  @override
+  String get englishLanguage => 'English';
 }

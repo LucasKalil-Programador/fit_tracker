@@ -368,7 +368,6 @@
   "@configNavBar": {
     "description": "Label for settings/config screen"
   },
-
   "importSummary": "• Exercises: {exercises}\n• Plans: {plans}\n• Tables: {tables}\n• Reports: {reports}",
   "@importSummary": {
     "description": "Summary of how many data items were imported",
@@ -378,5 +377,17 @@
       "tables": {},
       "reports": {}
     }
+  },
+  "languageTitle": "Language",
+  "@languageTitle": {
+    "description": "Label for language selection screen"
+  },
+  "portugueseLanguage": "Portuguese",
+  "@portugueseLanguage": {
+    "description": "Option to select Portuguese language"
+  },
+  "englishLanguage": "English",
+  "@englishLanguage": {
+    "description": "Option to select English language"
   }
 }

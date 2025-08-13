@@ -25,19 +25,26 @@ class ConfigPage extends StatelessWidget {
       ),
       body: Consumer<MetadataState>(
         builder: (context, metadataState, child) {
-          return Column(
-            children: [
-              DefaultDivider(),
-              ThemeSelection(
-                initialValue: getTheme(metadataState),
-                onThemeSelected: (theme) => onThemeSelected(context, theme),
-              ),
-              DefaultDivider(),
-              DataImportExport(),
-              DefaultDivider(),
-              DevTools(),
-              DefaultDivider(),
-            ],
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                DefaultDivider(),
+                ThemeSelection(
+                  initialValue: getTheme(metadataState),
+                  onThemeSelected: (theme) => onThemeSelected(context, theme),
+                ),
+                DefaultDivider(),
+                LocateSelector(
+                  selectedLocale: getLocale(metadataState),
+                  onLocaleSelected: (locale) => onLocaleSelected(context, locale),
+                ),
+                DefaultDivider(),
+                DataImportExport(),
+                DefaultDivider(),
+                DevTools(),
+                DefaultDivider(),
+              ],
+            ),
           );
         },
       ),
@@ -46,18 +53,28 @@ class ConfigPage extends StatelessWidget {
 
   AppTheme getTheme(MetadataState metadataState) {
     final selectedTheme = metadataState.get(themeKey);
-    if(selectedTheme != null) {
+    final themeNameMap = AppTheme.values.asNameMap();
+
+    if(selectedTheme != null && themeNameMap.containsKey(selectedTheme)) {
       return AppTheme.values.byName(selectedTheme);
     }
     return AppTheme.system;
+  }
+
+  String getLocale(MetadataState metadataState) {
+    return metadataState.get(localeKey) ?? "sys";
   }
 
   void onThemeSelected(BuildContext context, AppTheme theme) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.put(themeKey, theme.name);
   }
-}
 
+  void onLocaleSelected(BuildContext context, Locale locale) {
+    final metadataState = Provider.of<MetadataState>(context, listen: false);
+    metadataState.put(localeKey, locale.languageCode); 
+  }
+}
 
 class DataImportExport extends StatelessWidget {
   const DataImportExport({super.key});
