@@ -137,6 +137,12 @@ abstract class AppLocalizations {
   /// **'Added successfully!'**
   String get addedSuccess;
 
+  /// Error message when adding fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add!'**
+  String get addError;
+
   /// Success message after deleting
   ///
   /// In en, this message translates to:

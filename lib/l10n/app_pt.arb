@@ -6,6 +6,7 @@
   "createNewTable": "Criar nova tabela",
   "selectTable": "Selecione uma tabela",
   "addedSuccess": "Adicionado com sucesso!",
+  "addError": "Falha ao adicionar!",
   "deletedSuccess": "Deletado com sucesso",
   "deleteError": "Falha ao excluir",
   "removedSuccess": "Removido com sucesso!",

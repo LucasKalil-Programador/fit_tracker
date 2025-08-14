@@ -22,6 +22,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
   bool isDeletingReport = false;
   bool isDeletingTable = false;
 
+  bool isCreatingReport = false;
+  bool isCreatingTable = false;
+
   @override
   Widget build(BuildContext context) {
     localization = AppLocalizations.of(context)!;
@@ -144,7 +147,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     });
   }
 
-// Forms
+  // Forms
 
   void showReportForm(BuildContext context) {
     if (activatedTable != null) {
@@ -158,7 +161,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               .of(context).viewInsets.bottom),
             child: ReportForm(
               table: activatedTable!,
-              onSubmit: (report) => onCreateReport(context, report),
+              onSubmit: (report) => isCreatingReport ? null : onCreateReport(context, report),
             ),
           );
         },
@@ -178,25 +181,38 @@ class _StatisticsPageState extends State<StatisticsPage> {
             .copyWith(bottom: MediaQuery
             .of(context).viewInsets.bottom),
             child: ReportTableForm(
-              onSubmit: (table) => onCreateTable(context, table),
+              onSubmit: (table) => isCreatingTable ? null : onCreateTable(context, table),
             ),
         );
       },
     );
   }
 
-// Actions table
+  // Actions table
 
-  void onCreateTable(BuildContext context, ReportTable table) {
-    Navigator.pop(context);
-    final reportTableState = Provider.of<ReportTableState>(context, listen: false);
-    final reportState = Provider.of<ReportState>(context, listen: false);
-    reportTableState.add(table);
-    activatedTable = table;
-    selectedId = table.id;
-    
-    loadReports(reportTableState, reportState, activatedTable!.id!);
-    showSnackMessage(context, localization.addedSuccess, true);
+  void onCreateTable(BuildContext context, ReportTable table) async {
+    if(isCreatingTable) return;
+    setState(() => isCreatingTable = true);
+
+    try {
+      final reportTableState = Provider.of<ReportTableState>(context, listen: false);
+      final reportState = Provider.of<ReportState>(context, listen: false);
+
+      final success = await reportTableState.addWait(table);
+
+      if(success) {
+        activatedTable = table; 
+        selectedId = table.id;
+        loadReports(reportTableState, reportState, activatedTable!.id!);
+      }
+
+      if(context.mounted) {
+        showSnackMessage(context, success ? localization.addedSuccess : localization.addError, success);
+        if(success) Navigator.pop(context);
+      }
+    } finally {
+      setState(() => isCreatingTable = false);
+    }
   }
 
   void onDeleteTable() async {
@@ -237,17 +253,29 @@ class _StatisticsPageState extends State<StatisticsPage> {
     }
   }
 
-// Actions report
+  // Actions report
 
-  void onCreateReport(BuildContext context, Report report) {
-    Navigator.pop(context);
-    final reportTableState = Provider.of<ReportTableState>(context, listen: false);
-    final reportState = Provider.of<ReportState>(context, listen: false);
-    reportState.add(report);
-    if(activatedTable != null) {
-      loadReports(reportTableState, reportState, activatedTable!.id!);
+  void onCreateReport(BuildContext context, Report report) async {
+    if (isCreatingReport) return;
+    setState(() => isCreatingReport = true);
+
+    try {
+      final reportTableState = Provider.of<ReportTableState>(context, listen: false);
+      final reportState = Provider.of<ReportState>(context, listen: false);
+
+      bool success = await reportState.addWait(report);
+
+      if (success && activatedTable != null) {
+        loadReports(reportTableState, reportState, activatedTable!.id!);
+      }
+
+      if (context.mounted) {
+        showSnackMessage(context, success ? localization.addedSuccess : localization.addError, success,);
+        if (success) Navigator.pop(context);
+      }
+    } finally {
+      setState(() => isCreatingReport = false);
     }
-    showSnackMessage(context, localization.addedSuccess, true);
   }
 
   void onDeleteReport(Report r) async {

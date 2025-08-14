@@ -27,6 +27,10 @@
   "@addedSuccess": {
     "description": "Success message after adding"
   },
+  "addError": "Failed to add!",
+  "@addError": {
+    "description": "Error message when adding fails"
+  },
   "deletedSuccess": "Deleted successfully",
   "@deletedSuccess": {
     "description": "Success message after deleting"

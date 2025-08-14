@@ -30,6 +30,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get addedSuccess => 'Adicionado com sucesso!';
 
   @override
+  String get addError => 'Falha ao adicionar!';
+
+  @override
   String get deletedSuccess => 'Deletado com sucesso';
 
   @override

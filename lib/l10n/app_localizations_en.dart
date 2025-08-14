@@ -30,6 +30,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addedSuccess => 'Added successfully!';
 
   @override
+  String get addError => 'Failed to add!';
+
+  @override
   String get deletedSuccess => 'Deleted successfully';
 
   @override

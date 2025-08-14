@@ -19,6 +19,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
   late AppLocalizations localization;
 
   bool isDeleting = false;
+  bool isSubmitting = false;
   String searchStr = "";
 
   @override
@@ -70,32 +71,47 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
         return Padding(
           padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: ExerciseForm(
-            onSubmit: (newExercise) {
-              Navigator.pop(context);
-              final listState = Provider.of<ExercisesState>(context, listen: false);
-
-              if(mode == ExerciseFormMode.creation) {
-                listState.add(newExercise);
-                showSnackMessage(context, localization.addedSuccess, true);
-              } else {
-                if(newExercise.id != null) {
-                  int index = listState.indexWhere((entity) => entity.id == newExercise.id);
-                  
-                  if(index >= 0) {
-                    listState[index] = newExercise;
-                    showSnackMessage(context, localization.editedSuccess, true);
-                    return;
-                  }
-                }
-                showSnackMessage(context, localization.editError, false);
-              }
-            },
+            onSubmit: (newExercise) => isSubmitting ? null : onSubmit(newExercise, mode),
             mode: mode,
             baseExercise: baseExercise,
           ),
         );
       },
     );
+  }
+
+  void onSubmit(Exercise newExercise, int mode) async {
+    if(isSubmitting) return;
+    setState(() => isSubmitting = true);
+
+    try {
+      final listState = Provider.of<ExercisesState>(context, listen: false);
+      bool success = false;
+
+      if(mode == ExerciseFormMode.creation) {
+        success = await listState.addWait(newExercise);
+      } else if(newExercise.id != null) {
+        success = await listState.reportUpdate(newExercise);
+      }
+
+      if(mounted) {
+        showSnackMessage(
+          context,
+          success
+            ? (mode == ExerciseFormMode.creation
+                ? localization.addedSuccess
+                : localization.editedSuccess)
+            : (mode == ExerciseFormMode.creation 
+                ? localization.addError 
+                : localization.editError),
+          success,
+        );
+        
+        if(success) Navigator.pop(context);
+      }
+    } finally {
+      setState(() => isSubmitting = false);
+    }
   }
 
   void onDelete(BuildContext context, Exercise exercise) async {

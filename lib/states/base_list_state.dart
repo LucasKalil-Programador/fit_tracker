@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:fittrackr/database/db.dart';
 import 'package:fittrackr/database/entities.dart';
-import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -11,9 +10,10 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   final ProxyPart<T, dynamic>? dbProxy;
   final _completer = Completer<bool>();
   final List<T> _cache = [];
-  bool useRollback;
 
+  List<Map<String, Object?>> toJson() => _cache.map((e) => e.toMap()).toList();
   List<T> get clone => List<T>.from(_cache);
+  
   bool get isEmpty => _cache.isEmpty;
   bool get isNotEmpty => _cache.isNotEmpty;
   int get length => _cache.length;
@@ -32,65 +32,27 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   Future<bool> waitLoaded() => _completer.future;
 
-
-  BaseListState({this.dbProxy, bool loadDatabase = false, this.useRollback = false}) {
+  BaseListState({this.dbProxy, bool loadDatabase = false}) {
     if(loadDatabase) {
       _completer.complete(_loadFromDatabase());
     } else {
       _completer.complete(true);
     }
   }
-
-  void operator []=(int index, T value) {
-    if(index < 0 || index >= _cache.length) return;
-    final oldValue = _cache[index];
-    if(oldValue.id != value.id) return;
-
-    _cache[index] = value;
-    notifyListeners();
-
-    dbProxy?.update(value)
-      .then((proxyResult) {
-        if(proxyResult.hasError && useRollback) {
-          _cache[index] = oldValue;
-          notifyListeners();
-          logger.i('Rollback: reverted update due to database error.');
-        }
-      },);
-  }
   
-  bool add(T entity) {
-    if(containsId(entity)) {
-      return false;
-    }
+  // Methods
+
+  Future<bool> addWait(T entity) async {
+    if(containsId(entity)) return false;
     entity.id ??= Uuid().v4();
+
+    if(dbProxy != null) {
+      final result = await dbProxy!.insert(entity);
+      if(result.hasError) return false;
+    }
 
     _cache.add(entity);
     this.sort(notify: true);
-
-    dbProxy?.insert(entity)
-      .then((proxyResult) {
-        if(proxyResult.hasError && useRollback) {
-          _cache.remove(entity);
-          notifyListeners();
-          logger.i('Rollback: removed entity after failed insert.');
-        }
-      },);
-    return true;
-  }
-
-
-
-  Future<bool> remove(T entity) async {
-    if (!containsId(entity)) return false;
-
-    if (dbProxy != null) {
-      final result = await dbProxy!.delete(entity);
-      if (result.notHasError == false) return false;
-    }
-
-    _cache.remove(entity);
-    notifyListeners();
     return true;
   }
 
@@ -115,6 +77,33 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return result.notHasError;
   }
 
+  Future<bool> reportUpdate(T entity) async {
+    final index = _cache.indexWhere((e) => e.id == entity.id);
+    if (index == -1) return false;
+
+    if(dbProxy != null) {
+      final result = await dbProxy!.update(entity);
+      if(result.hasError) return false;
+    }
+
+    _cache[index] = entity;
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> remove(T entity) async {
+    if (!containsId(entity)) return false;
+
+    if (dbProxy != null) {
+      final result = await dbProxy!.delete(entity);
+      if (result.hasError) return false;
+    }
+
+    _cache.remove(entity);
+    notifyListeners();
+    return true;
+  }
+
   Future<bool> clear() async {
     if (dbProxy == null) {
       _cache.clear();
@@ -131,19 +120,11 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return result.notHasError;
   }
 
+  // Aux methods
 
   void sort({bool notify = false}) {
     _cache.sort((e0, e1) => e0.id!.compareTo(e1.id!));
     if(notify) notifyListeners();
-  }
-
-  void reportUpdate(T entity) {
-    if(entity.id != null) {
-      int index = _binarySearch(entity.id!);
-      if (index < _cache.length && _cache[index].id == entity.id) {
-        this[index] = entity;
-      }
-    }
   }
 
   T? getById(String id) {
@@ -155,8 +136,6 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   }
 
   // internals
-
-  List<Map<String, Object?>> toJson() => _cache.map((e) => e.toMap()).toList();
 
   int _binarySearch(String id) {
     int min = 0;

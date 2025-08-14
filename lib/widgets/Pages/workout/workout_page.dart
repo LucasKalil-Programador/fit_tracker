@@ -18,6 +18,8 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   late AppLocalizations localization;
+
+  bool isSubmitting = false;
   bool isDeleting = false;
 
   @override
@@ -128,32 +130,46 @@ class _WorkoutPageState extends State<WorkoutPage> {
           child: TrainingPlanForm(
             baseTrainingPlan: baseTrainingPlan,
             mode: mode,
-            onSubmit: (newPlan) {
-              Navigator.pop(context);
-              TrainingPlanState plansState = Provider.of<TrainingPlanState>(context, listen: false);
-              
-              if(mode == TrainingPlanFormMode.creation) {
-                plansState.add(newPlan);
-                showSnackMessage(context, localization.addedSuccess, true);
-              } else {
-                if(newPlan.id != null) {
-                  int index = plansState.indexWhere((entity) => entity.id == newPlan.id);
-                  
-                  if(index >= 0) {
-                    plansState[index] = newPlan;
-                    showSnackMessage(context, localization.editedSuccess, true);
-                    return;
-                  }
-                }
-                showSnackMessage(context, localization.editError, false);
-              }
-            },
+            onSubmit: (newPlan) => isSubmitting ? null : onSubmit(newPlan, mode),
           ),
         );
       },
     );
   }
 
+  void onSubmit(TrainingPlan newPlan, int mode) async {
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
+
+    try {
+      final plansState = Provider.of<TrainingPlanState>(context, listen: false);
+      bool success = false;
+
+      if (mode == TrainingPlanFormMode.creation) {
+        success = await plansState.addWait(newPlan);
+      } else if (newPlan.id != null) {
+        success = await plansState.reportUpdate(newPlan);
+      }
+
+      if (mounted) {
+        showSnackMessage(
+          context,
+          success
+            ? (mode == TrainingPlanFormMode.creation
+                ? localization.addedSuccess
+                : localization.editedSuccess)
+            : (mode == TrainingPlanFormMode.creation
+                ? localization.addError
+                : localization.editError),
+          success,
+        );
+
+        if (success) Navigator.pop(context);
+      }
+    } finally {
+      setState(() => isSubmitting = false);
+    }
+  }
 
   static const  metadataActivatedKey = "workout:activated";
   static const  metadataDoneKey = "workout:donelist";
