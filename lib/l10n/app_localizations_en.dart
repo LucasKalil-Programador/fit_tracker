@@ -33,7 +33,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletedSuccess => 'Deleted successfully';
 
   @override
+  String get deleteError => 'Failed to delete';
+
+  @override
   String get removedSuccess => 'Removed successfully!';
+
+  @override
+  String get removeError => 'Failed to remove!';
 
   @override
   String get timer => 'Timer';

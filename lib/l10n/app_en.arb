@@ -31,9 +31,17 @@
   "@deletedSuccess": {
     "description": "Success message after deleting"
   },
+  "deleteError": "Failed to delete",
+  "@deleteError": {
+    "description": "Error message when deletion fails"
+  },
   "removedSuccess": "Removed successfully!",
   "@removedSuccess": {
     "description": "Success message after removing"
+  },
+  "removeError": "Failed to remove!",
+  "@removeError": {
+    "description": "Error message when removal fails"
   },
   "timer": "Timer",
   "@timer": {

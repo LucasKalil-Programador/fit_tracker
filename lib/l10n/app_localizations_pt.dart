@@ -33,7 +33,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deletedSuccess => 'Deletado com sucesso';
 
   @override
+  String get deleteError => 'Falha ao excluir';
+
+  @override
   String get removedSuccess => 'Removido com sucesso!';
+
+  @override
+  String get removeError => 'Falha ao remover!';
 
   @override
   String get timer => 'Cronômetro';

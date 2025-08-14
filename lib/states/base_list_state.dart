@@ -79,20 +79,20 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
     return true;
   }
 
-  void remove(T entity) {
+
+
+  Future<bool> remove(T entity) async {
+    if (!containsId(entity)) return false;
+
+    if (dbProxy != null) {
+      final result = await dbProxy!.delete(entity);
+      if (result.notHasError == false) return false;
+    }
+
     _cache.remove(entity);
     notifyListeners();
-
-    dbProxy?.delete(entity)
-      .then((proxyResult) {
-        if(proxyResult.hasError && useRollback) {
-          _cache.add(entity);
-          notifyListeners();
-          logger.i('Rollback: restored entity after failed delete.');
-        }
-      },);
+    return true;
   }
-
 
   Future<bool> addAll(List<T> entities) async {
     if (entities.any((e) => containsId(e))) return false;

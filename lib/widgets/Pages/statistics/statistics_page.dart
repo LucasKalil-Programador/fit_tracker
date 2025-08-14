@@ -14,13 +14,17 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
-  late final localization = AppLocalizations.of(context)!;
+  late AppLocalizations localization;
   List<Report>? reports;
   ReportTable? activatedTable;
   String? selectedId;
 
+  bool isDeletingReport = false;
+  bool isDeletingTable = false;
+
   @override
   Widget build(BuildContext context) {
+    localization = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -43,7 +47,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       key: ValueKey(activatedTable!.id! + reports!.length.toString()),
                       reports: reports,
                       table: activatedTable,
-                      onDelete: onDeleteReport,
+                      onDelete: isDeletingReport ? null : onDeleteReport,
                     )
                     : ReportView(reports: null, table: null),
               ],
@@ -195,22 +199,31 @@ class _StatisticsPageState extends State<StatisticsPage> {
     showSnackMessage(context, localization.addedSuccess, true);
   }
 
-  void onDeleteTable() {
+  void onDeleteTable() async {
     if(activatedTable != null) {
-      final tableState = Provider.of<ReportTableState>(context, listen: false);
-      final reportState = Provider.of<ReportState>(context, listen: false);
-      final reportList = reportState.getByTable(activatedTable!.id!);
-      for (var element in reportList) {
-        reportState.remove(element);
-      }
-      tableState.remove(activatedTable!);
-      
-      setState(() {
-        activatedTable = null;
-        reports = null;
-      });
+      try {
+        if(isDeletingTable) return;
+        setState(() => isDeletingTable = true);
 
-      showSnackMessage(context, localization.deletedSuccess, true);
+        final tableState = Provider.of<ReportTableState>(context, listen: false);
+        final reportState = Provider.of<ReportState>(context, listen: false);
+        final reportList = reportState.getByTable(activatedTable!.id!);
+
+        await Future.wait(reportList.map((e) => reportState.remove(e)));
+        final removeResult = await tableState.remove(activatedTable!);
+        
+        if(mounted) {
+          if(removeResult) {
+            setState(() {
+              activatedTable = null;
+              reports = null;
+            });
+          }
+          showSnackMessage(context, removeResult ? localization.deletedSuccess : localization.deleteError, true);
+        }
+      } finally {
+        if(mounted) setState(() => isDeletingTable = false);
+      }
     } else {
       showSnackMessage(context, localization.selectTable, false);
     }
@@ -237,12 +250,20 @@ class _StatisticsPageState extends State<StatisticsPage> {
     showSnackMessage(context, localization.addedSuccess, true);
   }
 
-  void onDeleteReport(Report r) {
-    final reportState = Provider.of<ReportState>(context, listen: false);
-    setState(() {
-      reportState.remove(r);
-      if(reports != null) reports!.remove(r);
-    });
-    showSnackMessage(context, localization.removedSuccess, true);
+  void onDeleteReport(Report r) async {
+    if(isDeletingReport) return;
+    setState(() => isDeletingReport = true);
+
+    try {
+      final reportState = Provider.of<ReportState>(context, listen: false);
+      final removeResult = await reportState.remove(r);
+    
+      if(mounted) {
+        if(removeResult) setState(() => reports?.remove(r));
+        showSnackMessage(context, removeResult ? localization.removedSuccess: localization.removeError, removeResult);
+      }
+    } finally {
+      if(mounted) setState(() => isDeletingReport = false);
+    }
   }
 }

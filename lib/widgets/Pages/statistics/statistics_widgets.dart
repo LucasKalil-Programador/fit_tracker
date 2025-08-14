@@ -473,7 +473,7 @@ class ReportForm extends StatefulWidget {
 }
 
 class _ReportFormState extends State<ReportForm> {
-  late final localization = AppLocalizations.of(context)!;
+  late AppLocalizations localization;
   final _noteController = TextEditingController(text: "");
 
   double value = 0;
@@ -482,6 +482,7 @@ class _ReportFormState extends State<ReportForm> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(

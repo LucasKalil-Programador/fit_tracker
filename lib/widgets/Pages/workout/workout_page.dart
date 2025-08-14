@@ -1,6 +1,7 @@
 import 'package:fittrackr/database/entities.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/utils/logger.dart';
 import 'package:fittrackr/widgets/Pages/workout/training_plan_form.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -16,7 +17,8 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  late final localization = AppLocalizations.of(context)!;
+  late AppLocalizations localization;
+  bool isDeleting = false;
 
   @override
   void initState() {
@@ -28,6 +30,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    localization = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -82,13 +86,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
         });
         saveActivated(plan);
       },
-      onDelete: (plan) {
-        final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-        trainingPlanState.remove(plan);     
-        showSnackMessage(context, localization.removedSuccess, true);
-      },
+      onDelete: (plan) => isDeleting ? null : onDelete(plan),
       onEdit: (plan) => showEditModalBottom(context, plan, TrainingPlanFormMode.edit),
     );
+  }
+
+  void onDelete(TrainingPlan plan) async {
+    if(isDeleting) return;
+    setState(() => isDeleting = true);
+    logger.i("Deleted");
+    try {
+      final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
+
+      final removeResult = await trainingPlanState.remove(plan);
+      
+      if(mounted) {
+        showSnackMessage(context, removeResult ? localization.removedSuccess : localization.removeError, removeResult);
+      }
+    } finally {
+      if(mounted) setState(() => isDeleting = false);
+    }
   }
 
   Widget emptyPlanText() {

@@ -143,11 +143,23 @@ abstract class AppLocalizations {
   /// **'Deleted successfully'**
   String get deletedSuccess;
 
+  /// Error message when deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete'**
+  String get deleteError;
+
   /// Success message after removing
   ///
   /// In en, this message translates to:
   /// **'Removed successfully!'**
   String get removedSuccess;
+
+  /// Error message when removal fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to remove!'**
+  String get removeError;
 
   /// Label for the timer screen or feature
   ///

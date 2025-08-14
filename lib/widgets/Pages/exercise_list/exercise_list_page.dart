@@ -16,11 +16,15 @@ class ExerciseListPage extends StatefulWidget {
 }
 
 class _ExerciseListPageState extends State<ExerciseListPage> {
-  late final localization = AppLocalizations.of(context)!;
+  late AppLocalizations localization;
+
+  bool isDeleting = false;
   String searchStr = "";
 
   @override
   Widget build(BuildContext context) {
+    localization = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -44,7 +48,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
               sortedList.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
                 return ExerciseListView(
                   sortedList: sortedList,
-                  onDelete: (e) => onDelete(context, e),
+                  onDelete: (e) => isDeleting ? null : onDelete(context, e),
                   onEdit: (e) => showEditModalBottom(context, e, ExerciseFormMode.edit),
                 );
             }),
@@ -94,20 +98,31 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
     );
   }
 
-  void onDelete(BuildContext context, Exercise exercise) {
-    final exercisesState = Provider.of<ExercisesState>(context, listen: false);
-    final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-    
-    exercisesState.remove(exercise);
-    
-    while(true) {
-      int index = trainingPlanState.indexWhere((p) => p.list?.contains(exercise.id) == true);
-      if(index == -1) break;
-      trainingPlanState[index].list?.remove(exercise.id);
-      trainingPlanState.reportUpdate(trainingPlanState[index]);
+  void onDelete(BuildContext context, Exercise exercise) async {
+    if(isDeleting) return;
+    setState(() => isDeleting = true);
+
+    try {
+      final exercisesState = Provider.of<ExercisesState>(context, listen: false);
+      final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
+      
+      final removeResult = await exercisesState.remove(exercise);
+      
+      if(removeResult) {
+        while(true) {
+          int index = trainingPlanState.indexWhere((p) => p.list?.contains(exercise.id) == true);
+          if(index == -1) break;
+          trainingPlanState[index].list?.remove(exercise.id);
+          trainingPlanState.reportUpdate(trainingPlanState[index]);
+        }
+      }
+
+      if(context.mounted) {
+        showSnackMessage(context, removeResult ? localization.removedSuccess : localization.removeError, removeResult);
+      }
+    } finally {
+      if(mounted) setState(() => isDeleting = false);
     }
-            
-    showSnackMessage(context, localization.removedSuccess, true);
   }
 }
 
