@@ -13,11 +13,12 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ExercisesState   (dbProxy: db.exercise,     loadDatabase: true)),
-        ChangeNotifierProvider(create: (_) => MetadataState    (dbProxy: db.metadata,     loadDatabase: true)),
-        ChangeNotifierProvider(create: (_) => TrainingPlanState(dbProxy: db.trainingPlan, loadDatabase: true)),
-        ChangeNotifierProvider(create: (_) => ReportTableState (dbProxy: db.reportTable,  loadDatabase: true)),
-        ChangeNotifierProvider(create: (_) => ReportState      (dbProxy: db.report,       loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => ExercisesState      (dbProxy: db.exercise,        loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => MetadataState       (dbProxy: db.metadata,        loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => TrainingPlanState   (dbProxy: db.trainingPlan,    loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => TrainingHistoryState(dbProxy: db.trainingHistory, loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => ReportTableState    (dbProxy: db.reportTable,     loadDatabase: true)),
+        ChangeNotifierProvider(create: (_) => ReportState         (dbProxy: db.report,          loadDatabase: true)),
       ],
       child: App(),
     ),

@@ -109,5 +109,9 @@
   "portugueseLanguage": "Português",
   "englishLanguage": "Inglês",
   "activeTraining": "Treino ativo",
-  "inactiveTraining": "Nenhum treino ativo"
+  "inactiveTraining": "Nenhum treino ativo",
+  "trainingFinishedHistorySaved": "Treino finalizado, histórico salvo",
+  "trainingFinishedHistorySaveError": "Treino finalizado, erro ao salvar histórico",
+  "noTrainingRecorded": "Nenhum treino registrado",
+  "trainingHistory": "Histórico de treinamento"
 }

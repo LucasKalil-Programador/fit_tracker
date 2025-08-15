@@ -412,5 +412,21 @@
   "inactiveTraining": "No active training",
   "@inactiveTraining": {
     "description": "Label shown when there is no active training plan"
+  },
+  "trainingFinishedHistorySaved": "Training finished, history saved",
+  "@trainingFinishedHistorySaved": {
+    "description": "Message shown when training finishes and history is saved successfully"
+  },
+  "trainingFinishedHistorySaveError": "Training finished, error saving history",
+  "@trainingFinishedHistorySaveError": {
+    "description": "Message shown when training finishes but there is an error saving history"
+  },
+  "noTrainingRecorded": "No training recorded",
+  "@noTrainingRecorded": {
+    "description": "Message shown when there is no recorded training history"
+  },
+  "trainingHistory": "Training history",
+  "@trainingHistory": {
+    "description": "Title for the training history section"
   }
 }

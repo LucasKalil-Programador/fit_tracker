@@ -315,4 +315,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get inactiveTraining => 'Nenhum treino ativo';
+
+  @override
+  String get trainingFinishedHistorySaved => 'Treino finalizado, histórico salvo';
+
+  @override
+  String get trainingFinishedHistorySaveError => 'Treino finalizado, erro ao salvar histórico';
+
+  @override
+  String get noTrainingRecorded => 'Nenhum treino registrado';
+
+  @override
+  String get trainingHistory => 'Histórico de treinamento';
 }

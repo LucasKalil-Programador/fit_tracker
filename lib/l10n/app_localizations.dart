@@ -706,6 +706,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No active training'**
   String get inactiveTraining;
+
+  /// Message shown when training finishes and history is saved successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Training finished, history saved'**
+  String get trainingFinishedHistorySaved;
+
+  /// Message shown when training finishes but there is an error saving history
+  ///
+  /// In en, this message translates to:
+  /// **'Training finished, error saving history'**
+  String get trainingFinishedHistorySaveError;
+
+  /// Message shown when there is no recorded training history
+  ///
+  /// In en, this message translates to:
+  /// **'No training recorded'**
+  String get noTrainingRecorded;
+
+  /// Title for the training history section
+  ///
+  /// In en, this message translates to:
+  /// **'Training history'**
+  String get trainingHistory;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

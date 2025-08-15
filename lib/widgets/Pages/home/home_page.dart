@@ -1,4 +1,5 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
+import 'package:fittrackr/widgets/Pages/home/history_pre_view.dart';
 import 'package:fittrackr/widgets/Pages/home/home_page_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,14 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ShowCurrentActivePlan(onClick: () => widget.onChangePage!(2))
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ShowCurrentActivePlan(onClick: () => widget.onChangePage!(2)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: HistoryPreView(),
+            )
           ],
         ),
       ),

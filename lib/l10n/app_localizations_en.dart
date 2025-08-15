@@ -315,4 +315,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inactiveTraining => 'No active training';
+
+  @override
+  String get trainingFinishedHistorySaved => 'Training finished, history saved';
+
+  @override
+  String get trainingFinishedHistorySaveError => 'Training finished, error saving history';
+
+  @override
+  String get noTrainingRecorded => 'No training recorded';
+
+  @override
+  String get trainingHistory => 'Training history';
 }

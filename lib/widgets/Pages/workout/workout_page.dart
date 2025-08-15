@@ -1,8 +1,9 @@
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/training_history.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/utils/logger.dart';
 import 'package:fittrackr/widgets/Pages/workout/training_plan_form.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -21,6 +22,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   bool isSubmitting = false;
   bool isDeleting = false;
+  bool savingHistory = false;
 
   @override
   void initState() {
@@ -63,12 +65,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 if (activatedPlan == null) {
                   showEditModalBottom(context);
                 } else {
-                  setState(() {
-                    activatedPlan = null;
-                    donelist = null;
-                  });
-                  saveActivated(null);
-                  saveDoneList(donelist);
+                  onFinishPlan();
                 }
               },
               child: Text(activatedPlan == null ? localization.createPlanButton : localization.finishPlan),
@@ -77,6 +74,46 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ],
       ),
     );
+  }
+
+  void onFinishPlan() {
+    if(activatedPlan != null && donelist != null) {
+      final exercisesState = Provider.of<ExercisesState>(context, listen: false);
+      final exercises = donelist!
+        .map((id) => exercisesState.getById(id))
+        .where((element) => element != null)
+        .cast<Exercise>().toList();
+
+      TrainingHistory history = TrainingHistory.fromTrainingPlan(
+        plan: activatedPlan!,
+        exercises: exercises,
+        dateTime: DateTime.now().millisecondsSinceEpoch,
+      );
+      saveHistory(history);
+    }
+    
+    setState(() {
+      activatedPlan = null;
+      donelist = null;
+    });
+    saveActivated(null);
+    saveDoneList(null);
+  }
+
+  Future<void> saveHistory(TrainingHistory history) async {
+    if (savingHistory) return;
+    setState(() => savingHistory = true);
+
+    try {
+      final historyState = Provider.of<TrainingHistoryState>(context, listen: false);
+      final success = await historyState.addWait(history);
+
+      if(mounted) {
+        showSnackMessage(context, success ? localization.trainingFinishedHistorySaved : localization.trainingFinishedHistorySaveError, success);
+      }
+    } finally {
+      setState(() => savingHistory = false);
+    }
   }
 
   Widget listViewTrainingPlan(TrainingPlanState trainingPlanState) {
@@ -96,10 +133,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void onDelete(TrainingPlan plan) async {
     if(isDeleting) return;
     setState(() => isDeleting = true);
-    logger.i("Deleted");
+    
     try {
       final trainingPlanState = Provider.of<TrainingPlanState>(context, listen: false);
-
       final removeResult = await trainingPlanState.remove(plan);
       
       if(mounted) {

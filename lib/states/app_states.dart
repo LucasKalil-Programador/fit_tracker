@@ -1,5 +1,6 @@
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities/training_history.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/base_list_state.dart';
 
@@ -29,5 +30,15 @@ class ReportState extends BaseListState<Report> {
 }
 
 class TrainingPlanState extends BaseListState<TrainingPlan> { TrainingPlanState({super.dbProxy, super.loadDatabase}); }
+
+class TrainingHistoryState extends BaseListState<TrainingHistory> { 
+  TrainingHistoryState({super.dbProxy, super.loadDatabase}); 
+  
+  List<TrainingHistory> sorted() {
+    final sortedList = super.clone;
+    sortedList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    return sortedList;
+  }
+}
 
 class ReportTableState extends BaseListState<ReportTable> { ReportTableState({super.dbProxy, super.loadDatabase}); }
