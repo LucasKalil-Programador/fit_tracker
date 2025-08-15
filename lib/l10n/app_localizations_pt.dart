@@ -279,6 +279,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeNavBar => 'Home';
 
   @override
+  String get homeAppBar => 'Home page';
+
+  @override
   String get timerNavBar => 'Timer';
 
   @override
@@ -306,4 +309,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get englishLanguage => 'Inglês';
+
+  @override
+  String get activeTraining => 'Treino ativo';
+
+  @override
+  String get inactiveTraining => 'Nenhum treino ativo';
 }

@@ -95,11 +95,7 @@ class _MainWidgetState extends State<MainWidget> {
     final localization = AppLocalizations.of(context)!;
     return Scaffold(
       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (value) {
-          setState(() {
-            currentPageIndex = value;
-          });
-        },
+        onDestinationSelected: onDestinationSelected,
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(icon: Icon(Icons.home), label: localization.homeNavBar),
@@ -111,7 +107,7 @@ class _MainWidgetState extends State<MainWidget> {
         ],
       ),
       body:
-          [ const HomePage(),
+          [ HomePage(onChangePage: onDestinationSelected),
             const StopWatchPage(),
             const WorkoutPage(),
             const ExerciseListPage(),
@@ -119,6 +115,12 @@ class _MainWidgetState extends State<MainWidget> {
             const ConfigPage(),
           ][currentPageIndex],
     );
+  }
+
+  void onDestinationSelected(int value) {
+    setState(() {
+      currentPageIndex = value;
+    });
   }
 
   @override

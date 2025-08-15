@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 const themeKey = "Theme:key";
 const localeKey = "Locale:key";
+const  metadataActivatedKey = "workout:activated";
+const  metadataDoneKey = "workout:donelist";
 
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;

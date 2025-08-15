@@ -457,9 +457,7 @@ class _ReportSource extends DataTableSource implements ValueListenable {
 
 // Report Form
 // TODO: Select date
-// TODO: Problema ao digitar no bloco de note
 // TODO: Savar estado temporario
-// TODO: posicao botao adicionar report
 class ReportForm extends StatefulWidget {
   final void Function(Report report)? onSubmit;
   final ReportTable table;
@@ -482,7 +480,7 @@ class _ReportFormState extends State<ReportForm> {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
+    localization = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -586,7 +584,10 @@ class _ReportTableFormState extends State<ReportTableForm> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
+        child: ListView(
+          padding: EdgeInsets.all(8).copyWith(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           children: [
             Padding(padding: const EdgeInsets.all(8.0), child: nameInput()),
             Padding(padding: const EdgeInsets.all(8.0), child: suffixInput()),

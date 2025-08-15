@@ -635,6 +635,12 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get homeNavBar;
 
+  /// Label for the home app bar
+  ///
+  /// In en, this message translates to:
+  /// **'Home page'**
+  String get homeAppBar;
+
   /// Label for the timer screen
   ///
   /// In en, this message translates to:
@@ -688,6 +694,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get englishLanguage;
+
+  /// Label shown when there is an active training plan
+  ///
+  /// In en, this message translates to:
+  /// **'Active training'**
+  String get activeTraining;
+
+  /// Label shown when there is no active training plan
+  ///
+  /// In en, this message translates to:
+  /// **'No active training'**
+  String get inactiveTraining;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

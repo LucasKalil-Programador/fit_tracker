@@ -279,6 +279,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNavBar => 'Home';
 
   @override
+  String get homeAppBar => 'Home page';
+
+  @override
   String get timerNavBar => 'Timer';
 
   @override
@@ -306,4 +309,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get englishLanguage => 'English';
+
+  @override
+  String get activeTraining => 'Active training';
+
+  @override
+  String get inactiveTraining => 'No active training';
 }

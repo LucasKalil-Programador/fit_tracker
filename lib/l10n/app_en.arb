@@ -355,10 +355,13 @@
   "@cancel": {
     "description": "Button to cancel an action"
   },
-
   "homeNavBar": "Home",
   "@homeNavBar": {
     "description": "Label for the home screen"
+  },
+  "homeAppBar": "Home page",
+  "@homeAppBar": {
+    "description": "Label for the home app bar"
   },
   "timerNavBar": "Timer",
   "@timerNavBar": {
@@ -401,5 +404,13 @@
   "englishLanguage": "English",
   "@englishLanguage": {
     "description": "Option to select English language"
+  },
+  "activeTraining": "Active training",
+  "@activeTraining": {
+    "description": "Label shown when there is an active training plan"
+  },
+  "inactiveTraining": "No active training",
+  "@inactiveTraining": {
+    "description": "Label shown when there is no active training plan"
   }
 }

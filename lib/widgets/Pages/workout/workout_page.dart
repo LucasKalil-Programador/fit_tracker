@@ -171,8 +171,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  static const  metadataActivatedKey = "workout:activated";
-  static const  metadataDoneKey = "workout:donelist";
   TrainingPlan? activatedPlan;
   List<String>? donelist;
 

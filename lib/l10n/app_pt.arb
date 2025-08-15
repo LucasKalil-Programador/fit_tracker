@@ -90,6 +90,7 @@
   "cancel": "Cancelar",
   "importSummary": "• Exercícios: {exercises}\n• Planos: {plans}\n• Tabelas: {tables}\n• Relatórios: {reports}",
   "homeNavBar": "Home",
+  "homeAppBar": "Home page",
   "timerNavBar": "Timer",
   "trainNavBar": "Treinar",
   "exercisesNavBar": "Exercícios",
@@ -106,5 +107,7 @@
   },
   "languageTitle": "Idioma",
   "portugueseLanguage": "Português",
-  "englishLanguage": "Inglês"
+  "englishLanguage": "Inglês",
+  "activeTraining": "Treino ativo",
+  "inactiveTraining": "Nenhum treino ativo"
 }
