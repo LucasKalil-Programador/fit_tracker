@@ -43,6 +43,7 @@ class ShowCurrentActivePlan extends StatelessWidget {
       if(metadataState.containsKey(metadataDoneKey)) {
         final donelist = metadataState.getList(metadataDoneKey);
         if(donelist is List<String> && activatedPlan.list is List<String>) {
+          if(activatedPlan.list!.isEmpty) return 100;
           return (donelist.length.toDouble() / activatedPlan.list!.length) * 100;
         }
       }

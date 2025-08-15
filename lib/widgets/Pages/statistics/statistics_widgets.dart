@@ -457,13 +457,14 @@ class _ReportSource extends DataTableSource implements ValueListenable {
 
 // Report Form
 // TODO: Select date
-// TODO: Savar estado temporario
 class ReportForm extends StatefulWidget {
   final void Function(Report report)? onSubmit;
+  final void Function(Report? report)? onDispose;
   final ReportTable table;
+  final Report? baseReport;
 
   const ReportForm({
-    super.key, required this.table, this.onSubmit 
+    super.key, required this.table, this.baseReport, this.onSubmit, this.onDispose  
   });
 
   @override
@@ -473,10 +474,19 @@ class ReportForm extends StatefulWidget {
 class _ReportFormState extends State<ReportForm> {
   late AppLocalizations localization;
   final _noteController = TextEditingController(text: "");
-
   double value = 0;
+  bool submited = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.baseReport != null) {
+      _noteController.text = widget.baseReport!.note;
+      value = widget.baseReport!.value;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -504,6 +514,7 @@ class _ReportFormState extends State<ReportForm> {
                   suffix: widget.table.valueSuffix,
                   minValue: -1_000_000_000,
                   maxValue: 1_000_000_000,
+                  initialValue: value,
                   onChanged: (value) => this.value = value,
                 ),
               ),
@@ -516,6 +527,14 @@ class _ReportFormState extends State<ReportForm> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if(widget.onDispose != null) {
+      widget.onDispose!(submited ? null : getReport());
+    }
   }
 
   Widget noteInput() {
@@ -536,16 +555,22 @@ class _ReportFormState extends State<ReportForm> {
     return ElevatedButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          Report report = Report(
-            value: value,
-            note: _noteController.text,
-            tableId: widget.table.id!,
-            reportDate: DateTime.now().millisecondsSinceEpoch,
-          );
-          if(widget.onSubmit != null) widget.onSubmit!(report);
+          submited = true;
+          if(widget.onSubmit != null) {
+            widget.onSubmit!(getReport());
+          }
         }
       },
       child: Text(localization.add),
+    );
+  }
+
+  Report getReport() {
+    return Report(
+      value: value,
+      note: _noteController.text,
+      tableId: widget.table.id!,
+      reportDate: DateTime.now().millisecondsSinceEpoch,
     );
   }
 }

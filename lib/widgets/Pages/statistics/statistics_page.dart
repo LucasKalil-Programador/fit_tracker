@@ -148,6 +148,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   // Forms
+  Report? tempReport;
 
   void showReportForm(BuildContext context) {
     if (activatedTable != null) {
@@ -161,7 +162,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
               .of(context).viewInsets.bottom),
             child: ReportForm(
               table: activatedTable!,
+              baseReport: tempReport,
               onSubmit: (report) => isCreatingReport ? null : onCreateReport(context, report),
+              onDispose: (report) => tempReport = report,
             ),
           );
         },
