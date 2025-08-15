@@ -1,98 +1,4 @@
-
-// BaseEntity
-
-import 'dart:convert';
-
-abstract class BaseEntity {
-  String? id;
-
-  Map<String, Object?> toMap();
-
-  bool get isValid;
-}
-
-// Exercise
-
-enum ExerciseType {cardio, musclework}
-
-class Exercise implements BaseEntity {
-  @override
-  String? id;
-  final String name;
-  final int amount;
-  final int reps;
-  final int sets;
-  final ExerciseType type;
-
-  Exercise({
-    this.id,
-    required this.name,
-    required this.amount,
-    required this.reps,
-    required this.sets,
-    required this.type,
-  });
-
-  @override
-  String toString() {
-    return 'Exercise(id: $id, name: $name, amount: $amount, reps: $reps, sets: $sets, type: ${type.name})';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Exercise &&
-        other.id == id &&
-        other.name == name &&
-        other.amount == amount &&
-        other.reps == reps &&
-        other.sets == sets &&
-        other.type == type;
-  }
-
-  @override
-  int get hashCode => Object.hash(id, name, amount, reps, sets, type);
-
-  @override
-  Map<String, Object?> toMap() {
-    return {
-      "uuid": id,
-      "name": name,
-      "amount": amount,
-      "reps": reps,
-      "sets": sets,
-      "type": type.name
-    };
-  }
-
-  static Exercise? fromMap(Map<String, Object?> e) {
-    final uuid = e["uuid"];
-    final name = e["name"];
-    final amount = e["amount"];
-    final reps = e["reps"];
-    final sets = e["sets"];
-    final type = e["type"];
-    if(uuid is String && name is String && amount is int && 
-       reps is int    && sets is int    && type is String) {
-      return Exercise(
-        id: uuid,
-        name: name,
-        amount: amount,
-        reps: reps,
-        sets: sets,
-        type: ExerciseType.values.byName(type),
-      );
-    }
-
-    return null;
-  }
-  
-  @override
-  // TODO: implement isValid
-  bool get isValid => true;
-}
-
-// ReportTable
+import 'package:fittrackr/database/entities/entity.dart';
 
 class ReportTable implements BaseEntity {
   @override
@@ -172,8 +78,6 @@ class ReportTable implements BaseEntity {
   bool get isValid => true;
 }
 
-// Report
-
 class Report implements BaseEntity {
   @override
   String? id;
@@ -238,63 +142,6 @@ class Report implements BaseEntity {
       );
     }
 
-    return null;
-  }
-  
-  @override
-  // TODO: implement isValid
-  bool get isValid => true;
-}
-
-// TrainingPlan
-
-class TrainingPlan implements BaseEntity {
-  @override
-  String? id;
-  final String name;
-  late List<String>? list;
-
-  TrainingPlan({
-    this.id,
-    required this.name, 
-    this.list,
-  });
-
-  @override
-  String toString() {
-    return 'TrainingPlan(id: $id, name: $name, list: $list)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is TrainingPlan && other.id == id && other.name == name;
-  }
-
-  @override
-  int get hashCode => Object.hash(id, name);
-
-  @override
-  Map<String, Object?> toMap() {
-    return {
-      "uuid": id,
-      "name": name,
-      "list": jsonEncode(list),
-    };
-  }
-
-  static TrainingPlan? fromMap(Map<String, Object?> e) {
-    final uuid = e['uuid'];
-    final name = e['name'];
-    final list = e['list'];
-
-    if (uuid is String && name is String && list is String) {
-      return TrainingPlan(
-        id: uuid,
-        name: name,
-        list: List<String>.from(jsonDecode(list)),
-      );
-    }
     return null;
   }
   

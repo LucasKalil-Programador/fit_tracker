@@ -1,4 +1,4 @@
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';

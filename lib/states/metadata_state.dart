@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:fittrackr/database/db.dart';
+import 'package:fittrackr/database/proxy/proxy.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
 

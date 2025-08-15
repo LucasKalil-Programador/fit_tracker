@@ -1,4 +1,6 @@
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/base_list_state.dart';
 
 class ExercisesState extends BaseListState<Exercise> {

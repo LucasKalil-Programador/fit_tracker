@@ -1,6 +1,8 @@
 import 'dart:math';
 
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/app_states.dart';
 
 Future<void> generateDB(ExercisesState exercisesState, TrainingPlanState trainingPlanState, ReportTableState reportTableState, ReportState reportState) async {

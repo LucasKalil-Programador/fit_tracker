@@ -1,4 +1,5 @@
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/utils/logger.dart';
@@ -6,7 +7,6 @@ import 'package:fittrackr/widgets/Pages/workout/training_plan_form.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutPage extends StatefulWidget {

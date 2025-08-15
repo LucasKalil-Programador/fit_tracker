@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fittrackr/l10n/app_localizations.dart';
 
 // Default Graph
 

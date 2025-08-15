@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/entity.dart';
+import 'package:fittrackr/database/proxy/proxy.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';

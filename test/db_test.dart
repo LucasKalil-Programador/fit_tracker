@@ -1,6 +1,9 @@
 
 import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/database/entities.dart';
+import 'package:fittrackr/database/entities/exercise.dart';
+import 'package:fittrackr/database/entities/report_table.dart';
+import 'package:fittrackr/database/entities/training_history.dart';
+import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';
 
@@ -10,6 +13,7 @@ void main() {
   metadataTest();
   reportTableTest();
   trainingPlanTest();
+  trainingHistoryTest();
 }
 
 void reportTest() {
@@ -310,6 +314,301 @@ void exerciseTest() {
     proxyResult = await proxy.exercise.selectAll();
     expect(proxyResult.result?.contains(exercise), false);
     expect(proxyResult.result?.contains(exercise2), true);
+  });
+}
+
+void trainingHistoryTest() {
+  test('TrainingHistory insert test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "Test", amount: 1234, reps: 56, sets: 22, type: ExerciseType.cardio);
+    TrainingPlan plan = TrainingPlan(name: 'training-1', list: [exercise.id!]);
+
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(), 
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.insert(history);
+    final proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), true);
+  });
+
+  test('TrainingHistory insert error same id', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(id: Uuid().v4(), name: "Test", amount: 1234, reps: 56, sets: 22, type: ExerciseType.cardio);
+    TrainingPlan plan = TrainingPlan(name: 'training-1', list: [exercise.id!]);
+
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(), 
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    var proxyResult = await proxy.trainingHistory.insert(history);
+    expect(proxyResult.result, true);
+
+    proxyResult = await proxy.trainingHistory.insert(history, printLog: false);
+    expect(proxyResult.result, false);
+  });
+  
+  test('TrainingHistory delete test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(
+      id: Uuid().v4(),
+      name: "Test",
+      amount: 1234,
+      reps: 56,
+      sets: 22,
+      type: ExerciseType.cardio
+    );
+
+    TrainingPlan plan = TrainingPlan(
+      name: 'training-1',
+      list: [exercise.id!]
+    );
+
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(),
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.insert(history);
+    var proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), true);
+
+    await proxy.trainingHistory.delete(history);
+    proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), false);
+  });
+
+  test('TrainingHistory delete all test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(
+      id: Uuid().v4(),
+      name: "Test",
+      amount: 1234,
+      reps: 56,
+      sets: 22,
+      type: ExerciseType.cardio
+    );
+
+    TrainingPlan plan = TrainingPlan(
+      name: 'training-1',
+      list: [exercise.id!]
+    );
+
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(),
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.insert(history);
+    var proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), true);
+
+    await proxy.trainingHistory.deleteAll();
+    proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.isEmpty, true);
+  });
+
+  test('TrainingHistory update test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(
+      id: Uuid().v4(),
+      name: "Test",
+      amount: 1234,
+      reps: 56,
+      sets: 22,
+      type: ExerciseType.cardio
+    );
+
+    TrainingPlan plan = TrainingPlan(
+      name: 'training-1',
+      list: [exercise.id!]
+    );
+
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(),
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.insert(history);
+    var proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), true);
+
+    // Novo history com mesmo ID mas dados diferentes
+    Exercise exercise2 = Exercise(
+      id: Uuid().v4(),
+      name: "Test Updated",
+      amount: 222,
+      reps: 99,
+      sets: 33,
+      type: ExerciseType.musclework
+    );
+
+    TrainingPlan plan2 = TrainingPlan(
+      name: 'training-2',
+      list: [exercise2.id!]
+    );
+
+    TrainingHistory updatedHistory = TrainingHistory.fromTrainingPlan(
+      id: history.id,
+      plan: plan2,
+      exercises: [exercise2],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.update(updatedHistory);
+    proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(updatedHistory), true);
+    expect(proxyResult.result?.contains(history), false);
+  });
+
+  test('TrainingHistory select all test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise ex1 = Exercise(id: Uuid().v4(), name: "Test-1", amount: 111, reps: 10, sets: 5, type: ExerciseType.cardio);
+    Exercise ex2 = Exercise(id: Uuid().v4(), name: "Test-2", amount: 222, reps: 20, sets: 6, type: ExerciseType.musclework);
+    Exercise ex3 = Exercise(id: Uuid().v4(), name: "Test-3", amount: 333, reps: 30, sets: 7, type: ExerciseType.cardio);
+
+    TrainingPlan plan1 = TrainingPlan(name: 'training-1', list: [ex1.id!]);
+    TrainingPlan plan2 = TrainingPlan(name: 'training-2', list: [ex2.id!]);
+    TrainingPlan plan3 = TrainingPlan(name: 'training-3', list: [ex3.id!]);
+
+    TrainingHistory h1 = TrainingHistory.fromTrainingPlan(id: Uuid().v4(), plan: plan1, exercises: [ex1], dateTime: DateTime.now().millisecondsSinceEpoch);
+    TrainingHistory h2 = TrainingHistory.fromTrainingPlan(id: Uuid().v4(), plan: plan2, exercises: [ex2], dateTime: DateTime.now().millisecondsSinceEpoch);
+    TrainingHistory h3 = TrainingHistory.fromTrainingPlan(id: Uuid().v4(), plan: plan3, exercises: [ex3], dateTime: DateTime.now().millisecondsSinceEpoch);
+
+    await proxy.trainingHistory.insert(h1);
+    await proxy.trainingHistory.insert(h2);
+    await proxy.trainingHistory.insert(h3);
+
+    // Atualiza h1
+    Exercise ex4 = Exercise(id: ex1.id, name: "Test-1 Updated", amount: 444, reps: 40, sets: 8, type: ExerciseType.musclework);
+    TrainingPlan plan4 = TrainingPlan(name: 'training-1-updated', list: [ex4.id!]);
+    TrainingHistory h4 = TrainingHistory.fromTrainingPlan(id: h1.id, plan: plan4, exercises: [ex4], dateTime: DateTime.now().millisecondsSinceEpoch);
+    await proxy.trainingHistory.update(h4);
+
+    final proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.isNotEmpty, true);
+    expect(proxyResult.result?.contains(h1), false);
+    expect(proxyResult.result?.contains(h2), true);
+    expect(proxyResult.result?.contains(h3), true);
+    expect(proxyResult.result?.contains(h4), true);
+  });
+
+  test('TrainingHistory insert all test', () async {
+    final proxy = DatabaseProxy.instance;
+    final histories = <TrainingHistory>[];
+
+    for (var i = 0; i < 10; i++) {
+      Exercise ex = Exercise(id: Uuid().v4(), name: "Test-$i", amount: i * 10, reps: i, sets: i + 1, type: ExerciseType.cardio);
+      TrainingPlan plan = TrainingPlan(name: 'training-$i', list: [ex.id!]);
+      TrainingHistory h = TrainingHistory.fromTrainingPlan(
+        id: Uuid().v4(),
+        plan: plan,
+        exercises: [ex],
+        dateTime: DateTime.now().millisecondsSinceEpoch
+      );
+      histories.add(h);
+    }
+
+    await proxy.trainingHistory.insertAll(histories);
+    final proxyResult = await proxy.trainingHistory.selectAll();
+
+    for (var h in histories) {
+      expect(proxyResult.result?.contains(h), true);
+    }
+  });
+
+  test('TrainingHistory exists test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(
+      id: Uuid().v4(),
+      name: "Test",
+      amount: 1234,
+      reps: 56,
+      sets: 22,
+      type: ExerciseType.cardio
+    );
+
+    TrainingPlan plan = TrainingPlan(name: 'training-1', list: [exercise.id!]);
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(),
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.insert(history);
+    var proxyResult = await proxy.trainingHistory.existsById(history.id!);
+    expect(proxyResult.result, true);
+
+    await proxy.trainingHistory.delete(history);
+    proxyResult = await proxy.trainingHistory.existsById(history.id!);
+    expect(proxyResult.result, false);
+  });
+
+  test('TrainingHistory upsert test', () async {
+    final proxy = DatabaseProxy.instance;
+
+    Exercise exercise = Exercise(
+      id: Uuid().v4(),
+      name: "Test",
+      amount: 1234,
+      reps: 56,
+      sets: 22,
+      type: ExerciseType.cardio
+    );
+
+    TrainingPlan plan = TrainingPlan(name: 'training-1', list: [exercise.id!]);
+    TrainingHistory history = TrainingHistory.fromTrainingPlan(
+      id: Uuid().v4(),
+      plan: plan,
+      exercises: [exercise],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.upsert(history);
+    var proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), true);
+
+    Exercise exercise2 = Exercise(
+      id: exercise.id,
+      name: "Test-2",
+      amount: 999,
+      reps: 88,
+      sets: 44,
+      type: ExerciseType.musclework
+    );
+
+    TrainingPlan plan2 = TrainingPlan(name: 'training-2', list: [exercise2.id!]);
+    TrainingHistory history2 = TrainingHistory.fromTrainingPlan(
+      id: history.id,
+      plan: plan2,
+      exercises: [exercise2],
+      dateTime: DateTime.now().millisecondsSinceEpoch
+    );
+
+    await proxy.trainingHistory.upsert(history2);
+    proxyResult = await proxy.trainingHistory.selectAll();
+    expect(proxyResult.result?.contains(history), false);
+    expect(proxyResult.result?.contains(history2), true);
   });
 }
 
