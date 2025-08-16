@@ -51,8 +51,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               builder: (context, trainingPlanState, child) {
                 if (trainingPlanState.isEmpty) {
                   return emptyPlanText();
-                }
-                if (activatedPlan != null) {
+                } else if (activatedPlan != null) {
                   return TrainingPlanWidget(trainingPlan: activatedPlan!, donelist: donelist, onDoneChange: saveDoneList);
                 }
                 return listViewTrainingPlan(trainingPlanState);
@@ -77,7 +76,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void onFinishPlan() {
-    if(activatedPlan != null && donelist != null) {
+    if(activatedPlan != null && donelist != null && donelist!.isNotEmpty) {
       final exercisesState = Provider.of<ExercisesState>(context, listen: false);
       final exercises = donelist!
         .map((id) => exercisesState.getById(id))
@@ -218,6 +217,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void saveDoneList(List<String>? donelist) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.putList(metadataDoneKey, donelist ?? List.empty());
+    this.donelist = donelist;
   }
 
   void loadActivated() {
