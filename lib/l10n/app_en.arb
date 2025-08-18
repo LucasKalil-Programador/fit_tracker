@@ -428,5 +428,44 @@
   "trainingHistory": "Training history",
   "@trainingHistory": {
     "description": "Title for the training history section"
+  },
+  "googleAccount": "Google Account",
+  "@googleAccount": {
+    "description": "Label for Google account login"
+  },
+  "loginWithGoogle": "Log in with your Google account to save your data to the cloud",
+  "@loginWithGoogle": {
+    "description": "Instruction to log in with Google to store data in the cloud"
+  },
+  "anonymous": "Anonymous",
+  "@anonymous": {
+    "description": "Label for anonymous user"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Label for login action"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Label for logout action"
+  },
+  "loginFailed": "Failed to log in",
+  "@loginFailed": {
+    "description": "Error message when login fails"
+  },
+  "userLoggedOut": "User logged out",
+  "@userLoggedOut": {
+    "description": "Message shown when the user logs out"
+  },
+  "loggedInAs": "Logged in as: {userName}",
+  "@loggedInAs": {
+    "description": "Message showing the currently logged in user's name",
+    "placeholders": {
+      "userName": {}
+    }
+  },
+  "logoutFailed": "Failed to log out",
+  "@logoutFailed": {
+    "description": "Error message shown when logout fails"
   }
 }

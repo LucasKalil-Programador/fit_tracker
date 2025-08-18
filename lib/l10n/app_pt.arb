@@ -113,5 +113,14 @@
   "trainingFinishedHistorySaved": "Treino finalizado, histórico salvo",
   "trainingFinishedHistorySaveError": "Treino finalizado, erro ao salvar histórico",
   "noTrainingRecorded": "Nenhum treino registrado",
-  "trainingHistory": "Histórico de treinamento"
+  "trainingHistory": "Histórico de treinamento",
+  "googleAccount": "Conta Google",
+  "loginWithGoogle": "Faça login com sua conta Google para salvar seus dados na nuvem",
+  "anonymous": "Anônimo",
+  "login": "Entrar",
+  "logout": "Sair",
+  "loginFailed": "Falha ao realizar login",
+  "userLoggedOut": "Usuário desconectado",
+  "loggedInAs": "Logado como: {userName}",
+  "logoutFailed": "Falha ao sair"
 }

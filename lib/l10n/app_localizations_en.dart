@@ -327,4 +327,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trainingHistory => 'Training history';
+
+  @override
+  String get googleAccount => 'Google Account';
+
+  @override
+  String get loginWithGoogle => 'Log in with your Google account to save your data to the cloud';
+
+  @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get loginFailed => 'Failed to log in';
+
+  @override
+  String get userLoggedOut => 'User logged out';
+
+  @override
+  String loggedInAs(Object userName) {
+    return 'Logged in as: $userName';
+  }
+
+  @override
+  String get logoutFailed => 'Failed to log out';
 }

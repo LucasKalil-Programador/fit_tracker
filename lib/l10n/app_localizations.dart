@@ -730,6 +730,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training history'**
   String get trainingHistory;
+
+  /// Label for Google account login
+  ///
+  /// In en, this message translates to:
+  /// **'Google Account'**
+  String get googleAccount;
+
+  /// Instruction to log in with Google to store data in the cloud
+  ///
+  /// In en, this message translates to:
+  /// **'Log in with your Google account to save your data to the cloud'**
+  String get loginWithGoogle;
+
+  /// Label for anonymous user
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
+
+  /// Label for login action
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// Label for logout action
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// Error message when login fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to log in'**
+  String get loginFailed;
+
+  /// Message shown when the user logs out
+  ///
+  /// In en, this message translates to:
+  /// **'User logged out'**
+  String get userLoggedOut;
+
+  /// Message showing the currently logged in user's name
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in as: {userName}'**
+  String loggedInAs(Object userName);
+
+  /// Error message shown when logout fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to log out'**
+  String get logoutFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
