@@ -356,4 +356,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutFailed => 'Failed to log out';
+
+  @override
+  String get notStarted => 'Not started';
+
+  @override
+  String syncCompleted(Object time) {
+    return 'Sync completed at $time';
+  }
+
+  @override
+  String get outOfSync => 'Data out of sync. Tap for sync options';
+
+  @override
+  String get saveError => 'Error saving. Retrying soon… Tap to try now';
+
+  @override
+  String get userDisconnected => 'User disconnected';
 }

@@ -467,5 +467,28 @@
   "logoutFailed": "Failed to log out",
   "@logoutFailed": {
     "description": "Error message shown when logout fails"
+  },
+  "notStarted": "Not started",
+  "@notStarted": {
+    "description": "Status message shown when saving has not started yet"
+  },
+  "syncCompleted": "Sync completed at {time}",
+  "@syncCompleted": {
+    "description": "Status message shown when sync is successful",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "outOfSync": "Data out of sync. Tap for sync options",
+  "@outOfSync": {
+    "description": "Status message when data is desynchronized"
+  },
+  "saveError": "Error saving. Retrying soon… Tap to try now",
+  "@saveError": {
+    "description": "Status message when saving fails"
+  },
+  "userDisconnected": "User disconnected",
+  "@userDisconnected": {
+    "description": "Status message when user is disconnected"
   }
 }

@@ -784,6 +784,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to log out'**
   String get logoutFailed;
+
+  /// Status message shown when saving has not started yet
+  ///
+  /// In en, this message translates to:
+  /// **'Not started'**
+  String get notStarted;
+
+  /// Status message shown when sync is successful
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed at {time}'**
+  String syncCompleted(Object time);
+
+  /// Status message when data is desynchronized
+  ///
+  /// In en, this message translates to:
+  /// **'Data out of sync. Tap for sync options'**
+  String get outOfSync;
+
+  /// Status message when saving fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving. Retrying soon… Tap to try now'**
+  String get saveError;
+
+  /// Status message when user is disconnected
+  ///
+  /// In en, this message translates to:
+  /// **'User disconnected'**
+  String get userDisconnected;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

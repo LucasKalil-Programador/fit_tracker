@@ -356,4 +356,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get logoutFailed => 'Falha ao sair';
+
+  @override
+  String get notStarted => 'Não iniciado';
+
+  @override
+  String syncCompleted(Object time) {
+    return 'Sincronização concluída em $time';
+  }
+
+  @override
+  String get outOfSync => 'Dados fora de sincronia. Toque para opções de sincronização';
+
+  @override
+  String get saveError => 'Erro ao salvar. Tentando novamente em breve… Toque para tentar agora';
+
+  @override
+  String get userDisconnected => 'Usuário desconectado';
 }

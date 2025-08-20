@@ -122,5 +122,10 @@
   "loginFailed": "Falha ao realizar login",
   "userLoggedOut": "Usuário desconectado",
   "loggedInAs": "Logado como: {userName}",
-  "logoutFailed": "Falha ao sair"
+  "logoutFailed": "Falha ao sair",
+  "notStarted": "Não iniciado",
+  "syncCompleted": "Sincronização concluída em {time}",
+  "outOfSync": "Dados fora de sincronia. Toque para opções de sincronização",
+  "saveError": "Erro ao salvar. Tentando novamente em breve… Toque para tentar agora",
+  "userDisconnected": "Usuário desconectado"
 }
