@@ -1,16 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:archive/archive.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/utils/firebase_options.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/auth_state.dart';
-import 'package:fittrackr/states/base_list_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/utils/firestore.dart';
+import 'package:fittrackr/utils/cloud/async_debouncer.dart';
+import 'package:fittrackr/utils/cloud/firebase_options.dart';
+import 'package:fittrackr/utils/cloud/firestore.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
 
@@ -56,7 +53,7 @@ class StateManager extends ChangeNotifier {
       reportState
     ];
     for (var state in watchedStates) {
-      state.addListener(handleUpdate);
+      state.addListener(_sync);
     }
 
     authState = AuthState();
@@ -69,7 +66,7 @@ class StateManager extends ChangeNotifier {
     },);
   }
 
-  final AsyncDebouncer _debouncer = AsyncDebouncer(delay: Duration(seconds: 1));
+  final AsyncDebouncer _debouncer = AsyncDebouncer(delay: Duration(seconds: 3));
   
   SaveResult? lastSaveResult;
   int retryCount = 0;
@@ -80,6 +77,26 @@ class StateManager extends ChangeNotifier {
   final int maxRetry = 20;
 
   bool _isSyncing = false;
+  bool get isSyncing => _isSyncing;
+
+  // sync options
+
+  void _sync() {
+    if(authState.isLoggedIn && _synchronized) {
+      _debouncer.call(() async {
+        if(_isSyncing || !_synchronized) return;
+        _isSyncing = true;
+
+        try {
+          return await FirestoreUtils
+            .saveData(this, metadataState.get(lastUpdateKey))
+            .then(_handleSaveResult);
+        } finally {
+          _isSyncing = false;
+        }
+      });
+    }
+  }
 
   Future<void> trySync() async {
     if(_isSyncing) return;
@@ -93,7 +110,7 @@ class StateManager extends ChangeNotifier {
         await FirestoreUtils.saveData(this, lastHash)
           .then(_handleSaveResult);
       } else {
-        lastSaveResult = SaveResult(SaveStatus.desynchronized, null, null);
+        _handleSaveResult(SaveResult(SaveStatus.desynchronized, null, null));
       }
       startPeriodicSync(Duration(minutes: 15));
     } finally {
@@ -101,23 +118,37 @@ class StateManager extends ChangeNotifier {
     }
   }
 
-  void handleUpdate() {
-    if(authState.isLoggedIn && _synchronized) {
-      _debouncer.call(() async {
-        if(_isSyncing) return;
-        _isSyncing = true;
+  Future<void> forceSyncLocalToCloud() async {
+    if(_isSyncing) return;
+    _isSyncing = true;
 
-        try {
-          return FirestoreUtils
-            .saveData(this, metadataState.get(lastUpdateKey))
-            .then(_handleSaveResult);
-        } finally {
-          _isSyncing = false;
-        }
-      });
+    try {
+      if(authState.user == null) return;
+      await FirestoreUtils.saveData(this, "bypassed", true)
+          .then(_handleSaveResult);
+      startPeriodicSync(Duration(minutes: 15));
+    } finally {
+      _isSyncing = false;
     }
   }
-  
+
+  Future<void> forceSyncCloudToLocal() async {
+    if(_isSyncing) return;
+    _isSyncing = true;
+
+    try {
+      final result = await FirestoreUtils.loadData(this);
+      if(result.status == LoadStatus.success) {
+        _handleSaveResult(SaveResult(SaveStatus.success, result.timestamp, result.lastDataHash));
+      }
+      _sync();
+    } finally {
+      _isSyncing = false;
+    }
+  }
+
+  // utils
+
   void _handleSaveResult(SaveResult result) {
     lastSaveResult = result;
     if(result.status == SaveStatus.desynchronized) {
@@ -136,7 +167,7 @@ class StateManager extends ChangeNotifier {
       retryCount = 0;
     } else if(result.status == SaveStatus.error) {
       if (retryCount < maxRetry) {
-        Future.delayed(_retryDelay, handleUpdate);
+        Future.delayed(_retryDelay, _sync);
         retryCount++;
         _retryDelay = _retryDelay * 2 <= _maxRetryDelay ? _retryDelay * 2 : _maxRetryDelay;
       } else {
@@ -152,69 +183,12 @@ class StateManager extends ChangeNotifier {
     _periodicTimer = Timer.periodic(interval, (_) => trySync());
   }
   void stopPeriodicSync() => _periodicTimer?.cancel();
-}
 
-class AsyncDebouncer {
-  final Duration delay;
-  Timer? _timer;
-  Completer<void>? _running;
-  bool _pending = false;
-
-  AsyncDebouncer({required this.delay});
-
-  Future<void> call(Future<void> Function() action) async {
-    _timer?.cancel();
-    _timer = Timer(delay, () async {
-      if (_running != null) {
-        _pending = true;
-        return;
-      }
-
-      _running = Completer<void>();
-      await action();
-      _running!.complete();
-      _running = null;
-
-      if (_pending) {
-        _pending = false;
-        await call(action);
-      }
-    });
-  }
-}
-
-// Serializer
-
-class SerializationResult {
-  final Uint8List compressed;
-  final String json;
-
-  SerializationResult(this.compressed, this.json);
-}
-
-class Serializer {
-  static SerializationResult serialize(List<BaseListState> states) {    
-    Map<String, Object> map = {};
-    for (var state in states) {
-      if(state.isNotEmpty) {
-        map[state.serializationKey] = state.clone.map((e) => e.toMap()).toList();
-      }
+  DateTime? getLocalTimeStamp() {
+    final localTimeStamp = metadataState.get(lastTimeStampKey);
+    if(localTimeStamp != null) {
+      return DateTime.parse(localTimeStamp);
     }
-    final json = jsonEncode(map);
-    final compressed = _zipData(json);
-    return SerializationResult(compressed, json);
-  }
-
-  static Uint8List _zipData(String data) {
-    final runes = data.runes;
-    Archive archive = Archive()
-      ..addFile(ArchiveFile("data.bin", runes.length, runes.toList()));
-    return ZipEncoder().encodeBytes(
-      archive,
-      level:
-          data.length > 500000
-              ? DeflateLevel.bestCompression
-              : DeflateLevel.bestSpeed,
-    );
+    return null;
   }
 }

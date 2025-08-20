@@ -22,8 +22,10 @@ class ExercisesState extends BaseListState<Exercise> {
            [exercise.reps, exercise.amount, exercise.sets].contains(int.tryParse(searchStr));
   }
 
+  static const String key = "exercises";
+
   @override
-  final String serializationKey = "exercises";
+  final String serializationKey = key;
 }
 
 class ReportState extends BaseListState<Report> {
@@ -31,15 +33,19 @@ class ReportState extends BaseListState<Report> {
 
   List<Report> getByTable(String tableId) => where((e) => e.tableId == tableId).toList();
 
+  static const String key = "reports";
+
   @override
-  final String serializationKey = "reports";
+  final String serializationKey = key;
 }
 
 class TrainingPlanState extends BaseListState<TrainingPlan> { 
   TrainingPlanState({super.dbProxy, super.loadDatabase});
 
+  static const String key = "training_plans";
+
   @override
-  final String serializationKey = "training_plans"; 
+  final String serializationKey = key; 
 }
 
 class TrainingHistoryState extends BaseListState<TrainingHistory> { 
@@ -50,14 +56,18 @@ class TrainingHistoryState extends BaseListState<TrainingHistory> {
     sortedList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
     return sortedList;
   }
+
+  static const String key = "training_history_plan";
   
   @override
-  final String serializationKey = "training_history_plan";
+  final String serializationKey = key;
 }
 
 class ReportTableState extends BaseListState<ReportTable> { 
   ReportTableState({super.dbProxy, super.loadDatabase});
 
+  static const String key = "reports_tables";
+
   @override
-  final String serializationKey = "reports"; 
+  final String serializationKey = key; 
 }
