@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fittrackr/database/db.dart';
-import 'package:fittrackr/firebase_options.dart';
+import 'package:fittrackr/utils/firebase_options.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/base_list_state.dart';
