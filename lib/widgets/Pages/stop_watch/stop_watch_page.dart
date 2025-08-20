@@ -43,35 +43,31 @@ class _StopWatchPageState extends State<StopWatchPage> with TickerProviderStateM
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  itemCount: controllers.length,
-                  controller: pageController,
-                  onPageChanged: (index) {
-                    setState(() => tabController.index = index);
-                  },
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: StopWatchBody(controller: controllers[index]),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PageSelector(
-                  tabController: tabController,
-                  onPageChanged: onPageSelectorChange,
-                ),
-              ),
-            ],
-          );
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              itemCount: controllers.length,
+              controller: pageController,
+              onPageChanged: (index) {
+                setState(() => tabController.index = index);
+              },
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  child: StopWatchBody(controller: controllers[index]),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PageSelector(
+              tabController: tabController,
+              onPageChanged: onPageSelectorChange,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,

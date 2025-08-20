@@ -21,15 +21,26 @@ class ExercisesState extends BaseListState<Exercise> {
     return exercise.name.toLowerCase().contains(searchStr) ||
            [exercise.reps, exercise.amount, exercise.sets].contains(int.tryParse(searchStr));
   }
+
+  @override
+  final String serializationKey = "exercises";
 }
 
 class ReportState extends BaseListState<Report> {
   ReportState({super.dbProxy, super.loadDatabase});
 
   List<Report> getByTable(String tableId) => where((e) => e.tableId == tableId).toList();
+
+  @override
+  final String serializationKey = "reports";
 }
 
-class TrainingPlanState extends BaseListState<TrainingPlan> { TrainingPlanState({super.dbProxy, super.loadDatabase}); }
+class TrainingPlanState extends BaseListState<TrainingPlan> { 
+  TrainingPlanState({super.dbProxy, super.loadDatabase});
+
+  @override
+  final String serializationKey = "training_plans"; 
+}
 
 class TrainingHistoryState extends BaseListState<TrainingHistory> { 
   TrainingHistoryState({super.dbProxy, super.loadDatabase}); 
@@ -39,6 +50,14 @@ class TrainingHistoryState extends BaseListState<TrainingHistory> {
     sortedList.sort((a, b) => b.dateTime.compareTo(a.dateTime));
     return sortedList;
   }
+  
+  @override
+  final String serializationKey = "training_history_plan";
 }
 
-class ReportTableState extends BaseListState<ReportTable> { ReportTableState({super.dbProxy, super.loadDatabase}); }
+class ReportTableState extends BaseListState<ReportTable> { 
+  ReportTableState({super.dbProxy, super.loadDatabase});
+
+  @override
+  final String serializationKey = "reports"; 
+}

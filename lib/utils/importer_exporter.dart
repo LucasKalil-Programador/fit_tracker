@@ -117,22 +117,6 @@ void _validFields(Data result) {
   result.reports?.removeWhere((item) => !item.isValid);
 }
 
-// Exporter
-
-String contextToJson(BuildContext context) {
-  final eState = Provider.of<ExercisesState>(context, listen: false);
-  final pState = Provider.of<TrainingPlanState>(context, listen: false);
-  final rState = Provider.of<ReportState>(context, listen: false);
-  final tState = Provider.of<ReportTableState>(context, listen: false);
-  final output = {
-      exerciseJsonKey: eState.toJson(),
-      plansJsonKey:     pState.toJson(),
-      tablesJsonKey:     tState.toJson(),
-      reportsJsonKey:   rState.toJson(),
-    };
-  return jsonEncode(output);
-}
-
 // Clear
 
 Future<void> clearContext(BuildContext context) async {
@@ -140,8 +124,10 @@ Future<void> clearContext(BuildContext context) async {
   final pState = Provider.of<TrainingPlanState>(context, listen: false);
   final rState = Provider.of<ReportState>(context, listen: false);
   final tState = Provider.of<ReportTableState>(context, listen: false);
+  final thState = Provider.of<TrainingHistoryState>(context, listen: false);
   await eState.clear();
   await pState.clear();
   await rState.clear();
   await tState.clear();
+  await thState.clear();
 }

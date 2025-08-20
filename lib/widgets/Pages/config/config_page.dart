@@ -1,16 +1,14 @@
-import 'dart:io';
-
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/utils/importer_exporter.dart';
+import 'package:fittrackr/states/state_manager.dart';
+import 'package:fittrackr/utils/firestore.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 
 class ConfigPage extends StatelessWidget {
@@ -44,7 +42,6 @@ class ConfigPage extends StatelessWidget {
                 DefaultDivider(),
                 GoogleLoginWidget(),
                 DefaultDivider(),
-                DataImportExport(),
                 DefaultDivider(),
                 DevTools(),
                 DefaultDivider(),
@@ -125,9 +122,20 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     }
     
     if(authState.isLoggedIn) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: getUserAvatar(authState),
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: getUserAvatar(authState),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Consumer<StateManager>(builder: (context, stateManager, child) {
+              return Text(getStatusMessage(stateManager.lastSaveResult), textAlign: TextAlign.center);
+            },),
+          ),
+        ],
       );
     }
     return Padding(
@@ -135,6 +143,27 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
       child: Text(localization.loginWithGoogle, textAlign: TextAlign.center,),
     );
   }
+
+  
+String getStatusMessage(SaveResult? lastSaveResult) {
+  if (lastSaveResult == null) return "Não iniciado";
+
+  String formattedTime = "";
+  if (lastSaveResult.timestamp != null) {
+    formattedTime = DateFormat('dd/MM/yyyy HH:mm').format(lastSaveResult.timestamp!.toDate());
+  }
+
+  switch (lastSaveResult.status) {
+    case SaveStatus.success:
+      return "Sincronização concluída em $formattedTime";
+    case SaveStatus.desynchronized:
+      return "Dados fora de sincronia. Toque para opções de sincronização";
+    case SaveStatus.error:
+      return "Erro ao salvar. Tentando novamente em breve… Toque para tentar agora";
+    case SaveStatus.disconnected:
+      return "Usuário desconectado";
+  }  
+}
 
   Widget getUserAvatar(AuthState authState) {
     String? photoURL = authState.user?.photoURL;
@@ -200,61 +229,5 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     } finally {
       setState(() => isLoading = false);
     }
-  }
-}
-
-class DataImportExport extends StatelessWidget {
-  const DataImportExport({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: 8,
-      children: [
-        Center(child: Text(localization.data, style: Theme.of(context).textTheme.titleLarge)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: ElevatedButton.icon(
-            onPressed: () => onExport(context),
-            icon: Icon(Icons.file_upload),
-            label: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(localization.exportData, softWrap: false),
-            ),
-            iconAlignment: IconAlignment.start,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: ElevatedButton.icon(
-            onPressed: () => onImport(),
-            icon: Icon(Icons.file_download),
-            label: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(localization.importData, softWrap: false),
-            ),
-            iconAlignment: IconAlignment.start,
-          ),
-        ),
-      ],
-    );
-  }
-
-  void onExport(BuildContext context) async {
-    final localization = AppLocalizations.of(context)!;
-    final json = contextToJson(context);
-    final dir = await getTemporaryDirectory();
-    final file = File("${dir.path}/fittracker_backup.json");
-    await file.writeAsString(json);
-
-    await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], text: localization.fittrackerBackup)
-    );
-  }
-
-  void onImport() {
-    // TODO: onImport
   }
 }

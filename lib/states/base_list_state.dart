@@ -7,11 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
+  abstract final String serializationKey;
+
   final ProxyPart<T, dynamic>? dbProxy;
   final _completer = Completer<bool>();
   final List<T> _cache = [];
 
-  List<Map<String, Object?>> toJson() => _cache.map((e) => e.toMap()).toList();
   List<T> get clone => List<T>.from(_cache);
   
   bool get isEmpty => _cache.isEmpty;

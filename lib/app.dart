@@ -1,10 +1,5 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/metadata_state.dart';
-import 'package:fittrackr/utils/importer_exporter.dart';
-import 'package:fittrackr/utils/logger.dart';
 import 'package:fittrackr/utils/themes.dart';
 import 'package:fittrackr/widgets/Pages/config/config_page.dart';
 import 'package:fittrackr/widgets/Pages/exercise_list/exercise_list_page.dart';
@@ -12,11 +7,8 @@ import 'package:fittrackr/widgets/Pages/home/home_page.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_page.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/stop_watch_page.dart';
 import 'package:fittrackr/widgets/Pages/workout/workout_page.dart';
-import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:tuple/tuple.dart';
 
 class App extends StatelessWidget {
@@ -87,7 +79,6 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget> {
   late final AppLocalizations localization;
-  StreamSubscription? streamSubscription;
   int currentPageIndex = 0;
 
   @override
@@ -121,99 +112,5 @@ class _MainWidgetState extends State<MainWidget> {
     setState(() {
       currentPageIndex = value;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if(kIsWeb) {
-      logger.i("Web not support ReceiveSharingIntent");
-    } else if(Platform.isAndroid) {
-      streamSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(onReceiveEvent);
-      ReceiveSharingIntent.instance.getInitialMedia().then(onReceiveEvent);
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    streamSubscription?.cancel();
-  }
-
-  void onReceiveEvent(List<SharedMediaFile> events) async {
-    logger.i("onReceiveEvent: {$events}");
-    try {
-      if (events.isEmpty) return;
-      final event = events.first;
-
-      if (event.type == SharedMediaType.file && event.path.endsWith(".json")) {
-        final file = File(event.path);
-        final data = await file.readAsString();
-        if (mounted) {
-          final importedData = jsonToData(data);
-          await confirmAction(context, importedData);
-        }
-      }
-    } catch (e) {
-      if(mounted) {
-        showSnackMessage(context, localization.importError, false);
-      }
-      logger.w(e);
-    }
-  }
-
-  Future<void> confirmAction(BuildContext context, Data importedData) async {
-    final task = await showDialog<int>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(localization.importData),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32),
-                  child: Text(
-                    '${localization.dataLoadedSuccess}'
-                    '${localization.totalData}'
-                    '${localization.importSummary(
-                    (importedData.exercises ?? []).length, 
-                    (importedData.plans ?? []).length, 
-                    (importedData.tables ?? []).length, 
-                    (importedData.reports ?? []).length)}',
-                  ),
-                ),
-                ElevatedButton(
-                  child: Text(localization.importReplace),
-                  onPressed: () => Navigator.pop(context, 0),
-                ),
-                ElevatedButton(
-                  child: Text(localization.importMerge),
-                  onPressed: () => Navigator.pop(context, 1),
-                ),
-                ElevatedButton(
-                  child: Text(localization.cancel),
-                  onPressed: () => Navigator.pop(context, 2),
-                )
-              ],
-            ),
-          ),
-    );
-    
-    switch (task) {
-      case 0:
-        if(context.mounted) {
-          await dataToContext(importedData, context, true);
-        }
-        break;
-      case 1:
-        if(context.mounted) {
-          await dataToContext(importedData, context, false);
-        }
-        break;
-      default:
-    }
   }
 }

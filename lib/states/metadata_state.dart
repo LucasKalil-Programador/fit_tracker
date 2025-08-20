@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 
 const themeKey = "Theme:key";
 const localeKey = "Locale:key";
-const  metadataActivatedKey = "workout:activated";
-const  metadataDoneKey = "workout:donelist";
+const metadataActivatedKey = "workout:activated";
+const metadataDoneKey = "workout:donelist";
+const lastUpdateKey = "Manager:LastUpdate";
+const lastTimeStampKey = "Manager:LastTimeStamp";
 
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;
@@ -23,6 +25,10 @@ class MetadataState extends ChangeNotifier {
   void forEach(void Function(String, String) action) => _cache.forEach(action);
   bool containsKey(String key) => _cache.containsKey(key);
   String? get(String key) => _cache[key];
+
+  Map<String, String> get clone => Map.from(_cache);
+
+  final String serializationKey = "metadata";
 
   List<String>? getList(String key) {
     final value = _cache[key];
