@@ -127,5 +127,12 @@
   "syncCompleted": "Sincronização concluída em {time}",
   "outOfSync": "Dados fora de sincronia. Toque para opções de sincronização",
   "saveError": "Erro ao salvar. Tentando novamente em breve… Toque para tentar agora",
-  "userDisconnected": "Usuário desconectado"
+  "userDisconnected": "Usuário desconectado",
+  "conflictDetectedTitle": "Conflito Detectado",
+  "conflictDetectedMessage": "Detectamos um conflito entre os dados locais e os dados na nuvem. Escolha qual versão deseja manter:",
+  "lastCloudSave": "Último salvamento na nuvem:\n {time}",
+  "lastLocalSave": "Último salvamento local:\n {time}",
+  "unableToDetermineDate": "Não foi possível determinar a data",
+  "useLocalData": "Usar dados locais",
+  "useCloudData": "Usar dados da nuvem"
 }

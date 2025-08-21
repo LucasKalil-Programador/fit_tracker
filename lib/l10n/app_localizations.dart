@@ -814,6 +814,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User disconnected'**
   String get userDisconnected;
+
+  /// Title of the dialog when a data conflict is detected
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict Detected'**
+  String get conflictDetectedTitle;
+
+  /// Message explaining the conflict and prompting the user to choose
+  ///
+  /// In en, this message translates to:
+  /// **'We detected a conflict between local data and cloud data. Choose which version you want to keep:'**
+  String get conflictDetectedMessage;
+
+  /// Label showing the last cloud save time
+  ///
+  /// In en, this message translates to:
+  /// **'Last save in the cloud:\n {time}'**
+  String lastCloudSave(Object time);
+
+  /// Label showing the last local save time
+  ///
+  /// In en, this message translates to:
+  /// **'Last local save:\n {time}'**
+  String lastLocalSave(Object time);
+
+  /// Shown when the date cannot be determined
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to determine the date'**
+  String get unableToDetermineDate;
+
+  /// Button label to use local data
+  ///
+  /// In en, this message translates to:
+  /// **'Use local data'**
+  String get useLocalData;
+
+  /// Button label to use cloud data
+  ///
+  /// In en, this message translates to:
+  /// **'Use cloud data'**
+  String get useCloudData;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

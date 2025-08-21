@@ -373,4 +373,29 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get userDisconnected => 'Usuário desconectado';
+
+  @override
+  String get conflictDetectedTitle => 'Conflito Detectado';
+
+  @override
+  String get conflictDetectedMessage => 'Detectamos um conflito entre os dados locais e os dados na nuvem. Escolha qual versão deseja manter:';
+
+  @override
+  String lastCloudSave(Object time) {
+    return 'Último salvamento na nuvem:\n $time';
+  }
+
+  @override
+  String lastLocalSave(Object time) {
+    return 'Último salvamento local:\n $time';
+  }
+
+  @override
+  String get unableToDetermineDate => 'Não foi possível determinar a data';
+
+  @override
+  String get useLocalData => 'Usar dados locais';
+
+  @override
+  String get useCloudData => 'Usar dados da nuvem';
 }

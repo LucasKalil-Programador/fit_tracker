@@ -373,4 +373,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userDisconnected => 'User disconnected';
+
+  @override
+  String get conflictDetectedTitle => 'Conflict Detected';
+
+  @override
+  String get conflictDetectedMessage => 'We detected a conflict between local data and cloud data. Choose which version you want to keep:';
+
+  @override
+  String lastCloudSave(Object time) {
+    return 'Last save in the cloud:\n $time';
+  }
+
+  @override
+  String lastLocalSave(Object time) {
+    return 'Last local save:\n $time';
+  }
+
+  @override
+  String get unableToDetermineDate => 'Unable to determine the date';
+
+  @override
+  String get useLocalData => 'Use local data';
+
+  @override
+  String get useCloudData => 'Use cloud data';
 }

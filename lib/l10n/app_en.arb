@@ -490,5 +490,39 @@
   "userDisconnected": "User disconnected",
   "@userDisconnected": {
     "description": "Status message when user is disconnected"
+  },
+  "conflictDetectedTitle": "Conflict Detected",
+  "@conflictDetectedTitle": {
+    "description": "Title of the dialog when a data conflict is detected"
+  },
+  "conflictDetectedMessage": "We detected a conflict between local data and cloud data. Choose which version you want to keep:",
+  "@conflictDetectedMessage": {
+    "description": "Message explaining the conflict and prompting the user to choose"
+  },
+  "lastCloudSave": "Last save in the cloud:\n {time}",
+  "@lastCloudSave": {
+    "description": "Label showing the last cloud save time",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "lastLocalSave": "Last local save:\n {time}",
+  "@lastLocalSave": {
+    "description": "Label showing the last local save time",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "unableToDetermineDate": "Unable to determine the date",
+  "@unableToDetermineDate": {
+    "description": "Shown when the date cannot be determined"
+  },
+  "useLocalData": "Use local data",
+  "@useLocalData": {
+    "description": "Button label to use local data"
+  },
+  "useCloudData": "Use cloud data",
+  "@useCloudData": {
+    "description": "Button label to use cloud data"
   }
 }

@@ -231,37 +231,34 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     final format = DateFormat('dd/MM/yyyy HH:mm:ss');
     final formattedServerTime = serverTime != null
             ? format.format(serverTime)
-            : "Não foi possível determinar a data";
+            : localization.unableToDetermineDate;
     final formattedLocalTime = localTime != null
             ? format.format(localTime)
-            : "Não foi possível determinar a data";
-
+            : localization.unableToDetermineDate;
+    
     final result = await showDialog<ResyncOption>(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text("Conflito Detectado"),
+            title: Text(localization.conflictDetectedTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Detectamos um conflito entre os dados locais e os dados na nuvem. "
-                  "Escolha qual versão deseja manter:",
-                ),
+                Text(localization.conflictDetectedMessage),
                 const SizedBox(height: 12),
-                Text("Último salvamento na nuvem:\n $formattedServerTime"),
-                Text("Último salvamento local:\n $formattedLocalTime"),
+                Text(localization.lastCloudSave(formattedServerTime)),
+                Text(localization.lastLocalSave(formattedLocalTime)),
               ],
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(ResyncOption.local),
-                child: const Text("Usar dados locais"),
+                child: Text(localization.useLocalData),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(ResyncOption.server),
-                child: const Text("Usar dados da nuvem"),
+                child: Text(localization.useCloudData),
               ),
             ],
           ),
