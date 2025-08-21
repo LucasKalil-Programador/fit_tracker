@@ -25,7 +25,6 @@ class Data {
 Data jsonToData(String data) {
   Data result = Data();
   _import(data, result);
-  _validFields(result);
   _filterInvalidForeignKey(result);
   return result;
 }
@@ -108,13 +107,6 @@ void _filterInvalidForeignKey(Data result) {
     final list = result.reports;
     result.reports = list?.where((item) => result.tables!.any((element) => element.id == item.tableId,)).toList();
   }
-}
-
-void _validFields(Data result) {
-  result.exercises?.removeWhere((item) => !item.isValid);
-  result.plans?.removeWhere((item) => !item.isValid);
-  result.tables?.removeWhere((item) => !item.isValid);
-  result.reports?.removeWhere((item) => !item.isValid);
 }
 
 // Clear
