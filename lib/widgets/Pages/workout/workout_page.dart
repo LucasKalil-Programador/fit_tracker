@@ -105,7 +105,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     try {
       final historyState = Provider.of<TrainingHistoryState>(context, listen: false);
-      final success = await historyState.addWait(history);
+      final success = await historyState.add(history);
 
       if(mounted) {
         showSnackMessage(context, success ? localization.trainingFinishedHistorySaved : localization.trainingFinishedHistorySaveError, success);
@@ -181,7 +181,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       bool success = false;
 
       if (mode == TrainingPlanFormMode.creation) {
-        success = await plansState.addWait(newPlan);
+        success = await plansState.add(newPlan);
       } else if (newPlan.id != null) {
         success = await plansState.reportUpdate(newPlan);
       }

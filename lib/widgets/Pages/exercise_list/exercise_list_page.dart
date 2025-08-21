@@ -89,7 +89,7 @@ class _ExerciseListPageState extends State<ExerciseListPage> {
       bool success = false;
 
       if(mode == ExerciseFormMode.creation) {
-        success = await listState.addWait(newExercise);
+        success = await listState.add(newExercise);
       } else if(newExercise.id != null) {
         success = await listState.reportUpdate(newExercise);
       }

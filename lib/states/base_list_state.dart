@@ -43,7 +43,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
   
   // Methods
 
-  Future<bool> addWait(T entity) async {
+  Future<bool> add(T entity) async {
     if(containsId(entity)) return false;
     entity.id ??= Uuid().v4();
 

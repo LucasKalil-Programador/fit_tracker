@@ -139,20 +139,20 @@ Future<void> _generateStates(
 ) async {
    for (var i = 0; i < length; i++) {
     Exercise exercise = Exercise(name: "Exercise-$i", amount: i * 2, reps: i * 3, sets: i * 4, type: i % 2 == 0 ? ExerciseType.cardio : ExerciseType.musclework);
-    await exercisesState.addWait(exercise);
+    await exercisesState.add(exercise);
   }
   
   for (var i = 0; i < length; i++) {
     final exercises = exercisesState.clone..shuffle(Random());
     TrainingPlan plan = TrainingPlan(name: "TrainingPlan-$i", list: exercises.take(i).map((e) => e.id!).toList());
-    await planState.addWait(plan);
+    await planState.add(plan);
   }
   
   for (var i = 0; i < length; i++) {
     final exercises = exercisesState.clone..shuffle(Random());
     final plans = planState.clone..shuffle(Random());
     TrainingHistory history = TrainingHistory.fromTrainingPlan(plan: plans.first, exercises: exercises.take(i).toList(), dateTime: DateTime.now().millisecondsSinceEpoch + i);
-    await historyState.addWait(history);
+    await historyState.add(history);
   }
   
   for (var i = 0; i < length; i++) {
@@ -163,12 +163,12 @@ Future<void> _generateStates(
       createdAt: DateTime.now().millisecondsSinceEpoch + i,
       updatedAt: DateTime.now().millisecondsSinceEpoch + i * i,
     );
-    await tableState.addWait(table);
+    await tableState.add(table);
   }
   
   for (var i = 0; i < length; i++) {
     final table = tableState.clone..shuffle(Random());
     Report report = Report(note: "Note-$i", reportDate: DateTime.now().millisecondsSinceEpoch + i, value: (i * i).toDouble(), tableId: table.first.id!);
-    await reportState.addWait(report);
+    await reportState.add(report);
   }
 }

@@ -201,7 +201,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       final reportTableState = Provider.of<ReportTableState>(context, listen: false);
       final reportState = Provider.of<ReportState>(context, listen: false);
 
-      final success = await reportTableState.addWait(table);
+      final success = await reportTableState.add(table);
 
       if(success) {
         activatedTable = table; 
@@ -266,7 +266,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       final reportTableState = Provider.of<ReportTableState>(context, listen: false);
       final reportState = Provider.of<ReportState>(context, listen: false);
 
-      bool success = await reportState.addWait(report);
+      bool success = await reportState.add(report);
 
       if (success && activatedTable != null) {
         loadReports(reportTableState, reportState, activatedTable!.id!);
