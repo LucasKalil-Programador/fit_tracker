@@ -51,8 +51,4 @@ class TrainingPlan implements BaseEntity {
     }
     return null;
   }
-  
-  @override
-  // TODO: implement isValid
-  bool get isValid => true;
 }

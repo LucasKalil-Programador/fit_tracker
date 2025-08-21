@@ -72,10 +72,6 @@ class ReportTable implements BaseEntity {
 
     return null;
   }
-  
-  @override
-  // TODO: implement isValid
-  bool get isValid => true;
 }
 
 class Report implements BaseEntity {
@@ -102,6 +98,7 @@ class Report implements BaseEntity {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
+    
     return other is Report &&
         other.id == id &&
         other.note == note &&
@@ -144,8 +141,4 @@ class Report implements BaseEntity {
 
     return null;
   }
-  
-  @override
-  // TODO: implement isValid
-  bool get isValid => true;
 }
