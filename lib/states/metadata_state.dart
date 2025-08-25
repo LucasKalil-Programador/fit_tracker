@@ -78,7 +78,7 @@ class MetadataState extends ChangeNotifier {
       });
   }
 
-  Future<bool> waitLoaded() => _completer.future;
+  Future<bool> waitLoad() => _completer.future;
 
   Future<bool> _loadFromDatabase() async {
     if(dbProxy == null) return true;

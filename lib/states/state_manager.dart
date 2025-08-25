@@ -15,14 +15,17 @@ import 'package:flutter/material.dart';
 
 class StateManager extends ChangeNotifier {
   late final ExercisesState exercisesState;
-  late final MetadataState metadataState;
   late final TrainingPlanState trainingPlanState;
   late final TrainingHistoryState trainingHistoryState;
   late final ReportTableState reportTableState;
   late final ReportState reportState;
+
+  late final MetadataState metadataState;
   late final AuthState authState;
 
   Future<void> initialize() async {
+    final startTime = DateTime.now();
+
     final db = DatabaseProxy.instance;
     exercisesState = ExercisesState(dbProxy: db.exercise, loadDatabase: true);
     metadataState = MetadataState(dbProxy: db.metadata, loadDatabase: true);
@@ -36,34 +39,20 @@ class StateManager extends ChangeNotifier {
     );
     
     await Future.wait([
-      exercisesState.waitLoaded(),
-      metadataState.waitLoaded(),
-      trainingPlanState.waitLoaded(),
-      trainingHistoryState.waitLoaded(),
-      reportTableState.waitLoaded(),
-      reportState.waitLoaded(),
+      exercisesState.waitLoad().then((_) => exercisesState.addListener(_sync)),
+      trainingPlanState.waitLoad().then((_) => trainingPlanState.addListener(_sync)),
+      trainingHistoryState.waitLoad().then((_) => trainingHistoryState.addListener(_sync)),
+      reportTableState.waitLoad().then((_) => reportTableState.addListener(_sync)),
+      reportState.waitLoad().then((_) => reportState.addListener(_sync)),
+      metadataState.waitLoad(),
       firebaseInitialization,
     ]);
 
-    final watchedStates = [
-      exercisesState,
-      trainingPlanState,
-      trainingHistoryState,
-      reportTableState,
-      reportState
-    ];
-    for (var state in watchedStates) {
-      state.addListener(_sync);
-    }
-
     authState = AuthState();
-    authState.addListener(() {
-      if(authState.isLoggedIn) {
-        trySync();
-      } else {
-        stopPeriodicSync();
-      }
-    },);
+    authState.addListener(() => authState.isLoggedIn ? trySync() : stopPeriodicSync());
+    
+    final elapsed = DateTime.now().difference(startTime);
+    logger.i("Elapsed in loading: $elapsed");
   }
 
   final AsyncDebouncer _debouncer = AsyncDebouncer(delay: Duration(seconds: 3));

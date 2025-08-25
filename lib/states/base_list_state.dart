@@ -26,12 +26,13 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   bool containsId(T entity) => entity.id != null && getById(entity.id!) != null;
   Iterable<T> where(bool Function(T) test) => _cache.where(test);
+  bool any(bool Function(T) test) => _cache.any(test);
   int indexWhere(bool Function(T entity) test, [int start = 0]) => _cache.indexWhere(test, start);
   int indexOf(T entity) => _cache.indexOf(entity);
 
   void forEach(void Function(T) action) => _cache.forEach(action);
 
-  Future<bool> waitLoaded() => _completer.future;
+  Future<bool> waitLoad() => _completer.future;
 
   BaseListState({this.dbProxy, bool loadDatabase = false}) {
     if(loadDatabase) {
