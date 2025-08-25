@@ -119,7 +119,6 @@ class HistoryListView extends StatefulWidget {
   State<HistoryListView> createState() => _HistoryListViewState();
 }
 
-
 class _HistoryListViewState extends State<HistoryListView> {
   final List<int> showMoreIndexes = [];
 
