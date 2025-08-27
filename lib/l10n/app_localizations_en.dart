@@ -398,4 +398,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get useCloudData => 'Use cloud data';
+
+  @override
+  String get sun => 'Sun';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get moreInfo => 'More information';
+
+  @override
+  String currentStreak(Object days) {
+    return 'Current streak: $days days';
+  }
 }

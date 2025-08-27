@@ -398,4 +398,33 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get useCloudData => 'Usar dados da nuvem';
+
+  @override
+  String get sun => 'Dom';
+
+  @override
+  String get mon => 'Seg';
+
+  @override
+  String get tue => 'Ter';
+
+  @override
+  String get wed => 'Qua';
+
+  @override
+  String get thu => 'Qui';
+
+  @override
+  String get fri => 'Sex';
+
+  @override
+  String get sat => 'Sab';
+
+  @override
+  String get moreInfo => 'Mais informações';
+
+  @override
+  String currentStreak(Object days) {
+    return 'Sequência atual: $days dias';
+  }
 }

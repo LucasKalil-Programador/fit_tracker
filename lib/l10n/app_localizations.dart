@@ -856,6 +856,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use cloud data'**
   String get useCloudData;
+
+  /// Abbreviation for Sunday
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sun;
+
+  /// Abbreviation for Monday
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mon;
+
+  /// Abbreviation for Tuesday
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tue;
+
+  /// Abbreviation for Wednesday
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wed;
+
+  /// Abbreviation for Thursday
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thu;
+
+  /// Abbreviation for Friday
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fri;
+
+  /// Abbreviation for Saturday
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get sat;
+
+  /// Label for button or link to show more information
+  ///
+  /// In en, this message translates to:
+  /// **'More information'**
+  String get moreInfo;
+
+  /// Message showing the current streak of completed days
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak: {days} days'**
+  String currentStreak(Object days);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

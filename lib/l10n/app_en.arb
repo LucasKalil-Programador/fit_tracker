@@ -524,5 +524,26 @@
   "useCloudData": "Use cloud data",
   "@useCloudData": {
     "description": "Button label to use cloud data"
+  },
+  "sun": "Sun",
+  "@sun": { "description": "Abbreviation for Sunday" },
+  "mon": "Mon",
+  "@mon": { "description": "Abbreviation for Monday" },
+  "tue": "Tue",
+  "@tue": { "description": "Abbreviation for Tuesday" },
+  "wed": "Wed",
+  "@wed": { "description": "Abbreviation for Wednesday" },
+  "thu": "Thu",
+  "@thu": { "description": "Abbreviation for Thursday" },
+  "fri": "Fri",
+  "@fri": { "description": "Abbreviation for Friday" },
+  "sat": "Sat",
+  "@sat": { "description": "Abbreviation for Saturday" },
+  "moreInfo": "More information",
+  "@moreInfo": { "description": "Label for button or link to show more information" },
+  "currentStreak": "Current streak: {days} days",
+  "@currentStreak": { 
+    "description": "Message showing the current streak of completed days",
+    "placeholders": { "days": {} } 
   }
 }

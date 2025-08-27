@@ -7,6 +7,7 @@ import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // Default Graph
 
@@ -258,6 +259,7 @@ class _ReportTableViewState extends State<ReportTableView> {
   @override
   Widget build(BuildContext context) {
     final reportSource = _ReportSource(
+      context: context,
       data: widget.reports,
       selected: widget.selected,
       suffix: widget.suffix ?? "",
@@ -365,6 +367,7 @@ class _ReportTableViewState extends State<ReportTableView> {
 }
 
 class _ReportSource extends DataTableSource implements ValueListenable {
+  final BuildContext context;
   final List<Report> data;
   final List<String> selected;
   final String suffix;
@@ -373,18 +376,13 @@ class _ReportSource extends DataTableSource implements ValueListenable {
   final void Function(List<String>)? onSelectedChanged;
   final void Function(Report)? onDelete;
 
-  _ReportSource({required this.data, required this.selected, required this.suffix, this.onPressNote, this.onSelectedChanged, this.onDelete});
+  _ReportSource({required this.context, required this.data, required this.selected, required this.suffix, this.onPressNote, this.onSelectedChanged, this.onDelete});
 
-  String formatDate(int milliseconds) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final day = twoDigits(dateTime.day);
-    final month = twoDigits(dateTime.month);
-    final year = twoDigits(dateTime.year);
-    final hour = twoDigits(dateTime.hour);
-    final minute = twoDigits(dateTime.minute);
-    
-    return "$day/$month/$year $hour:$minute";
+  String formatDate(BuildContext context, int dateTimeMs) {
+    final locale = Localizations.localeOf(context).toString();
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(dateTimeMs);
+    final formattedDate = DateFormat.yMMMMd(locale).add_Hm().format(dateTime);
+    return formattedDate;
   }
 
   String compactText(String text, int maxLength) {
@@ -416,7 +414,7 @@ class _ReportSource extends DataTableSource implements ValueListenable {
         ),
         DataCell(
           Text(
-            formatDate(element.reportDate),
+            formatDate(context, element.reportDate),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -726,13 +724,14 @@ class _ReportViewState extends State<ReportView> {
       
       periodMap = createPeriodMap();
       selected.addAll(periodMap[_ReportViewPeriod.last7]!);
-      generateSpots();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    generateSpots();
+    
     return Column(
       children: [
         DefaultDivider(),
@@ -812,14 +811,11 @@ class _ReportViewState extends State<ReportView> {
     return Map.unmodifiable(periodMap);
   }
 
-  String formatDate(int milliseconds) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final day = twoDigits(dateTime.day);
-    final month = twoDigits(dateTime.month);
-    final year = twoDigits(dateTime.year);
-    
-    return "$day/$month/$year";
+  String formatDate(BuildContext context, int dateTimeMs) {
+    final locale = Localizations.localeOf(context).toString();
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(dateTimeMs);
+    final formattedDate = DateFormat.yMMMMd(locale).add_Hm().format(dateTime);
+    return formattedDate;
   }
 
   void generateSpots() {
@@ -832,7 +828,7 @@ class _ReportViewState extends State<ReportView> {
         if (bottomTitles.isEmpty ||
             bottomTitles.length == selected.length - 1 ||
             bottomTitles.length == (selected.length / 2).toInt()) {
-          bottomTitles.add(formatDate(element.reportDate));
+          bottomTitles.add(formatDate(context, element.reportDate));
         } else {
           bottomTitles.add("");
         }

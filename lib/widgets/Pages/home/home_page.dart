@@ -1,7 +1,7 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/widgets/Pages/home/history_view.dart';
 import 'package:fittrackr/widgets/Pages/home/current_active_view.dart';
-import 'package:fittrackr/widgets/Pages/home/sequence.dart';
+import 'package:fittrackr/widgets/Pages/home/sequence_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {

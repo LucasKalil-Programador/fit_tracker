@@ -57,6 +57,24 @@ class TrainingHistoryState extends BaseListState<TrainingHistory> {
     return sortedList;
   }
 
+  bool hasHistoryInDate(int day, int month, int year) {
+    return any((e) {
+      final hDate = DateTime.fromMillisecondsSinceEpoch(e.dateTime);
+      return hDate.year == year &&
+          hDate.month == month &&
+          hDate.day == day;
+    },);
+  }
+
+  List<TrainingHistory> getHistoryInDate(int day, int month, int year) {
+    return where((e) {
+      final hDate = DateTime.fromMillisecondsSinceEpoch(e.dateTime);
+      return hDate.year == year &&
+          hDate.month == month &&
+          hDate.day == day;
+    },).toList();
+  }
+
   static const String key = "training_history_plan";
   
   @override

@@ -134,5 +134,14 @@
   "lastLocalSave": "Último salvamento local:\n {time}",
   "unableToDetermineDate": "Não foi possível determinar a data",
   "useLocalData": "Usar dados locais",
-  "useCloudData": "Usar dados da nuvem"
+  "useCloudData": "Usar dados da nuvem",
+  "sun": "Dom",
+  "mon": "Seg",
+  "tue": "Ter",
+  "wed": "Qua",
+  "thu": "Qui",
+  "fri": "Sex",
+  "sat": "Sab",
+  "moreInfo": "Mais informações",
+  "currentStreak": "Sequência atual: {days} dias"
 }

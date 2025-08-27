@@ -5,6 +5,7 @@ import 'package:fittrackr/database/entities/training_history.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class HistoryCard extends StatefulWidget {
@@ -37,7 +38,7 @@ class _HistoryCardState extends State<HistoryCard> {
     } else {
       tile = ListTile(
         title: Text(widget.history!.trainingName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(formatDate(widget.history!.dateTime)),
+        subtitle: Text(formatDate(context, widget.history!.dateTime)),
         trailing: widget.trailing,
       );
       if(widget.showMore) {
@@ -86,16 +87,11 @@ class _HistoryCardState extends State<HistoryCard> {
     );
   }
 
-  String formatDate(int dateTimeMs) {
+  String formatDate(BuildContext context, int dateTimeMs) {
+    final locale = Localizations.localeOf(context).toString();
     final dateTime = DateTime.fromMillisecondsSinceEpoch(dateTimeMs);
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final day = twoDigits(dateTime.day);
-    final month = twoDigits(dateTime.month);
-    final year = twoDigits(dateTime.year);
-    final hour = twoDigits(dateTime.hour);
-    final minute = twoDigits(dateTime.minute);
-
-    return "$day/$month/$year $hour:$minute";
+    final formattedDate = DateFormat.yMMMMd(locale).add_Hm().format(dateTime);
+    return formattedDate;
   }
 }
 
@@ -198,7 +194,7 @@ class HistoryPreView extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(4),
-      decoration: boxDecorator(Theme.of(context).colorScheme.primaryContainer),
+      decoration: historyCardBoxDecorator(Theme.of(context).colorScheme.primaryContainer),
       child: Consumer<TrainingHistoryState>(
         builder: (context, trainingPlanState, child) {
           final sorted = trainingPlanState.sorted();
@@ -206,7 +202,7 @@ class HistoryPreView extends StatelessWidget {
             children: [
               Container(
                 margin: const EdgeInsets.all(4),
-                decoration: boxDecorator(Theme.of(context).colorScheme.onSecondary),
+                decoration: historyCardBoxDecorator(Theme.of(context).colorScheme.onSecondary),
                 child: ListTile(
                   title: Text(localization.trainingHistory),
                   trailing: IconButton(onPressed: () => onShowHistory(context, sorted), icon: Icon(Icons.arrow_forward_ios)),
@@ -216,7 +212,7 @@ class HistoryPreView extends StatelessWidget {
                 histories: sorted,
                 maxCards: 3,
                 physics: const NeverScrollableScrollPhysics(),
-                boxDecoration: boxDecorator(
+                boxDecoration: historyCardBoxDecorator(
                   Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
@@ -236,7 +232,7 @@ class HistoryPreView extends StatelessWidget {
           padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: HistoryFullList(
             histories: sorted,
-            boxDecoration: boxDecorator(
+            boxDecoration: historyCardBoxDecorator(
               Theme.of(context).colorScheme.onPrimary,
             ),
           ),
@@ -244,16 +240,16 @@ class HistoryPreView extends StatelessWidget {
       },
     );
   }
+}
 
-  BoxDecoration boxDecorator(Color color) {
-    return BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-      ],
-    );
-  }
+BoxDecoration historyCardBoxDecorator(Color color) {
+  return BoxDecoration(
+    color: color,
+    borderRadius: BorderRadius.circular(12),
+    boxShadow: [
+      BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+    ],
+  );
 }
 
 
