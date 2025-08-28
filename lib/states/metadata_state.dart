@@ -9,8 +9,6 @@ const themeKey = "Theme:key";
 const localeKey = "Locale:key";
 const metadataActivatedKey = "workout:activated";
 const metadataDoneKey = "workout:donelist";
-const lastUpdateKey = "Manager:LastUpdate";
-const lastTimeStampKey = "Manager:LastTimeStamp";
 
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;

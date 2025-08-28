@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/state_manager.dart';
+import 'package:fittrackr/states/state_manager_extension.dart';
 import 'package:fittrackr/utils/cloud/firestore.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
@@ -212,7 +213,7 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
       final userID = authState.user?.uid;
       if(userID != null) {
         final serverTime = await FirestoreUtils.getServerTimeStamp(userID);
-        final localTime = manager.getLocalTimeStamp();
+        final localTime = await manager.getLocalTimeStamp();
         if(mounted) {
           final option = await showResyncDialog(context, serverTime, localTime);
           if(option == ResyncOption.local) {

@@ -1,17 +1,27 @@
 import 'dart:async';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fittrackr/database/db.dart';
+import 'package:fittrackr/database/helper/helper.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/states/periodic_sync_manager.dart';
+import 'package:fittrackr/states/state_manager_extension.dart';
 import 'package:fittrackr/utils/cloud/async_debouncer.dart';
 import 'package:fittrackr/utils/cloud/firebase_options.dart';
 import 'package:fittrackr/utils/cloud/firestore.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // StateManager
+
+const lastUpdateKeyy = "Manager:LastUpdate";
+const lastTimeStampKeyy = "Manager:LastTimeStamp";
+String encryptionKey = "Manager:encryption";
 
 class StateManager extends ChangeNotifier {
   late final ExercisesState exercisesState;
@@ -21,11 +31,37 @@ class StateManager extends ChangeNotifier {
   late final ReportState reportState;
 
   late final MetadataState metadataState;
+  late final FlutterSecureStorage safeStorage;
   late final AuthState authState;
 
   Future<void> initialize() async {
     final startTime = DateTime.now();
 
+    safeStorage = FlutterSecureStorage();
+    await loadDatabasePassword();
+    await loadStates();
+    
+    final elapsed = DateTime.now().difference(startTime);
+    logger.i("Elapsed in loading: $elapsed");
+  }
+
+  Future<void> loadDatabasePassword() async {
+    final password = await safeStorage.read(key: encryptionKey);
+    if(password != null) {
+      DatabaseHelper.password = password;
+    } else {
+      final secureRandom = Random.secure();
+      final newPasswordBytes = Uint8List.fromList(
+        List<int>.generate(32, (_) => secureRandom.nextInt(256)),
+      );
+    
+      String newPassword = String.fromCharCodes(newPasswordBytes);
+      DatabaseHelper.password = newPassword;
+      await safeStorage.write(key: encryptionKey, value: newPassword);
+    }
+  }
+
+  Future<void> loadStates() async {
     final db = DatabaseProxy.instance;
     exercisesState = ExercisesState(dbProxy: db.exercise, loadDatabase: true);
     metadataState = MetadataState(dbProxy: db.metadata, loadDatabase: true);
@@ -33,7 +69,7 @@ class StateManager extends ChangeNotifier {
     trainingHistoryState = TrainingHistoryState(dbProxy: db.trainingHistory, loadDatabase: true);
     reportTableState = ReportTableState(dbProxy: db.reportTable, loadDatabase: true);
     reportState = ReportState(dbProxy: db.report, loadDatabase: true);
-
+    
     final firebaseInitialization = Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -47,26 +83,28 @@ class StateManager extends ChangeNotifier {
       metadataState.waitLoad(),
       firebaseInitialization,
     ]);
-
-    authState = AuthState();
-    authState.addListener(() => authState.isLoggedIn ? trySync() : stopPeriodicSync());
     
-    final elapsed = DateTime.now().difference(startTime);
-    logger.i("Elapsed in loading: $elapsed");
+    authState = AuthState();
+    _periodicSync = PeriodicSyncManager(trySync);
+    authState.addListener(() => authState.isLoggedIn ? trySync() : _periodicSync.stop());
   }
 
   final AsyncDebouncer _debouncer = AsyncDebouncer(delay: Duration(seconds: 3));
+  late final PeriodicSyncManager _periodicSync;
   
   SaveResult? lastSaveResult;
+
+  // retry variables
+  Duration _retryDelay = Duration(seconds: 1);
   int retryCount = 0;
 
-  bool _synchronized = false;
-  Duration _retryDelay = Duration(seconds: 1);
-  final Duration _maxRetryDelay = Duration(minutes: 1);
-  final int maxRetry = 20;
+  // retry consts
+  static const Duration _maxRetryDelay = Duration(minutes: 1);
+  static final int _maxRetry = 20;
 
+  // syncronization controler
+  bool _synchronized = false;
   bool _isSyncing = false;
-  bool get isSyncing => _isSyncing;
 
   // sync options
 
@@ -78,7 +116,7 @@ class StateManager extends ChangeNotifier {
 
         try {
           return await FirestoreUtils
-            .saveData(this, metadataState.get(lastUpdateKey))
+            .saveData(this, await getLastHash())
             .then(_handleSaveResult);
         } finally {
           _isSyncing = false;
@@ -93,15 +131,15 @@ class StateManager extends ChangeNotifier {
 
     try {
       if(authState.user == null) return;
-      final lastHash = metadataState.get(lastUpdateKey);
+      final lastHash = await getLastHash();
       final syncronized = await FirestoreUtils.checkSynchronized(authState.user!.uid, lastHash);
       if(syncronized) {
         await FirestoreUtils.saveData(this, lastHash)
           .then(_handleSaveResult);
       } else {
-        _handleSaveResult(SaveResult(SaveStatus.desynchronized, null, null));
+        await _handleSaveResult(SaveResult(SaveStatus.desynchronized, null, null));
       }
-      startPeriodicSync(Duration(minutes: 15));
+      _periodicSync.start(Duration(minutes: 10));
     } finally {
       _isSyncing = false;
     }
@@ -115,7 +153,7 @@ class StateManager extends ChangeNotifier {
       if(authState.user == null) return;
       await FirestoreUtils.saveData(this, "bypassed", true)
           .then(_handleSaveResult);
-      startPeriodicSync(Duration(minutes: 15));
+      _periodicSync.start(Duration(minutes: 15));
     } finally {
       _isSyncing = false;
     }
@@ -128,7 +166,7 @@ class StateManager extends ChangeNotifier {
     try {
       final result = await FirestoreUtils.loadData(this);
       if(result.status == LoadStatus.success) {
-        _handleSaveResult(SaveResult(SaveStatus.success, result.timestamp, result.lastDataHash));
+        await _handleSaveResult(SaveResult(SaveStatus.success, result.timestamp, result.lastDataHash));
       }
       _sync();
     } finally {
@@ -138,46 +176,41 @@ class StateManager extends ChangeNotifier {
 
   // utils
 
-  void _handleSaveResult(SaveResult result) {
+  Future<void> _handleSaveResult(SaveResult result) async {
     lastSaveResult = result;
     if(result.status == SaveStatus.desynchronized) {
-      _synchronized = false;
-      _retryDelay = Duration(seconds: 2);
-      retryCount = 0;
+      _onDesynchronized();
     } else if(result.status == SaveStatus.success) {
-      if(result.lastDataHash != null) {
-        metadataState.put(lastUpdateKey, result.lastDataHash!);
-      }
-      if(result.timestamp != null) {
-        metadataState.put(lastTimeStampKey, result.timestamp!.toDate().toIso8601String());
-      }
-      _synchronized = true;
-      _retryDelay = Duration(seconds: 2);
-      retryCount = 0;
+      await _onSuccess(result);
     } else if(result.status == SaveStatus.error) {
-      if (retryCount < maxRetry) {
-        Future.delayed(_retryDelay, _sync);
-        retryCount++;
-        _retryDelay = _retryDelay * 2 <= _maxRetryDelay ? _retryDelay * 2 : _maxRetryDelay;
-      } else {
-        logger.e("Max retries reached, giving up.");
-      }
+      _onError();
     }
     notifyListeners();
   }
 
-  Timer? _periodicTimer;
-  void startPeriodicSync(Duration interval) {
-    _periodicTimer?.cancel();
-    _periodicTimer = Timer.periodic(interval, (_) => trySync());
+  void _onDesynchronized() {
+    _synchronized = false;
+    _retryDelay = Duration(seconds: 2);
+    retryCount = 0;
   }
-  void stopPeriodicSync() => _periodicTimer?.cancel();
 
-  DateTime? getLocalTimeStamp() {
-    final localTimeStamp = metadataState.get(lastTimeStampKey);
-    if(localTimeStamp != null) {
-      return DateTime.parse(localTimeStamp);
+  Future<void> _onSuccess(SaveResult result) async {
+    if(result.lastDataHash != null && result.timestamp != null) {
+      await setLastHash(result.lastDataHash!);
+      await setLocalTimeStamp(result.timestamp!.toDate());
+      _synchronized = true;
+      _retryDelay = Duration(seconds: 2);
+      retryCount = 0;
     }
-    return null;
+  }
+
+  void _onError() {
+    if (retryCount < _maxRetry) {
+      Future.delayed(_retryDelay, _sync);
+      retryCount++;
+      _retryDelay = _retryDelay * 2 <= _maxRetryDelay ? _retryDelay * 2 : _maxRetryDelay;
+    } else {
+      logger.e("Max retries reached, giving up.");
+    }
   }
 }

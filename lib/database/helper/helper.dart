@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fittrackr/database/helper/database/database_multiplatform.dart';
 import 'package:fittrackr/database/helper/exercise_helper.dart';
 import 'package:fittrackr/database/helper/metadata_helper.dart';
 import 'package:fittrackr/database/helper/report_helper.dart';
@@ -10,10 +11,6 @@ import 'package:fittrackr/database/helper/training_plan_helper.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:sqflite_sqlcipher/sqlite_api.dart';
 import 'package:synchronized/synchronized.dart';
-
-import 'database/database_windows.dart'
-    if (dart.library.html) 'database/database_web.dart'
-    if (dart.library.io) 'database/database_mobile.dart';
 
 
 class DatabaseHelper {
@@ -29,6 +26,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
+  static String? password;
 
   static final _initLocker = Lock();
   Future<Database> get database async {
@@ -41,22 +39,17 @@ class DatabaseHelper {
 
   Future<Database> _initDb() async {
     logger.i("starting Database");
-    final dbFactory = await getDatabaseFactory();
-    final dbPath = await getDatabasePath();
-    
-    return await dbFactory.openDatabase(
-      dbPath,
-      options: OpenDatabaseOptions(
-        version: 1,
-        onCreate: (db, version) async {
-          await db.execute(exerciseSQL);
-          await db.execute(trainingPlanSQL);
-          await db.execute(trainingHistorySQL);
-          await db.execute(metadataSQL);
-          await db.execute(reportTableSQL);
-          await db.execute(reportSQL);
-        },
-      ),
+    return await openDatabase(
+      version: 1,
+      password: password,
+      onCreate: (db, version) async {
+        await db.execute(exerciseSQL);
+        await db.execute(trainingPlanSQL);
+        await db.execute(trainingHistorySQL);
+        await db.execute(metadataSQL);
+        await db.execute(reportTableSQL);
+        await db.execute(reportSQL);
+      },
     );
   }
 }
