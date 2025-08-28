@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
+import 'package:fittrackr/database/entities/entity.dart';
+import 'package:fittrackr/states/base_list_state.dart';
 import 'package:fittrackr/states/state_manager.dart';
 import 'package:fittrackr/utils/cloud/serializer.dart';
 import 'package:fittrackr/utils/logger.dart';
@@ -47,7 +49,6 @@ class FirestoreUtils {
         lastHash,
         newHash,
         user.uid,
-        user.displayName,
         bypassHash
       );
 
@@ -106,22 +107,35 @@ class FirestoreUtils {
 
       List<String> loadedList = [];
 
-      Future<void> updateState<T>(dynamic state, List<T>? items, String name) async {
+      Future<bool> updateState<T extends BaseEntity>(BaseListState<T> state, List<T>? items, String name) async {
         await state.clear();
-        if (items?.isNotEmpty ?? false) {
-          await state.addAll(items!);
-          loadedList.add("$name loaded: ${items.length}");
+        if (items != null) {
+          final success = await state.addAll(items);
+          if(success) {
+            loadedList.add("$name loaded: ${items.length}");
+          } else {
+            loadedList.add("Failed to load $name");
+          }
+          return success;
         }
+        return false;
       }
 
-      await updateState(manager.exercisesState, data.result!.exercises, "Exercises");
-      await updateState(manager.trainingPlanState, data.result!.plans, "Plans");
-      await updateState(manager.trainingHistoryState, data.result!.history, "History");
-      await updateState(manager.reportTableState, data.result!.tables, "Tables");
-      await updateState(manager.reportState, data.result!.reports, "Reports");
-
+      bool success = await updateState(manager.exercisesState, data.result!.exercises, "Exercises");
+      success &= await updateState(manager.trainingPlanState, data.result!.plans, "Plans");
+      success &= await updateState(manager.trainingHistoryState, data.result!.history, "History");
+      success &= await updateState(manager.reportTableState, data.result!.tables, "Tables");
+      success &= await updateState(manager.reportState, data.result!.reports, "Reports");
+      if(data.result?.metadata != null) {
+        manager.metadataState.addAll(data.result!.metadata!);
+      }
+      
       logger.i(loadedList.join("\n"));
 
+      if(!success) {
+        return LoadResult(LoadStatus.error, null, null, null);
+      }
+    
       logger.i("Data loaded successfully for user ${user.uid}");
       return LoadResult(LoadStatus.success, data.timestamp, data.lastDataHash, data.result);
     } catch (e, st) {
@@ -183,7 +197,7 @@ Future<LoadResult?> _loadData(String uid) async {
   }
 }
 
-Future<SaveResult> _saveBlob(Uint8List blob, String? lastHash, String newHash, String uid, [String? username, bool bypassHash = false]) async {
+Future<SaveResult> _saveBlob(Uint8List blob, String? lastHash, String newHash, String uid, [bool bypassHash = false]) async {
   final firestore = FirebaseFirestore.instance;
   final docRef = firestore.collection("user_data").doc(uid);
   SaveResult? result;
@@ -209,7 +223,6 @@ Future<SaveResult> _saveBlob(Uint8List blob, String? lastHash, String newHash, S
         "data_hash": newHash,
         "data_length": blob.length,
         "timestamp": FieldValue.serverTimestamp(),
-        "username": username ?? "anonymous",
       });
     });
     if (result == null) {
@@ -239,7 +252,7 @@ SerializationResult _getData(StateManager manager) {
     manager.trainingHistoryState,
     manager.reportTableState,
     manager.reportState,
-  ]);
+  ], manager.metadataState);
 }
 
 String _computeHash(String data) {

@@ -8,6 +8,7 @@ import 'package:fittrackr/database/entities/training_history.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/states/base_list_state.dart';
+import 'package:fittrackr/states/metadata_state.dart';
 
 class SerializationResult {
   final Uint8List compressed;
@@ -22,14 +23,15 @@ class DeserializationResult {
   List<TrainingHistory>? history;
   List<ReportTable>? tables;
   List<Report>? reports;
+  Map<String, String>? metadata;
   String jsonRaw;
 
   DeserializationResult(this.jsonRaw);
 }
 
 class Serializer {
-  static SerializationResult serialize(List<BaseListState> states) {    
-    Map<String, Object> map = {};
+  static SerializationResult serialize(List<BaseListState> states, MetadataState metadata) {    
+    Map<String, Object> map = {metadata.serializationKey: metadata.clone};
     for (var state in states) {
       if(state.isNotEmpty) {
         map[state.serializationKey] = state.clone.map((e) => e.toMap()).toList();
@@ -50,7 +52,7 @@ class Serializer {
     result.history = _parseList<TrainingHistory>(map, TrainingHistoryState.key, (e) => TrainingHistory.fromMap(e));
     result.tables = _parseList<ReportTable>(map, ReportTableState.key, (e) => ReportTable.fromMap(e));
     result.reports = _parseList<Report>(map, ReportState.key, (e) => Report.fromMap(e));
-    
+    result.metadata = _parseMap(map, MetadataState.key);
     return result;
   }
 
@@ -60,6 +62,15 @@ class Serializer {
       return raw.map(converter).where((e) => e != null).cast<T>().toList();
     }
     return [];
+  }
+
+  static Map<String, String>? _parseMap(Map<String, dynamic> map, String key) {
+    final raw = map[key];
+    try {
+      return raw.cast<String, String>();
+    } catch (e) {
+      return null;
+    }
   }
 
   static Uint8List _zipData(String data) {

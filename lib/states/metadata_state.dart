@@ -26,7 +26,9 @@ class MetadataState extends ChangeNotifier {
 
   Map<String, String> get clone => Map.from(_cache);
 
-  final String serializationKey = "metadata";
+  static const key = "metadata";
+  
+  final String serializationKey = key;
 
   List<String>? getList(String key) {
     final value = _cache[key];
@@ -38,6 +40,12 @@ class MetadataState extends ChangeNotifier {
     final value = _cache[key];
     if(value == null) return null;
     return (jsonDecode(value) as Map).cast<String, Object?>();
+  }
+
+  void addAll(Map<String, String> other) {
+    for (var element in other.entries) {
+      put(element.key, element.value);
+    }
   }
 
   void put(String key, String value) {

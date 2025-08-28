@@ -21,7 +21,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const lastUpdateKeyy = "Manager:LastUpdate";
 const lastTimeStampKeyy = "Manager:LastTimeStamp";
-String encryptionKey = "Manager:encryption";
+const encryptionKey = "Manager:encryption";
 
 class StateManager extends ChangeNotifier {
   late final ExercisesState exercisesState;
@@ -80,7 +80,7 @@ class StateManager extends ChangeNotifier {
       trainingHistoryState.waitLoad().then((_) => trainingHistoryState.addListener(_sync)),
       reportTableState.waitLoad().then((_) => reportTableState.addListener(_sync)),
       reportState.waitLoad().then((_) => reportState.addListener(_sync)),
-      metadataState.waitLoad(),
+      metadataState.waitLoad().then((_) => metadataState.addListener(_sync)),
       firebaseInitialization,
     ]);
     
