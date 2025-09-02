@@ -545,5 +545,17 @@
   "@currentStreak": { 
     "description": "Message showing the current streak of completed days",
     "placeholders": { "days": {} } 
+  },
+  "selectTrainingDays": "Select your training days",
+  "@selectTrainingDays": {
+    "description": "Instruction asking the user to choose their training days"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Label for the save button"
+  },
+  "selectedDaysInfo": "The selected days will be used to calculate your training streak",
+  "@selectedDaysInfo": {
+    "description": "Explanation that selected days are used to calculate the user's training streak"
   }
 }

@@ -26,6 +26,7 @@ abstract class BaseListState<T extends BaseEntity> extends ChangeNotifier {
 
   bool containsId(T entity) => entity.id != null && getById(entity.id!) != null;
   Iterable<T> where(bool Function(T) test) => _cache.where(test);
+  T reduce(T Function(T value, T element) combine) => _cache.reduce(combine);
   bool any(bool Function(T) test) => _cache.any(test);
   int indexWhere(bool Function(T entity) test, [int start = 0]) => _cache.indexWhere(test, start);
   int indexOf(T entity) => _cache.indexOf(entity);

@@ -9,6 +9,7 @@ const themeKey = "Theme:key";
 const localeKey = "Locale:key";
 const metadataActivatedKey = "workout:activated";
 const metadataDoneKey = "workout:donelist";
+const sequencePreferenceKey = "sequence:preference";
 
 class MetadataState extends ChangeNotifier {
   final ProxyPart<MapEntry<String, String>, String>? dbProxy;

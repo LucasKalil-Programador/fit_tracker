@@ -143,5 +143,8 @@
   "fri": "Sex",
   "sat": "Sab",
   "moreInfo": "Mais informações",
-  "currentStreak": "Sequência atual: {days} dias"
+  "currentStreak": "Sequência atual: {days} dias",
+  "selectTrainingDays": "Selecione seus dias de treino",
+  "save": "Salvar",
+  "selectedDaysInfo": "Os dias selecionados serão considerados para calcular sua sequência de treino"
 }

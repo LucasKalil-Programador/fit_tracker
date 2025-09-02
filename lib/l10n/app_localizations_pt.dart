@@ -427,4 +427,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String currentStreak(Object days) {
     return 'Sequência atual: $days dias';
   }
+
+  @override
+  String get selectTrainingDays => 'Selecione seus dias de treino';
+
+  @override
+  String get save => 'Salvar';
+
+  @override
+  String get selectedDaysInfo => 'Os dias selecionados serão considerados para calcular sua sequência de treino';
 }

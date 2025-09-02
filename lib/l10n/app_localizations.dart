@@ -910,6 +910,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current streak: {days} days'**
   String currentStreak(Object days);
+
+  /// Instruction asking the user to choose their training days
+  ///
+  /// In en, this message translates to:
+  /// **'Select your training days'**
+  String get selectTrainingDays;
+
+  /// Label for the save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Explanation that selected days are used to calculate the user's training streak
+  ///
+  /// In en, this message translates to:
+  /// **'The selected days will be used to calculate your training streak'**
+  String get selectedDaysInfo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

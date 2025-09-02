@@ -57,6 +57,12 @@ class TrainingHistoryState extends BaseListState<TrainingHistory> {
     return sortedList;
   }
 
+  DateTime? firstDateTime() {
+    return DateTime.fromMillisecondsSinceEpoch(
+      reduce((a, b) => a.dateTime < b.dateTime ? a : b).dateTime,
+    );
+  }
+
   bool hasHistoryInDate(int day, int month, int year) {
     return any((e) {
       final hDate = DateTime.fromMillisecondsSinceEpoch(e.dateTime);

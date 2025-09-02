@@ -1,11 +1,10 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
+import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/utils/assets.dart';
-import 'package:fittrackr/widgets/Pages/home/history_view.dart';
-import 'package:fittrackr/widgets/common/default_widgets.dart';
+import 'package:fittrackr/widgets/Pages/home/info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Sequence extends StatelessWidget {
@@ -19,28 +18,63 @@ class Sequence extends StatelessWidget {
       builder:
           (context, history, widget) => Column(
             children: [
-              Text(localization.currentStreak(getActualSequence(history)),
+              Text(localization.currentStreak(getActualSequence(history, context)),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
               WeeklySummary(weekActivit: getActivitList(history)),
               const SizedBox(height: 24),
-              ShowMoreButton()
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ShowMoreButton(),
+                  IconButton(onPressed: () => onShowEditPanel(context), icon: Icon(Icons.edit)),
+                ],
+              )
             ],
           ),
     );
   }
 
-  int getActualSequence(TrainingHistoryState history) {
+  void onShowEditPanel(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(
+            16,
+          ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: EditPanel(),
+        );
+      },
+    );
+  }
+
+  int getActualSequence(TrainingHistoryState history, BuildContext context) {
     final now = DateTime.now();
+    final firstDate = history.firstDateTime();
+    final metadata = Provider.of<MetadataState>(context);
+    final activeDays = metadata.getList(sequencePreferenceKey)?.map(int.parse).toList();
+    
+    int offset = 0;
     int sequence = 0;
 
     while(true) {
-      final day = now.subtract(Duration(days: sequence));
-      final result = history.hasHistoryInDate(day.day, day.month, day.year);
-      if(result) {
+      final day = now.subtract(Duration(days: offset));
+      final hasHistory = history.hasHistoryInDate(day.day, day.month, day.year);
+      final isRelevant = activeDays != null && activeDays.contains((day.weekday % 7) + 1);
+    
+      if(hasHistory) {
         sequence++;
+        offset++;
+      } else if(isRelevant) {
+        break;
       } else {
+        offset++;
+      }
+
+      if(firstDate != null && day.isBefore(firstDate)) {
         break;
       }
     }
@@ -126,184 +160,38 @@ class DayFire extends StatelessWidget {
 }
 
 
-class ShowMoreButton extends StatelessWidget {
-  const ShowMoreButton({
+class EditPanel extends StatefulWidget {
+  const EditPanel({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-
-    return ElevatedButton.icon(
-      onPressed: () => onShowMoreInfo(context),
-      label: Text(localization.moreInfo),
-      icon: Icon(Icons.info),
-    );
-  }
-
-  void onShowMoreInfo(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: const InfoWidget(),
-        );
-      },
-    );
-  }
+  State<EditPanel> createState() => _EditPanelState();
 }
 
-
-class InfoWidget extends StatefulWidget {
-  const InfoWidget({
-    super.key,
-  });
+class _EditPanelState extends State<EditPanel> {
+  bool isSaving = false;
+  final activeDays = <int>[];
 
   @override
-  State<InfoWidget> createState() => _InfoWidgetState();
-}
+  void initState() {
+    super.initState();
 
-class _InfoWidgetState extends State<InfoWidget> {
-  late int day, month, year;
-
-  _InfoWidgetState() {
-    final now = DateTime.now();
-    day = now.day;
-    month = now.month;
-    year = now.year;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localization.moreInfo,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: Consumer<TrainingHistoryState>(
-        builder: (context, history, child) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Calendar(
-                  day: day,
-                  month: month,
-                  year: year,
-                  checkActivity: history.hasHistoryInDate,
-                  onDateClick: (day, month, year) {
-                    setState(() {
-                      this.day = day;
-                      this.month = month;
-                      this.year = year;
-                    });
-                  },
-                ),
-                DefaultDivider(),
-                HistoryListView(
-                  histories: history.getHistoryInDate(day, month, year),
-                  physics: const NeverScrollableScrollPhysics(),
-                  boxDecoration: historyCardBoxDecorator(
-                    Theme.of(context).colorScheme.onPrimary,
-                  ),
-                )
-              ],
-            ),
-          );
-        }
-      ),
-    );
-  }
-}
-
-
-class Calendar extends StatefulWidget {
-  final bool Function(int day, int month, int year)? checkActivity;
-  final void Function(int day, int month, int year)? onDateClick;
-  final int day, month, year;
-
-  const Calendar({super.key, this.checkActivity, this.onDateClick, required this.day, required this.month, required this.year});
-
-  @override
-  State<Calendar> createState() => _CalendarState();
-}
-
-class _CalendarState extends State<Calendar> {
-  int monthOffset = 0;
-
-  List<Widget> _buildCalendarDays(DateTime date) {
-    final firstDayOfMonth = DateTime(date.year, date.month, 1);
-    final lastDayOfMonth = DateTime(date.year, date.month + 1, 0);
-
-    int startOffset = firstDayOfMonth.weekday % 7;
-    int totalDays = lastDayOfMonth.day;
-
-    List<Widget> dayWidgets = [];
-
-    for (int i = 0; i < startOffset; i++) {
-      dayWidgets.add(Container());
-    }
-
-    for (int day = 1; day <= totalDays; day++) {
-      bool hasResult = false;
-      if(widget.checkActivity != null) {
-        hasResult = widget.checkActivity!(day, date.month, date.year);
+    final metadata = Provider.of<MetadataState>(context, listen: false);
+    final list = metadata.getList(sequencePreferenceKey);
+    if(list != null) {
+      final days = list.map(int.tryParse).where((e) => e != null).cast<int>().toList();
+      activeDays.addAll(days);
+    } else {
+      for (var i = 0; i < 7; i++) {
+        activeDays.add(i);
       }
-
-      var borderColor = Theme.of(context).colorScheme.primary;
-      if(widget.day == day && widget.month == date.month && widget.year == date.year) {
-        borderColor = Theme.of(context).colorScheme.primaryContainer;
-      }
-      
-      dayWidgets.add(
-        GestureDetector(
-          onTap: () {
-            if (widget.onDateClick != null) {
-              widget.onDateClick!(day, date.month, date.year);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(2),
-            child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: borderColor),
-              ),
-              child: SizedBox(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: DayFire(light: hasResult, title: day.toString()),
-                    ),
-                  ),
-            ),
-          ),
-        ),
-      );
     }
-
-    for (int i = 0; i < 42 - (startOffset + totalDays); i++) {
-      dayWidgets.add(Container());
-    }
-
-    return dayWidgets;
   }
-
+  
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context).toString();
     final localization = AppLocalizations.of(context)!;
-
-    final date = DateTime(
-      widget.year,
-      widget.month - monthOffset,
-      widget.day,
-    );
     
     final daysOfWeek = [
       localization.sun,
@@ -315,49 +203,63 @@ class _CalendarState extends State<Calendar> {
       localization.sat,
     ];
 
-    return Column(
-        mainAxisSize: MainAxisSize.min,
+    return SingleChildScrollView(
+      child: Column(
         children: [
-          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(localization.selectTrainingDays),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: Text(localization.selectedDaysInfo),
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: () => setState(() => monthOffset++),
-                icon: Icon(Icons.arrow_back_ios),
-              ),
-              Expanded(
-                child: Text(
-                  DateFormat.yMMMM(locale).format(date),
-                  style: Theme.of(context).textTheme.titleLarge,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
+              for (int i = 0; i < daysOfWeek.length; i++)
+                Column(
+                  children: [
+                    Text(daysOfWeek[i]),
+                    Checkbox(
+                      value: activeDays.contains((i % 7) + 1),
+                      onChanged: (value) => onCheckDay((i % 7) + 1),
+                    ),
+                  ],
                 ),
-              ),
-              IconButton(
-                onPressed: () => setState(() => monthOffset--),
-                icon: Icon(Icons.arrow_forward_ios),
-              ),
             ],
           ),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 7,
-            children: daysOfWeek
-                .map((day) => Center(child: Text(day, style: TextStyle(fontWeight: FontWeight.bold))))
-                .toList(),
-          ),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 7,
-            children: _buildCalendarDays(date),
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 64),
+            child: ElevatedButton(onPressed: onSave, child: Text(localization.save)),
           ),
         ],
+      ),
     );
   }
+
+  void onCheckDay(int i) {
+    return setState(() {
+      if (activeDays.contains(i)) {
+        activeDays.remove(i);
+      } else {
+        activeDays.add(i);
+      }
+    });
+  }
+
+  void onSave() {
+    if (isSaving) return;
+    isSaving = true;
+    
+    try {
+      final metadata = Provider.of<MetadataState>(context, listen: false);
+      final dayList = activeDays.map((e) => e.toString()).toList();
+      metadata.putList(sequencePreferenceKey, dayList);
+      Navigator.pop(context);
+    } finally {
+      isSaving = false;
+    }
+  }
 }
-
-
 

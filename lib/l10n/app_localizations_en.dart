@@ -427,4 +427,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String currentStreak(Object days) {
     return 'Current streak: $days days';
   }
+
+  @override
+  String get selectTrainingDays => 'Select your training days';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get selectedDaysInfo => 'The selected days will be used to calculate your training streak';
 }
