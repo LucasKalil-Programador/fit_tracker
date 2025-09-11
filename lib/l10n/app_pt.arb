@@ -146,5 +146,6 @@
   "currentStreak": "Sequência atual: {days} dias",
   "selectTrainingDays": "Selecione seus dias de treino",
   "save": "Salvar",
-  "selectedDaysInfo": "Os dias selecionados serão considerados para calcular sua sequência de treino"
+  "selectedDaysInfo": "Os dias selecionados serão considerados para calcular sua sequência de treino",
+  "termsRejected": "Termos de serviço rejeitados"
 }

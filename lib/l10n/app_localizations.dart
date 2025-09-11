@@ -928,6 +928,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The selected days will be used to calculate your training streak'**
   String get selectedDaysInfo;
+
+  /// Message shown when the user rejects the terms of service
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service rejected'**
+  String get termsRejected;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

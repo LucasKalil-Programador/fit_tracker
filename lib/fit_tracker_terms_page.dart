@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 
 class FitTrackerTermsPage extends StatelessWidget {
-  const FitTrackerTermsPage({super.key});
+  final Function? onAccepted;
+  final Function? onRejected;
+
+  const FitTrackerTermsPage({super.key, required this.onAccepted, required this.onRejected});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Termos de Uso & Política de Privacidade"),
+      ),
+      bottomNavigationBar: RequestBottom(
+        onPressed: (accepted) {
+          if (accepted) {
+            if(onAccepted != null) onAccepted!();
+          } else {
+            if(onRejected != null) onRejected!();
+          }
+        },
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(4),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 900),
@@ -437,6 +452,89 @@ class FitTrackerTermsPage extends StatelessWidget {
         style: TextStyle(
           fontSize: 13,
         ),
+      ),
+    );
+  }
+}
+
+class RequestBottom extends StatefulWidget {
+  final Function(bool) onPressed;
+  final int waitTimeSeconds;
+
+  const RequestBottom({
+    super.key, required this.onPressed, this.waitTimeSeconds = 5,
+  });
+
+  @override
+  State<RequestBottom> createState() => _RequestBottomState();
+}
+
+class _RequestBottomState extends State<RequestBottom> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late DateTime startTime;
+  late int secondsLest;
+
+  @override
+  void initState() {
+    startTime = DateTime.now();
+    secondsLest = widget.waitTimeSeconds;
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: widget.waitTimeSeconds),
+    );
+    _controller.addListener(() {
+      setState(() {
+        secondsLest = widget.waitTimeSeconds - DateTime.now().difference(startTime).inSeconds;
+        if(secondsLest <= 0) _controller.dispose();
+      });
+    });
+    _controller.repeat();
+  }
+
+  @override
+  void dispose() {
+    if(_controller.isDismissed) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Leia e aceite os termos de serviço para continuar."),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: () => widget.onPressed(false),
+                  child: const Text("Rejeitar"),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondsLest <= 0 ? Colors.green : Colors.grey,
+                  ),
+                  onPressed: () => widget.onPressed(true),
+                  child: secondsLest <= 0 ? Text("Aceitar") : Text("$secondsLest segundos"),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

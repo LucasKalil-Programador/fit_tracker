@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fittrackr/fit_tracker_terms_page.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/state_manager.dart';
 import 'package:fittrackr/states/state_manager_extension.dart';
 import 'package:fittrackr/utils/cloud/firestore.dart';
+import 'package:fittrackr/utils/logger.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -163,9 +165,26 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     setState(() => isLoading = true);
 
     try {
+      final manager = Provider.of<StateManager>(context, listen: false);
+      final status = await manager.safeStorage.read(key: acceptTermsKey);
+      if(status == null || status == "rejected") {
+        logger.i("Requesting privacy terms");
+        bool accepted = false;
+        if(context.mounted) {
+          accepted = await showPrivacyTerms(context);
+        } 
+        if(!accepted) {
+          if(context.mounted) {
+            showSnackMessage(context, localization.termsRejected, false);
+            return;
+          }
+        }
+      }
+      
       final success = await authState.signInWithGoogle();
       if(context.mounted) {
         if (success) {
+          manager.safeStorage.write(key: acceptTermsKey, value: "accepted");
           showSnackMessage(context, localization.loggedInAs(authState.user?.displayName ?? localization.anonymous), true);
         } else {
           showSnackMessage(context, localization.loginFailed, false);
@@ -226,6 +245,30 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     } finally {
       setState(() => isSyncing = false);
     }
+  }
+
+  Future<bool> showPrivacyTerms(BuildContext context) async {
+    bool result = false;
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(16).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: FitTrackerTermsPage(
+            onAccepted: () {
+              Navigator.pop(context);
+              result = true;
+            },
+            onRejected: () {
+              Navigator.pop(context);
+              result = false;
+            },
+          ),
+        );
+      },
+    );
+    return result;
   }
 
   Future<ResyncOption> showResyncDialog(BuildContext context, DateTime? serverTime, DateTime? localTime) async {

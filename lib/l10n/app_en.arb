@@ -557,5 +557,9 @@
   "selectedDaysInfo": "The selected days will be used to calculate your training streak",
   "@selectedDaysInfo": {
     "description": "Explanation that selected days are used to calculate the user's training streak"
+  },
+  "termsRejected": "Terms of service rejected",
+  "@termsRejected": {
+    "description": "Message shown when the user rejects the terms of service"
   }
 }

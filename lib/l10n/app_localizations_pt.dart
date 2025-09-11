@@ -436,4 +436,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get selectedDaysInfo => 'Os dias selecionados serão considerados para calcular sua sequência de treino';
+
+  @override
+  String get termsRejected => 'Termos de serviço rejeitados';
 }

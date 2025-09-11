@@ -436,4 +436,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectedDaysInfo => 'The selected days will be used to calculate your training streak';
+
+  @override
+  String get termsRejected => 'Terms of service rejected';
 }
