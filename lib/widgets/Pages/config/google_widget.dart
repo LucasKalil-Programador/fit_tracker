@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:fittrackr/fit_tracker_terms_page.dart';
+import 'package:fittrackr/widgets/Pages/fit_tracker_terms_page.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/auth_state.dart';
 import 'package:fittrackr/states/state_manager.dart';
