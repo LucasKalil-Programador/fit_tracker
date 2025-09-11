@@ -3,10 +3,7 @@ import 'package:fittrackr/states/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// TODO: Tela de concentimento
 // TODO: Tela de exclucao de dados do usuario
-// TODO: Termos do usuario/Politicas de privacidade
-// TODO: Remover logs com dados sensiveis
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

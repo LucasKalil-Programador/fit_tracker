@@ -561,5 +561,211 @@
   "termsRejected": "Terms of service rejected",
   "@termsRejected": {
     "description": "Message shown when the user rejects the terms of service"
+  },
+  "termsAndPrivacy": "Terms of Use & Privacy Policy",
+  "@termsAndPrivacy": {
+    "description": "Title for terms of use and privacy policy section"
+  },
+  "acceptTermsMessage": "Read and accept the terms of service to continue.",
+  "@acceptTermsMessage": {
+    "description": "Instruction asking the user to read and accept terms"
+  },
+  "reject": "Reject",
+  "@reject": {
+    "description": "Button label to reject the terms"
+  },
+  "accept": "Accept",
+  "@accept": {
+    "description": "Button label to accept the terms"
+  },
+  "secondsLeft": "{seconds} seconds",
+  "@secondsLeft": {
+    "description": "Message showing countdown seconds left",
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "fitTrackerTermsTitle": "FitTracker — Terms of Use & Privacy Policy",
+  "@fitTrackerTermsTitle": {
+    "description": "Title for the FitTracker terms of use and privacy policy"
+  },
+  "publicDocumentInfo": "Public document for use in the Play Store / App Store — Last updated: 09/11/2025",
+  "@publicDocumentInfo": {
+    "description": "Information about the public document version and last update"
+  },
+  "loginMethod": "Login: Google Sign-In",
+  "@loginMethod": {
+    "description": "Specifies the login method used by the app"
+  },
+  "storageMethod": "Storage: Firebase (Google Cloud)",
+  "@storageMethod": {
+    "description": "Specifies the storage method used by the app"
+  },
+  "minimumAge": "Minimum age: 13+",
+  "@minimumAge": {
+    "description": "Indicates the minimum age required to use the app"
+  },
+  "termsOfUse": "Terms of Use",
+  "@termsOfUse": {
+    "description": "Label for terms of use section"
+  },
+  "readCarefully": "Read carefully — using the app implies acceptance of these terms.",
+  "@readCarefully": {
+    "description": "Instruction explaining that using the app implies acceptance of terms"
+  },
+  "termsAcceptance": "Acceptance of Terms",
+  "@termsAcceptance": {
+    "description": "Title for acceptance of terms section"
+  },
+  "termsAcceptanceMessage": "By using FitTracker, you agree to these Terms. If you do not agree, do not use the app.",
+  "@termsAcceptanceMessage": {
+    "description": "Message explaining that using the app implies agreement with terms"
+  },
+  "appPurpose": "Purpose of the App",
+  "@appPurpose": {
+    "description": "Title for app purpose section"
+  },
+  "appPurposeMessage": "FitTracker is a tool for tracking workouts and physical progress. It does not replace medical or professional fitness guidance.",
+  "@appPurposeMessage": {
+    "description": "Explanation of the purpose of the app"
+  },
+  "loginAndAccount": "Login and Account",
+  "@loginAndAccount": {
+    "description": "Title for login and account section"
+  },
+  "loginAndAccountMessage": "Login in FitTracker is done exclusively through your Google account. We do not require creating an account within the app. Access to your Google account is your sole responsibility.",
+  "@loginAndAccountMessage": {
+    "description": "Explanation of login method and responsibility"
+  },
+  "responsibleUse": "Responsible Use",
+  "@responsibleUse": {
+    "description": "Title for responsible use section"
+  },
+  "responsibleUseMessage": "You are responsible for the information and data entered in the app. Do not use FitTracker for illegal practices or anything that may compromise your health.",
+  "@responsibleUseMessage": {
+    "description": "Message about responsible use of the app"
+  },
+  "minimumAgeTitle": "Minimum Age",
+  "@minimumAgeTitle": {
+    "description": "Title for minimum age section"
+  },
+  "minimumAgeMessage": "FitTracker is intended for users aged 13 or older.",
+  "@minimumAgeMessage": {
+    "description": "Message about minimum age requirement"
+  },
+  "liabilityLimitation": "Limitation of Liability",
+  "@liabilityLimitation": {
+    "description": "Title for limitation of liability section"
+  },
+  "liabilityLimitationMessage": "FitTracker does not guarantee health or fitness results. It only serves as a tracking and logging tool.",
+  "@liabilityLimitationMessage": {
+    "description": "Message explaining limitation of liability"
+  },
+  "modifications": "Modifications",
+  "@modifications": {
+    "description": "Title for modifications section"
+  },
+  "modificationsMessage": "We may update these Terms at any time. Continued use of the app means you accept the changes.",
+  "@modificationsMessage": {
+    "description": "Message about updates to terms"
+  },
+  "libraryLicenses": "Library Licenses",
+  "@libraryLicenses": {
+    "description": "Title for the section listing the app's library licenses"
+  },
+  "mitLicense": "MIT License",
+  "@mitLicense": {
+    "description": "Label for MIT License"
+  },
+  "bsd2ClauseLicense": "BSD 2-Clause License",
+  "@bsd2ClauseLicense": {
+    "description": "Label for BSD 2-Clause License"
+  },
+  "bsd3ClauseLicense": "BSD 3-Clause License",
+  "@bsd3ClauseLicense": {
+    "description": "Label for BSD 3-Clause License"
+  },
+  "apacheLicense": "Apache 2.0 License",
+  "@apacheLicense": {
+    "description": "Label for Apache 2.0 License"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Title for the privacy policy section"
+  },
+  "privacyPolicyDescription": "Transparency about what data we collect and how it is used.",
+  "@privacyPolicyDescription": {
+    "description": "Short description of the privacy policy"
+  },
+  "collectedData": "Collected Data",
+  "@collectedData": {
+    "description": "Title for section about data collected"
+  },
+  "useOfInformation": "Use of Information",
+  "@useOfInformation": {
+    "description": "Title for section about how collected information is used"
+  },
+  "thirdPartyServices": "Third-Party Services",
+  "@thirdPartyServices": {
+    "description": "Title for section about third-party services"
+  },
+  "dataSharing": "Data Sharing",
+  "@dataSharing": {
+    "description": "Title for section about data sharing practices"
+  },
+  "storageAndSecurity": "Storage and Security",
+  "@storageAndSecurity": {
+    "description": "Title for section about data storage and security measures"
+  },
+  "accountAndDataDeletion": "Account and Data Deletion",
+  "@accountAndDataDeletion": {
+    "description": "Title for section about deleting user account and data"
+  },
+  "policyChanges": "Changes to this Policy",
+  "@policyChanges": {
+    "description": "Title for section about policy updates"
+  },
+  "contact": "Contact",
+  "@contact": {
+    "description": "Title for contact section"
+  },
+  "dataNotSold": "Data is not sold or shared with third parties, except when required by law or to comply with legal orders.",
+  "@dataNotSold": {
+    "description": "Statement about data not being sold or shared"
+  },
+  "dataStorageSecurity": "Information is stored on Firebase (Google Cloud) servers. We employ technical and organizational measures to protect data, but no system is 100% secure.",
+  "@dataStorageSecurity": {
+    "description": "Information about data storage and security"
+  },
+  "accountDeletionInstructions": "You may request deletion of your account and data at any time. To do this, send an email to:",
+  "@accountDeletionInstructions": {
+    "description": "Instructions for users on how to request account and data deletion"
+  },
+  "deletionTimeframe": "After the request, it may take up to 30 days to remove backups and replicas, according to technical and legal practices.",
+  "@deletionTimeframe": {
+    "description": "Explanation of the timeframe for data deletion"
+  },
+  "policyUpdates": "We may update this Policy. Users will be notified via the app or email when relevant changes occur.",
+  "@policyUpdates": {
+    "description": "Information about updates to the privacy policy"
+  },
+  "privacyQuestions": "Questions or requests about privacy: {email}",
+  "@privacyQuestions": {
+    "description": "Contact email placeholder for privacy inquiries",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "thirdPartyServicesDescription": "FitTracker uses Google services for authentication and storage:\n\n• Google Sign-In — used only for authentication.\n• Firebase (Google Cloud) — used to store app data.\n\nUse of these services is subject to Google's Privacy Policy.",
+  "@thirdPartyServicesDescription": {
+    "description": "Explanation about the third-party services used by the app"
+  },
+  "useOfInformationDescription": "• Identify your account within the app.\n• Save and sync your workouts and progress across devices.\n• Improve the experience and fix technical issues.",
+  "@useOfInformationDescription": {
+    "description": "Explanation of how collected information is used"
+  },
+  "collectedDataDescription": "FitTracker only collects the following data:\n\n• Google user ID (provided via Google Sign-In).\n• Data generated by app usage (e.g., workouts, goals, progress, in-app usage statistics).\n\nWe do not collect name, email, phone, or other personal data directly.",
+  "@collectedDataDescription": {
+    "description": "Explanation of the data collected by the app"
   }
 }

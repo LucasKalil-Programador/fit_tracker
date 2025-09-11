@@ -1,3 +1,4 @@
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class FitTrackerTermsPage extends StatelessWidget {
@@ -8,9 +9,11 @@ class FitTrackerTermsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Termos de Uso & Política de Privacidade"),
+        title: Text(localization.termsAndPrivacy),
       ),
       bottomNavigationBar: RequestBottom(
         onPressed: (accepted) {
@@ -36,19 +39,19 @@ class FitTrackerTermsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Header
-                  _buildHeader(Theme.of(context).colorScheme),
+                  _buildHeader(Theme.of(context).colorScheme, localization),
                   const SizedBox(height: 20),
                   
                   // Termos de Uso
-                  _buildTermsSection(Theme.of(context).colorScheme),
+                  _buildTermsSection(Theme.of(context).colorScheme, localization),
                   const SizedBox(height: 18),
                   
                   // Política de Privacidade
-                  _buildPrivacySection(Theme.of(context).colorScheme),
+                  _buildPrivacySection(Theme.of(context).colorScheme, localization),
                   const SizedBox(height: 18),
                   
                   // Licenças
-                  _buildLicensesSection(Theme.of(context).colorScheme),
+                  _buildLicensesSection(Theme.of(context).colorScheme, localization),
                   const SizedBox(height: 18),
                   
                   // Footer
@@ -62,7 +65,7 @@ class FitTrackerTermsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(ColorScheme scheme) {
+  Widget _buildHeader(ColorScheme scheme, AppLocalizations localization) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,7 +79,7 @@ class FitTrackerTermsPage extends StatelessWidget {
           ),
           child: const Center(
             child: Text(
-              'FT',
+              "FT", // TODO: Put icon here
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -91,16 +94,16 @@ class FitTrackerTermsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'FitTracker — Termos de Uso & Política de Privacidade',
+              Text(
+                localization.fitTrackerTermsTitle,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Documento público para uso na Play Store / App Store — Última atualização: 11/09/2025',
+              Text(
+                localization.publicDocumentInfo,
                 style: TextStyle(
                   fontSize: 14,
                 ),
@@ -110,9 +113,9 @@ class FitTrackerTermsPage extends StatelessWidget {
                 spacing: 12,
                 runSpacing: 8,
                 children: [
-                  _buildChip('Login: Google Sign-In', scheme),
-                  _buildChip('Armazenamento: Firebase (Google Cloud)', scheme),
-                  _buildChip('Idade mínima: 13+', scheme),
+                  _buildChip(localization.loginMethod, scheme),
+                  _buildChip(localization.storageMethod, scheme),
+                  _buildChip(localization.minimumAge, scheme),
                 ],
               ),
             ],
@@ -153,7 +156,7 @@ class FitTrackerTermsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$emoji $title',
+            "$emoji $title",
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -175,70 +178,42 @@ class FitTrackerTermsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTermsSection(ColorScheme scheme) {
+  Widget _buildTermsSection(ColorScheme scheme, AppLocalizations localization) {
     return _buildSection(
       scheme,
-      title: 'Termos de Uso',
-      emoji: '📜',
-      subtitle: 'Leia com atenção — o uso do aplicativo implica aceitação destes termos.',
+      title: localization.termsOfUse,
+      emoji: "📜",
+      subtitle: localization.readCarefully,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildOrderedListItem('1', 'Aceitação dos Termos', 'Ao usar o FitTracker, você concorda com estes Termos. Caso não concorde, não utilize o aplicativo.'),
-          _buildOrderedListItem('2', 'Objetivo do Aplicativo', 'O FitTracker é uma ferramenta de acompanhamento de treinos e progresso físico. Não substitui orientação médica ou profissional de educação física.'),
-          _buildOrderedListItem('3', 'Login e Conta', 'O login no FitTracker é feito exclusivamente por meio da sua conta Google. Não solicitamos criação de conta própria dentro do app. A responsabilidade pelo acesso à sua conta Google é exclusivamente sua.'),
-          _buildOrderedListItem('4', 'Uso Responsável', 'Você é responsável pelas informações e dados inseridos no app. Não utilize o FitTracker para práticas ilegais ou que possam comprometer sua saúde.'),
-          _buildOrderedListItem('5', 'Idade Mínima', 'O FitTracker é destinado a usuários com 13 anos ou mais.'),
-          _buildOrderedListItem('6', 'Limitação de Responsabilidade', 'O FitTracker não garante resultados de saúde ou condicionamento físico. Ele serve apenas como ferramenta de registro e acompanhamento.'),
-          _buildOrderedListItem('7', 'Modificações', 'Podemos atualizar estes Termos a qualquer momento. O uso contínuo do app significa que você aceita as mudanças.'),
+          _buildOrderedListItem("1", localization.termsAcceptance, localization.termsAcceptanceMessage),
+          _buildOrderedListItem("2", localization.appPurpose, localization.appPurposeMessage),
+          _buildOrderedListItem("3", localization.loginAndAccount, localization.loginAndAccountMessage),
+          _buildOrderedListItem("4", localization.responsibleUse, localization.responsibleUseMessage),
+          _buildOrderedListItem("5", localization.minimumAgeTitle, localization.minimumAgeMessage),
+          _buildOrderedListItem("6", localization.liabilityLimitation, localization.liabilityLimitationMessage),
+          _buildOrderedListItem("7", localization.modifications, localization.modificationsMessage),
         ],
       ),
     );
   }
 
-  Widget _buildPrivacySection(ColorScheme scheme) {
+  Widget _buildPrivacySection(ColorScheme scheme, AppLocalizations localization) {
     return _buildSection(
       scheme,
-      title: 'Política de Privacidade',
-      emoji: '🔒',
-      subtitle: 'Transparência sobre quais dados coletamos e como são usados.',
+      title: localization.privacyPolicy,
+      emoji: "🔒",
+      subtitle: localization.privacyPolicyDescription,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSubSection('1. Dados Coletados', [
-            'O FitTracker coleta apenas os seguintes dados:',
-            '• ID de usuário do Google (fornecida pelo login via Google Sign-In).',
-            '• Dados gerados pelo uso do app (ex.: treinos, metas, progresso, estatísticas de uso dentro do app).',
-            '',
-            'Não coletamos nome, e-mail, telefone ou outros dados pessoais diretamente.',
-          ]),
-          
-          _buildSubSection('2. Uso das Informações', [
-            '• Identificar sua conta dentro do aplicativo.',
-            '• Salvar e sincronizar seus treinos e progresso entre dispositivos.',
-            '• Melhorar a experiência e corrigir problemas técnicos.',
-          ]),
-          
-          _buildSubSection('3. Serviços de Terceiros', [
-            'O FitTracker utiliza serviços do Google para autenticação e armazenamento:',
-            '• Google Sign-In — usado apenas para autenticação.',
-            '• Firebase (Google Cloud) — usado para armazenar os dados do app.',
-            '',
-            'O uso desses serviços está sujeito à Política de Privacidade do Google.',
-          ]),
-          
-          _buildSubSection('4. Compartilhamento de Dados', [
-            'Os dados não são vendidos nem compartilhados com terceiros, exceto quando exigido por lei ou para cumprir ordens judiciais.',
-          ]),
-          
-          _buildSubSection('5. Armazenamento e Segurança', [
-            'As informações são armazenadas em servidores do Firebase (Google Cloud). Empregamos medidas técnicas e organizacionais para proteger os dados, mas nenhum sistema é 100% seguro.',
-          ]),
-          
-          _buildSubSection('6. Exclusão de Conta e Dados', [
-            'Você pode solicitar a exclusão da sua conta e dos seus dados a qualquer momento. Para isso, envie um e-mail para:',
-          ]),
-          
+          _buildSubSection("1. ${localization.collectedData}", localization.collectedDataDescription),
+          _buildSubSection("2. ${localization.useOfInformation}", localization.useOfInformationDescription,),
+          _buildSubSection("3. ${localization.thirdPartyServices}", localization.thirdPartyServicesDescription),
+          _buildSubSection("4. ${localization.dataSharing}", localization.dataNotSold,),
+          _buildSubSection("5. ${localization.storageAndSecurity}", localization.dataStorageSecurity,),
+          _buildSubSection("6. ${localization.accountAndDataDeletion}", localization.accountDeletionInstructions,),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
             padding: const EdgeInsets.all(12),
@@ -247,34 +222,27 @@ class FitTrackerTermsPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Text(
-              'lucas.prokalil2020@outlook.com',
+              "lucas.prokalil2020@outlook.com",
               style: TextStyle(
-                fontFamily: 'monospace',
+                fontFamily: "monospace",
                 fontSize: 13,
               ),
             ),
           ),
-          
-          const Text(
-            'Após a solicitação podemos levar até 30 dias para remover backups e réplicas, conforme práticas técnicas e legais.',
+          Text(
+            localization.deletionTimeframe,
             style: TextStyle(
               fontSize: 13,
             ),
           ),
-          
-          _buildSubSection('7. Alterações nesta Política', [
-            'Podemos atualizar esta Política. Notificaremos os usuários por meio do app ou por e-mail quando mudanças relevantes ocorrerem.',
-          ]),
-          
-          _buildSubSection('8. Contato', [
-            'Dúvidas ou solicitações sobre privacidade: lucas.prokalil2020@outlook.com',
-          ]),
+          _buildSubSection("7. ${localization.policyChanges}", localization.policyUpdates),
+          _buildSubSection("8. ${localization.contact}", localization.privacyQuestions("lucas.prokalil2020@outlook.com"),),
         ],
       ),
     );
   }
 
-  Widget _buildLicensesSection(ColorScheme scheme) {
+  Widget _buildLicensesSection(ColorScheme scheme, AppLocalizations localization) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -284,8 +252,8 @@ class FitTrackerTermsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Licenças das Bibliotecas',
+          Text(
+            localization.libraryLicenses,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -293,47 +261,47 @@ class FitTrackerTermsPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           
-          _buildLicenseSection('Licença MIT', [
-            'cupertino_icons',
-            'provider',
-            'uuid',
-            'flutter_slidable',
-            'flutter_staggered_grid_view',
-            'fl_chart',
-            'synchronized',
-            'logger',
-            'archive',
-            'flutter_svg',
-            'sqflite_sqlcipher',
+          _buildLicenseSection(localization.mitLicense, [
+            "cupertino_icons",
+            "provider",
+            "uuid",
+            "flutter_slidable",
+            "flutter_staggered_grid_view",
+            "fl_chart",
+            "synchronized",
+            "logger",
+            "archive",
+            "flutter_svg",
+            "sqflite_sqlcipher",
           ]),
           
-          _buildLicenseSection('Licença BSD de 2 cláusulas', [
-            'sqflite',
-            'sqflite_common_ffi',
-            'percent_indicator',
-            'sqflite_common_ffi_web',
-            'tuple',
-            'sqflite_common',
+          _buildLicenseSection(localization.bsd2ClauseLicense, [
+            "sqflite",
+            "sqflite_common_ffi",
+            "percent_indicator",
+            "sqflite_common_ffi_web",
+            "tuple",
+            "sqflite_common",
           ]),
           
-          _buildLicenseSection('Licença BSD de 3 cláusulas', [
-            'path',
-            'shimmer',
-            'share_plus',
-            'path_provider',
-            'intl',
-            'firebase_core',
-            'firebase_auth',
-            'google_sign_in',
-            'loading_animation_widget',
-            'cloud_firestore',
-            'crypto',
-            'connectivity_plus',
-            'flutter_secure_storage',
+          _buildLicenseSection(localization.bsd3ClauseLicense, [
+            "path",
+            "shimmer",
+            "share_plus",
+            "path_provider",
+            "intl",
+            "firebase_core",
+            "firebase_auth",
+            "google_sign_in",
+            "loading_animation_widget",
+            "cloud_firestore",
+            "crypto",
+            "connectivity_plus",
+            "flutter_secure_storage",
           ]),
           
-          _buildLicenseSection('Licença Apache 2.0', [
-            'receive_sharing_intent',
+          _buildLicenseSection(localization.apacheLicense, [
+            "receive_sharing_intent",
           ]),
         ],
       ),
@@ -357,7 +325,7 @@ class FitTrackerTermsPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
             children: [
-              const Text('• '),
+              const Text("• "),
               Expanded(
                 child: RichText(
                   text: TextSpan(
@@ -366,7 +334,7 @@ class FitTrackerTermsPage extends StatelessWidget {
                         text: package,
                       ),
                       TextSpan(
-                        text: ' – $title',
+                        text: " – $title",
                       ),
                     ],
                   ),
@@ -386,7 +354,7 @@ class FitTrackerTermsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$number. ',
+            "$number. ",
             style: const TextStyle(
               fontSize: 14,
             ),
@@ -417,7 +385,7 @@ class FitTrackerTermsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSubSection(String title, List<String> content) {
+  Widget _buildSubSection(String title, String content) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -431,15 +399,15 @@ class FitTrackerTermsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ...content.map((text) => text.isEmpty ? const SizedBox(height: 4) : Padding(
+          Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
-              text,
+              content,
               style: const TextStyle(
                 fontSize: 14,
               ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -448,7 +416,7 @@ class FitTrackerTermsPage extends StatelessWidget {
   Widget _buildFooter() {
     return const Center(
       child: Text(
-        '© 2025 FitTracker',
+        "© 2025 FitTracker",
         style: TextStyle(
           fontSize: 13,
         ),
@@ -502,6 +470,8 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
       child: Column(
@@ -509,7 +479,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text("Leia e aceite os termos de serviço para continuar."),
+            child: Text(localization.acceptTermsMessage),
           ),
           Row(
             children: [
@@ -519,7 +489,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
                     backgroundColor: Colors.red,
                   ),
                   onPressed: () => widget.onPressed(false),
-                  child: const Text("Rejeitar"),
+                  child: Text(localization.reject),
                 ),
               ),
               const SizedBox(width: 12),
@@ -529,7 +499,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
                     backgroundColor: secondsLest <= 0 ? Colors.green : Colors.grey,
                   ),
                   onPressed: () => widget.onPressed(true),
-                  child: secondsLest <= 0 ? Text("Aceitar") : Text("$secondsLest segundos"),
+                  child: secondsLest <= 0 ? Text(localization.accept) : Text(localization.secondsLeft(secondsLest)),
                 ),
               ),
             ],

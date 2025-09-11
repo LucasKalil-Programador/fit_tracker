@@ -934,6 +934,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Terms of service rejected'**
   String get termsRejected;
+
+  /// Title for terms of use and privacy policy section
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use & Privacy Policy'**
+  String get termsAndPrivacy;
+
+  /// Instruction asking the user to read and accept terms
+  ///
+  /// In en, this message translates to:
+  /// **'Read and accept the terms of service to continue.'**
+  String get acceptTermsMessage;
+
+  /// Button label to reject the terms
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// Button label to accept the terms
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// Message showing countdown seconds left
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds'**
+  String secondsLeft(Object seconds);
+
+  /// Title for the FitTracker terms of use and privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker — Terms of Use & Privacy Policy'**
+  String get fitTrackerTermsTitle;
+
+  /// Information about the public document version and last update
+  ///
+  /// In en, this message translates to:
+  /// **'Public document for use in the Play Store / App Store — Last updated: 09/11/2025'**
+  String get publicDocumentInfo;
+
+  /// Specifies the login method used by the app
+  ///
+  /// In en, this message translates to:
+  /// **'Login: Google Sign-In'**
+  String get loginMethod;
+
+  /// Specifies the storage method used by the app
+  ///
+  /// In en, this message translates to:
+  /// **'Storage: Firebase (Google Cloud)'**
+  String get storageMethod;
+
+  /// Indicates the minimum age required to use the app
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum age: 13+'**
+  String get minimumAge;
+
+  /// Label for terms of use section
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get termsOfUse;
+
+  /// Instruction explaining that using the app implies acceptance of terms
+  ///
+  /// In en, this message translates to:
+  /// **'Read carefully — using the app implies acceptance of these terms.'**
+  String get readCarefully;
+
+  /// Title for acceptance of terms section
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptance of Terms'**
+  String get termsAcceptance;
+
+  /// Message explaining that using the app implies agreement with terms
+  ///
+  /// In en, this message translates to:
+  /// **'By using FitTracker, you agree to these Terms. If you do not agree, do not use the app.'**
+  String get termsAcceptanceMessage;
+
+  /// Title for app purpose section
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose of the App'**
+  String get appPurpose;
+
+  /// Explanation of the purpose of the app
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker is a tool for tracking workouts and physical progress. It does not replace medical or professional fitness guidance.'**
+  String get appPurposeMessage;
+
+  /// Title for login and account section
+  ///
+  /// In en, this message translates to:
+  /// **'Login and Account'**
+  String get loginAndAccount;
+
+  /// Explanation of login method and responsibility
+  ///
+  /// In en, this message translates to:
+  /// **'Login in FitTracker is done exclusively through your Google account. We do not require creating an account within the app. Access to your Google account is your sole responsibility.'**
+  String get loginAndAccountMessage;
+
+  /// Title for responsible use section
+  ///
+  /// In en, this message translates to:
+  /// **'Responsible Use'**
+  String get responsibleUse;
+
+  /// Message about responsible use of the app
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for the information and data entered in the app. Do not use FitTracker for illegal practices or anything that may compromise your health.'**
+  String get responsibleUseMessage;
+
+  /// Title for minimum age section
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Age'**
+  String get minimumAgeTitle;
+
+  /// Message about minimum age requirement
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker is intended for users aged 13 or older.'**
+  String get minimumAgeMessage;
+
+  /// Title for limitation of liability section
+  ///
+  /// In en, this message translates to:
+  /// **'Limitation of Liability'**
+  String get liabilityLimitation;
+
+  /// Message explaining limitation of liability
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker does not guarantee health or fitness results. It only serves as a tracking and logging tool.'**
+  String get liabilityLimitationMessage;
+
+  /// Title for modifications section
+  ///
+  /// In en, this message translates to:
+  /// **'Modifications'**
+  String get modifications;
+
+  /// Message about updates to terms
+  ///
+  /// In en, this message translates to:
+  /// **'We may update these Terms at any time. Continued use of the app means you accept the changes.'**
+  String get modificationsMessage;
+
+  /// Title for the section listing the app's library licenses
+  ///
+  /// In en, this message translates to:
+  /// **'Library Licenses'**
+  String get libraryLicenses;
+
+  /// Label for MIT License
+  ///
+  /// In en, this message translates to:
+  /// **'MIT License'**
+  String get mitLicense;
+
+  /// Label for BSD 2-Clause License
+  ///
+  /// In en, this message translates to:
+  /// **'BSD 2-Clause License'**
+  String get bsd2ClauseLicense;
+
+  /// Label for BSD 3-Clause License
+  ///
+  /// In en, this message translates to:
+  /// **'BSD 3-Clause License'**
+  String get bsd3ClauseLicense;
+
+  /// Label for Apache 2.0 License
+  ///
+  /// In en, this message translates to:
+  /// **'Apache 2.0 License'**
+  String get apacheLicense;
+
+  /// Title for the privacy policy section
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// Short description of the privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'Transparency about what data we collect and how it is used.'**
+  String get privacyPolicyDescription;
+
+  /// Title for section about data collected
+  ///
+  /// In en, this message translates to:
+  /// **'Collected Data'**
+  String get collectedData;
+
+  /// Title for section about how collected information is used
+  ///
+  /// In en, this message translates to:
+  /// **'Use of Information'**
+  String get useOfInformation;
+
+  /// Title for section about third-party services
+  ///
+  /// In en, this message translates to:
+  /// **'Third-Party Services'**
+  String get thirdPartyServices;
+
+  /// Title for section about data sharing practices
+  ///
+  /// In en, this message translates to:
+  /// **'Data Sharing'**
+  String get dataSharing;
+
+  /// Title for section about data storage and security measures
+  ///
+  /// In en, this message translates to:
+  /// **'Storage and Security'**
+  String get storageAndSecurity;
+
+  /// Title for section about deleting user account and data
+  ///
+  /// In en, this message translates to:
+  /// **'Account and Data Deletion'**
+  String get accountAndDataDeletion;
+
+  /// Title for section about policy updates
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to this Policy'**
+  String get policyChanges;
+
+  /// Title for contact section
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// Statement about data not being sold or shared
+  ///
+  /// In en, this message translates to:
+  /// **'Data is not sold or shared with third parties, except when required by law or to comply with legal orders.'**
+  String get dataNotSold;
+
+  /// Information about data storage and security
+  ///
+  /// In en, this message translates to:
+  /// **'Information is stored on Firebase (Google Cloud) servers. We employ technical and organizational measures to protect data, but no system is 100% secure.'**
+  String get dataStorageSecurity;
+
+  /// Instructions for users on how to request account and data deletion
+  ///
+  /// In en, this message translates to:
+  /// **'You may request deletion of your account and data at any time. To do this, send an email to:'**
+  String get accountDeletionInstructions;
+
+  /// Explanation of the timeframe for data deletion
+  ///
+  /// In en, this message translates to:
+  /// **'After the request, it may take up to 30 days to remove backups and replicas, according to technical and legal practices.'**
+  String get deletionTimeframe;
+
+  /// Information about updates to the privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'We may update this Policy. Users will be notified via the app or email when relevant changes occur.'**
+  String get policyUpdates;
+
+  /// Contact email placeholder for privacy inquiries
+  ///
+  /// In en, this message translates to:
+  /// **'Questions or requests about privacy: {email}'**
+  String privacyQuestions(Object email);
+
+  /// Explanation about the third-party services used by the app
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker uses Google services for authentication and storage:\n\n• Google Sign-In — used only for authentication.\n• Firebase (Google Cloud) — used to store app data.\n\nUse of these services is subject to Google\'s Privacy Policy.'**
+  String get thirdPartyServicesDescription;
+
+  /// Explanation of how collected information is used
+  ///
+  /// In en, this message translates to:
+  /// **'• Identify your account within the app.\n• Save and sync your workouts and progress across devices.\n• Improve the experience and fix technical issues.'**
+  String get useOfInformationDescription;
+
+  /// Explanation of the data collected by the app
+  ///
+  /// In en, this message translates to:
+  /// **'FitTracker only collects the following data:\n\n• Google user ID (provided via Google Sign-In).\n• Data generated by app usage (e.g., workouts, goals, progress, in-app usage statistics).\n\nWe do not collect name, email, phone, or other personal data directly.'**
+  String get collectedDataDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

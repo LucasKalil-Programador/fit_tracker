@@ -439,4 +439,158 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsRejected => 'Terms of service rejected';
+
+  @override
+  String get termsAndPrivacy => 'Terms of Use & Privacy Policy';
+
+  @override
+  String get acceptTermsMessage => 'Read and accept the terms of service to continue.';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String secondsLeft(Object seconds) {
+    return '$seconds seconds';
+  }
+
+  @override
+  String get fitTrackerTermsTitle => 'FitTracker — Terms of Use & Privacy Policy';
+
+  @override
+  String get publicDocumentInfo => 'Public document for use in the Play Store / App Store — Last updated: 09/11/2025';
+
+  @override
+  String get loginMethod => 'Login: Google Sign-In';
+
+  @override
+  String get storageMethod => 'Storage: Firebase (Google Cloud)';
+
+  @override
+  String get minimumAge => 'Minimum age: 13+';
+
+  @override
+  String get termsOfUse => 'Terms of Use';
+
+  @override
+  String get readCarefully => 'Read carefully — using the app implies acceptance of these terms.';
+
+  @override
+  String get termsAcceptance => 'Acceptance of Terms';
+
+  @override
+  String get termsAcceptanceMessage => 'By using FitTracker, you agree to these Terms. If you do not agree, do not use the app.';
+
+  @override
+  String get appPurpose => 'Purpose of the App';
+
+  @override
+  String get appPurposeMessage => 'FitTracker is a tool for tracking workouts and physical progress. It does not replace medical or professional fitness guidance.';
+
+  @override
+  String get loginAndAccount => 'Login and Account';
+
+  @override
+  String get loginAndAccountMessage => 'Login in FitTracker is done exclusively through your Google account. We do not require creating an account within the app. Access to your Google account is your sole responsibility.';
+
+  @override
+  String get responsibleUse => 'Responsible Use';
+
+  @override
+  String get responsibleUseMessage => 'You are responsible for the information and data entered in the app. Do not use FitTracker for illegal practices or anything that may compromise your health.';
+
+  @override
+  String get minimumAgeTitle => 'Minimum Age';
+
+  @override
+  String get minimumAgeMessage => 'FitTracker is intended for users aged 13 or older.';
+
+  @override
+  String get liabilityLimitation => 'Limitation of Liability';
+
+  @override
+  String get liabilityLimitationMessage => 'FitTracker does not guarantee health or fitness results. It only serves as a tracking and logging tool.';
+
+  @override
+  String get modifications => 'Modifications';
+
+  @override
+  String get modificationsMessage => 'We may update these Terms at any time. Continued use of the app means you accept the changes.';
+
+  @override
+  String get libraryLicenses => 'Library Licenses';
+
+  @override
+  String get mitLicense => 'MIT License';
+
+  @override
+  String get bsd2ClauseLicense => 'BSD 2-Clause License';
+
+  @override
+  String get bsd3ClauseLicense => 'BSD 3-Clause License';
+
+  @override
+  String get apacheLicense => 'Apache 2.0 License';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyDescription => 'Transparency about what data we collect and how it is used.';
+
+  @override
+  String get collectedData => 'Collected Data';
+
+  @override
+  String get useOfInformation => 'Use of Information';
+
+  @override
+  String get thirdPartyServices => 'Third-Party Services';
+
+  @override
+  String get dataSharing => 'Data Sharing';
+
+  @override
+  String get storageAndSecurity => 'Storage and Security';
+
+  @override
+  String get accountAndDataDeletion => 'Account and Data Deletion';
+
+  @override
+  String get policyChanges => 'Changes to this Policy';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get dataNotSold => 'Data is not sold or shared with third parties, except when required by law or to comply with legal orders.';
+
+  @override
+  String get dataStorageSecurity => 'Information is stored on Firebase (Google Cloud) servers. We employ technical and organizational measures to protect data, but no system is 100% secure.';
+
+  @override
+  String get accountDeletionInstructions => 'You may request deletion of your account and data at any time. To do this, send an email to:';
+
+  @override
+  String get deletionTimeframe => 'After the request, it may take up to 30 days to remove backups and replicas, according to technical and legal practices.';
+
+  @override
+  String get policyUpdates => 'We may update this Policy. Users will be notified via the app or email when relevant changes occur.';
+
+  @override
+  String privacyQuestions(Object email) {
+    return 'Questions or requests about privacy: $email';
+  }
+
+  @override
+  String get thirdPartyServicesDescription => 'FitTracker uses Google services for authentication and storage:\n\n• Google Sign-In — used only for authentication.\n• Firebase (Google Cloud) — used to store app data.\n\nUse of these services is subject to Google\'s Privacy Policy.';
+
+  @override
+  String get useOfInformationDescription => '• Identify your account within the app.\n• Save and sync your workouts and progress across devices.\n• Improve the experience and fix technical issues.';
+
+  @override
+  String get collectedDataDescription => 'FitTracker only collects the following data:\n\n• Google user ID (provided via Google Sign-In).\n• Data generated by app usage (e.g., workouts, goals, progress, in-app usage statistics).\n\nWe do not collect name, email, phone, or other personal data directly.';
 }
