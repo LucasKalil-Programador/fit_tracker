@@ -25,6 +25,7 @@ class ConfigPage extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
+                VersionWidget(),
                 DefaultDivider(),
                 ThemeSelection(
                   initialValue: getTheme(metadataState),
@@ -73,3 +74,5 @@ class ConfigPage extends StatelessWidget {
     metadataState.put(localeKey, locale.languageCode); 
   }
 }
+
+

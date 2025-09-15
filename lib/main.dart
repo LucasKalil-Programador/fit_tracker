@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 // TODO: Tela de exclucao de dados do usuario
 
+const version = "1.0.0";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final states = StateManager();

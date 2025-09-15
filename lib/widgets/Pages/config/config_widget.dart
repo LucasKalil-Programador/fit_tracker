@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:fittrackr/database/generate_db.dart';
+import 'package:fittrackr/main.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:flutter/material.dart';
@@ -171,5 +174,24 @@ class DevTools extends StatelessWidget {
     final rState = Provider.of<ReportState>(context, listen: false);
     final tState = Provider.of<ReportTableState>(context, listen: false);
     await generateDB(eState, pState, tState, rState);
+  }
+}
+
+class VersionWidget extends StatelessWidget {
+  const VersionWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+    String platform = "unknown";
+    if(Platform.isAndroid) {
+      platform = "Android";
+    } else if(Platform.isIOS) {
+      platform = "IOS";
+    } else if(Platform.isWindows) {
+      platform = "Windows";
+    }
+    
+    return Text(localization.appVersionPlatform(version, platform), style: TextStyle(fontWeight: FontWeight.bold),);
   }
 }

@@ -593,4 +593,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get collectedDataDescription => 'O FitTracker coleta apenas os seguintes dados:\n\n• ID de usuário do Google (fornecida pelo login via Google Sign-In).\n• Dados gerados pelo uso do app (ex.: treinos, metas, progresso, estatísticas de uso dentro do app).\n\nNão coletamos nome, e-mail, telefone ou outros dados pessoais diretamente.';
+
+  @override
+  String appVersionPlatform(Object version, Object platform) {
+    return 'Versão $version | Plataforma: $platform';
+  }
 }
