@@ -439,6 +439,8 @@ class RequestBottom extends StatefulWidget {
 
 class _RequestBottomState extends State<RequestBottom> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  bool isDisposed = false;
+  bool isSubmited = false;
   late DateTime startTime;
   late int secondsLest;
 
@@ -454,7 +456,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
     _controller.addListener(() {
       setState(() {
         secondsLest = widget.waitTimeSeconds - DateTime.now().difference(startTime).inSeconds;
-        if(secondsLest <= 0) _controller.dispose();
+        if(secondsLest <= 0) disposeAnimation();
       });
     });
     _controller.repeat();
@@ -462,10 +464,13 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
 
   @override
   void dispose() {
-    if(_controller.isDismissed) {
-      _controller.dispose();
-    }
+    disposeAnimation();
     super.dispose();
+  }
+
+  void disposeAnimation() {
+    if(!isDisposed) _controller.dispose();
+    isDisposed = true;
   }
 
   @override
@@ -488,7 +493,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
-                  onPressed: () => widget.onPressed(false),
+                  onPressed: () => onSubmit(false),
                   child: Text(localization.reject),
                 ),
               ),
@@ -498,7 +503,7 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
                   style: ElevatedButton.styleFrom(
                     backgroundColor: secondsLest <= 0 ? Colors.green : Colors.grey,
                   ),
-                  onPressed: () => widget.onPressed(true),
+                  onPressed: () => onSubmit(true),
                   child: secondsLest <= 0 ? Text(localization.accept) : Text(localization.secondsLeft(secondsLest)),
                 ),
               ),
@@ -507,5 +512,11 @@ class _RequestBottomState extends State<RequestBottom> with SingleTickerProvider
         ],
       ),
     );
+  }
+
+  void onSubmit(bool result) {
+    if(isSubmited) return;
+    isSubmited = true;
+    widget.onPressed(result);
   }
 }

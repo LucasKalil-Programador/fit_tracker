@@ -165,26 +165,18 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
     setState(() => isLoading = true);
 
     try {
-      final manager = Provider.of<StateManager>(context, listen: false);
-      final status = await manager.safeStorage.read(key: acceptTermsKey);
-      if(status == null || status == "rejected") {
-        logger.i("Requesting privacy terms");
-        bool accepted = false;
+      logger.i("Requesting privacy terms");
+      final accepted = await showPrivacyTerms(context);
+      if(!accepted) {
         if(context.mounted) {
-          accepted = await showPrivacyTerms(context);
-        } 
-        if(!accepted) {
-          if(context.mounted) {
-            showSnackMessage(context, localization.termsRejected, false);
-            return;
-          }
+          showSnackMessage(context, localization.termsRejected, false);
+          return;
         }
       }
       
       final success = await authState.signInWithGoogle();
       if(context.mounted) {
         if (success) {
-          manager.safeStorage.write(key: acceptTermsKey, value: "accepted");
           showSnackMessage(context, localization.loggedInAs(authState.user?.displayName ?? localization.anonymous), true);
         } else {
           showSnackMessage(context, localization.loginFailed, false);

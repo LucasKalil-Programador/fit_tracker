@@ -23,8 +23,6 @@ const lastUpdateKeyy = "Manager:LastUpdate";
 const lastTimeStampKeyy = "Manager:LastTimeStamp";
 const encryptionKey = "Manager:encryption";
 
-const acceptTermsKey = "Config:acceptTerms";
-
 class StateManager extends ChangeNotifier {
   late final ExercisesState exercisesState;
   late final TrainingPlanState trainingPlanState;
