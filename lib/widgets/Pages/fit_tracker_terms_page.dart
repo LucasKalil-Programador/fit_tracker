@@ -1,4 +1,5 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
+import 'package:fittrackr/utils/assets.dart';
 import 'package:flutter/material.dart';
 
 class FitTrackerTermsPage extends StatelessWidget {
@@ -70,22 +71,10 @@ class FitTrackerTermsPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Logo
-        Container(
+        SizedBox(
           width: 64,
           height: 64,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            
-          ),
-          child: const Center(
-            child: Text(
-              "FT", // TODO: Put icon here
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
+          child: CircleAvatar(backgroundImage: Image.asset(Assets.fittrackerIcon).image, backgroundColor: Colors.white,),
         ),
         const SizedBox(width: 16),
         
