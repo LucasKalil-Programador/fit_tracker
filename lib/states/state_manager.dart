@@ -176,6 +176,26 @@ class StateManager extends ChangeNotifier {
 
   // utils
 
+  Future<bool> deleteAccount() async {
+    while(_isSyncing) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    _isSyncing = true;
+
+    try {
+      if (authState.isLoggedIn) {
+        await FirestoreUtils.deleteAccount(authState.user!.uid);
+        return await authState.signOut();
+      }
+      return false;
+    } catch (e) {
+      logger.w('Error deleting account: $e');
+      return false;
+    } finally {
+      _isSyncing = false;
+    }
+  }
+
   Future<void> _handleSaveResult(SaveResult result) async {
     lastSaveResult = result;
     if(result.status == SaveStatus.desynchronized) {

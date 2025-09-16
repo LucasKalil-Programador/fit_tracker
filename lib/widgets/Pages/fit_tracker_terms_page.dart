@@ -1,5 +1,6 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/utils/assets.dart';
+import 'package:fittrackr/widgets/common/request_buttons.dart';
 import 'package:flutter/material.dart';
 
 class FitTrackerTermsPage extends StatelessWidget {
@@ -16,14 +17,19 @@ class FitTrackerTermsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(localization.termsAndPrivacy),
       ),
-      bottomNavigationBar: RequestBottom(
-        onPressed: (accepted) {
-          if (accepted) {
-            if(onAccepted != null) onAccepted!();
-          } else {
-            if(onRejected != null) onRejected!();
-          }
-        },
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 48),
+        child: RequestButtons(
+          onPressed: (accepted) {
+            if (accepted) {
+              if(onAccepted != null) onAccepted!();
+            } else {
+              if(onRejected != null) onRejected!();
+            }
+          },
+          rejectButtonColor: Colors.red,
+          acceptButtonColor: Colors.green,
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(4),
@@ -396,101 +402,5 @@ class FitTrackerTermsPage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class RequestBottom extends StatefulWidget {
-  final Function(bool) onPressed;
-  final int waitTimeSeconds;
-
-  const RequestBottom({
-    super.key, required this.onPressed, this.waitTimeSeconds = 5,
-  });
-
-  @override
-  State<RequestBottom> createState() => _RequestBottomState();
-}
-
-class _RequestBottomState extends State<RequestBottom> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  bool isDisposed = false;
-  bool isSubmited = false;
-  late DateTime startTime;
-  late int secondsLest;
-
-  @override
-  void initState() {
-    startTime = DateTime.now();
-    secondsLest = widget.waitTimeSeconds;
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: widget.waitTimeSeconds),
-    );
-    _controller.addListener(() {
-      setState(() {
-        secondsLest = widget.waitTimeSeconds - DateTime.now().difference(startTime).inSeconds;
-        if(secondsLest <= 0) disposeAnimation();
-      });
-    });
-    _controller.repeat();
-  }
-
-  @override
-  void dispose() {
-    disposeAnimation();
-    super.dispose();
-  }
-
-  void disposeAnimation() {
-    if(!isDisposed) _controller.dispose();
-    isDisposed = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-
-    return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(localization.acceptTermsMessage),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: () => onSubmit(false),
-                  child: Text(localization.reject),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: secondsLest <= 0 ? Colors.green : Colors.grey,
-                  ),
-                  onPressed: () => onSubmit(true),
-                  child: secondsLest <= 0 ? Text(localization.accept) : Text(localization.secondsLeft(secondsLest)),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void onSubmit(bool result) {
-    if(isSubmited) return;
-    isSubmited = true;
-    widget.onPressed(result);
   }
 }

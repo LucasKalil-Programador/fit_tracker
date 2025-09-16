@@ -77,6 +77,11 @@ class FirestoreUtils {
     return true;
   }
 
+  static Future<void> deleteAccount(String uid) {
+    final firestore = FirebaseFirestore.instance;
+    return firestore.collection("user_data").doc(uid).delete();
+  }
+
   static Future<DateTime?> getServerTimeStamp(String uid) async {
     final firestore = FirebaseFirestore.instance;
     final docRef = firestore.collection("user_data").doc(uid);
