@@ -598,4 +598,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String appVersionPlatform(Object version, Object platform) {
     return 'Version $version | Platform: $platform';
   }
+
+  @override
+  String get accountDeleted => 'Account deleted';
+
+  @override
+  String get accountDeletionError => 'Failed to delete account. Please try again later';
+
+  @override
+  String get deleteAccountWarning => 'You are about to delete your account. All data stored in the cloud will be permanently deleted, but local data on your device will remain intact. This action is irreversible and the account cannot be reactivated.';
+
+  @override
+  String get attention => 'Attention!';
+
+  @override
+  String get deleteAccount => 'Delete Account';
 }

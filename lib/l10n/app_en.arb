@@ -775,5 +775,25 @@
       "version": {},
       "platform": {}
     }
+  },
+  "accountDeleted": "Account deleted",
+  "@accountDeleted": {
+    "description": "Message shown when the account has been successfully deleted"
+  },
+  "accountDeletionError": "Failed to delete account. Please try again later",
+  "@accountDeletionError": {
+    "description": "Error message shown when account deletion fails"
+  },
+  "deleteAccountWarning": "You are about to delete your account. All data stored in the cloud will be permanently deleted, but local data on your device will remain intact. This action is irreversible and the account cannot be reactivated.",
+  "@deleteAccountWarning": {
+    "description": "Warning message shown before deleting the account"
+  },
+  "attention": "Attention!",
+  "@attention": {
+    "description": "Label to alert the user"
+  },
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Label for delete account action"
   }
 }

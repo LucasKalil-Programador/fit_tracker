@@ -1,5 +1,6 @@
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/metadata_state.dart';
+import 'package:fittrackr/states/state_manager.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/Pages/config/google_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
@@ -39,9 +40,10 @@ class ConfigPage extends StatelessWidget {
                 DefaultDivider(),
                 GoogleLoginWidget(),
                 DefaultDivider(),
+                AccountDeletionButton(isLogged: true, onConfirmDeletion: () => onConfirmDeletion(context, localization)),
+                DefaultDivider(),
                 DevTools(),
                 DefaultDivider(),
-                
               ],
             ),
           );
@@ -72,6 +74,20 @@ class ConfigPage extends StatelessWidget {
   void onLocaleSelected(BuildContext context, Locale locale) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.put(localeKey, locale.languageCode); 
+  }
+
+  void onConfirmDeletion(BuildContext context, AppLocalizations localization) async {
+    final manager = Provider.of<StateManager>(context, listen: false);
+    final result = await manager.deleteAccount();
+    if (context.mounted) {
+      showSnackMessage(
+        context,
+        result
+            ? localization.accountDeleted
+            : localization.accountDeletionError,
+        result,
+      );
+    }
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:fittrackr/database/generate_db.dart';
 import 'package:fittrackr/main.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
+import 'package:fittrackr/widgets/common/request_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -177,6 +178,8 @@ class DevTools extends StatelessWidget {
   }
 }
 
+// Version
+
 class VersionWidget extends StatelessWidget {
   const VersionWidget({super.key});
 
@@ -193,5 +196,74 @@ class VersionWidget extends StatelessWidget {
     }
     
     return Text(localization.appVersionPlatform(version, platform), style: TextStyle(fontWeight: FontWeight.bold),);
+  }
+}
+
+// Account deletion
+
+
+class AccountDeletionButton extends StatelessWidget {
+  final bool isLogged;
+  final VoidCallback onConfirmDeletion;
+
+  const AccountDeletionButton({
+    super.key,
+    required this.isLogged,
+    required this.onConfirmDeletion,
+  });
+
+  void _showConfirmationDialog(BuildContext context, AppLocalizations localization) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.red),
+            SizedBox(width: 10),
+            Text(localization.attention),
+          ],
+        ),
+        content: Text(
+          localization.deleteAccountWarning,
+          style: TextStyle(height: 1.5),
+        ),
+        actions: [
+          RequestButtons(
+                onPressed: (result) {
+                  Navigator.of(context).pop();
+                  if (result) {
+                    onConfirmDeletion();
+                  }
+                },
+                waitTimeSeconds: 10,
+                messageText: "",
+                rejectText: localization.cancel,
+                acceptText: localization.deleteAccount,
+                acceptButtonColor: Colors.red,
+              ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: ElevatedButton.icon(
+        onPressed: isLogged
+            ? () => _showConfirmationDialog(context, localization)
+            : null,
+        icon: const Icon(Icons.delete),
+        label: Text(localization.deleteAccount),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 }

@@ -598,4 +598,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String appVersionPlatform(Object version, Object platform) {
     return 'Versão $version | Plataforma: $platform';
   }
+
+  @override
+  String get accountDeleted => 'Conta excluída';
+
+  @override
+  String get accountDeletionError => 'Erro ao excluir conta. Tente novamente mais tarde';
+
+  @override
+  String get deleteAccountWarning => 'Você está prestes a deletar sua conta. Todos os dados armazenados na nuvem serão permanentemente excluídos, mas os dados locais no seu dispositivo permanecerão intactos. Esta ação é irreversível e a conta não poderá ser reativada.';
+
+  @override
+  String get attention => 'Atenção!';
+
+  @override
+  String get deleteAccount => 'Deletar Conta';
 }

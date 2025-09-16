@@ -1240,6 +1240,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version} | Platform: {platform}'**
   String appVersionPlatform(Object version, Object platform);
+
+  /// Message shown when the account has been successfully deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted'**
+  String get accountDeleted;
+
+  /// Error message shown when account deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete account. Please try again later'**
+  String get accountDeletionError;
+
+  /// Warning message shown before deleting the account
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to delete your account. All data stored in the cloud will be permanently deleted, but local data on your device will remain intact. This action is irreversible and the account cannot be reactivated.'**
+  String get deleteAccountWarning;
+
+  /// Label to alert the user
+  ///
+  /// In en, this message translates to:
+  /// **'Attention!'**
+  String get attention;
+
+  /// Label for delete account action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
