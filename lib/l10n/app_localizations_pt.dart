@@ -572,10 +572,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get dataStorageSecurity => 'As informações são armazenadas em servidores do Firebase (Google Cloud). Empregamos medidas técnicas e organizacionais para proteger os dados, mas nenhum sistema é 100% seguro.';
 
   @override
-  String get accountDeletionInstructions => 'Você pode solicitar a exclusão da sua conta e dos seus dados a qualquer momento. Para isso, envie um e-mail para:';
+  String get accountDeletionInstructions => 'Você pode excluir sua conta e todos os dados associados a qualquer momento diretamente nas configurações do aplicativo. Atenção: a exclusão é permanente e irreversível.';
 
   @override
-  String get deletionTimeframe => 'Após a solicitação podemos levar até 30 dias para remover backups e réplicas, conforme práticas técnicas e legais.';
+  String get deletionTimeframe => 'A conta e seus dados são excluídos instantaneamente após a confirmação.';
 
   @override
   String get policyUpdates => 'Podemos atualizar esta Política. Notificaremos os usuários por meio do app ou por e-mail quando mudanças relevantes ocorrerem.';

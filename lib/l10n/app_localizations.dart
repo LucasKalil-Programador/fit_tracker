@@ -1196,13 +1196,13 @@ abstract class AppLocalizations {
   /// Instructions for users on how to request account and data deletion
   ///
   /// In en, this message translates to:
-  /// **'You may request deletion of your account and data at any time. To do this, send an email to:'**
+  /// **'You can delete your account and all associated data at any time directly from the app settings. Please note: deletion is permanent and cannot be undone.'**
   String get accountDeletionInstructions;
 
   /// Explanation of the timeframe for data deletion
   ///
   /// In en, this message translates to:
-  /// **'After the request, it may take up to 30 days to remove backups and replicas, according to technical and legal practices.'**
+  /// **'The account and its data are deleted instantly upon confirmation.'**
   String get deletionTimeframe;
 
   /// Information about updates to the privacy policy

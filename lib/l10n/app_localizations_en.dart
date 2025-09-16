@@ -572,10 +572,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataStorageSecurity => 'Information is stored on Firebase (Google Cloud) servers. We employ technical and organizational measures to protect data, but no system is 100% secure.';
 
   @override
-  String get accountDeletionInstructions => 'You may request deletion of your account and data at any time. To do this, send an email to:';
+  String get accountDeletionInstructions => 'You can delete your account and all associated data at any time directly from the app settings. Please note: deletion is permanent and cannot be undone.';
 
   @override
-  String get deletionTimeframe => 'After the request, it may take up to 30 days to remove backups and replicas, according to technical and legal practices.';
+  String get deletionTimeframe => 'The account and its data are deleted instantly upon confirmation.';
 
   @override
   String get policyUpdates => 'We may update this Policy. Users will be notified via the app or email when relevant changes occur.';

@@ -203,21 +203,6 @@ class FitTrackerTermsPage extends StatelessWidget {
           _buildSubSection("4. ${localization.dataSharing}", localization.dataNotSold,),
           _buildSubSection("5. ${localization.storageAndSecurity}", localization.dataStorageSecurity,),
           _buildSubSection("6. ${localization.accountAndDataDeletion}", localization.accountDeletionInstructions,),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Text(
-              "lucas.prokalil2020@outlook.com",
-              style: TextStyle(
-                fontFamily: "monospace",
-                fontSize: 13,
-              ),
-            ),
-          ),
           Text(
             localization.deletionTimeframe,
             style: TextStyle(
