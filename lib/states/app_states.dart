@@ -58,6 +58,7 @@ class TrainingHistoryState extends BaseListState<TrainingHistory> {
   }
 
   DateTime? firstDateTime() {
+    if(isEmpty) return null;
     return DateTime.fromMillisecondsSinceEpoch(
       reduce((a, b) => a.dateTime < b.dateTime ? a : b).dateTime,
     );
