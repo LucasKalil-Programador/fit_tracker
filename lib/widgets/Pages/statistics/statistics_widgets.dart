@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:fittrackr/database/entities/report_table.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
-import 'package:fittrackr/widgets/common/value_input_double_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -381,7 +380,7 @@ class _ReportSource extends DataTableSource implements ValueListenable {
   String formatDate(BuildContext context, int dateTimeMs) {
     final locale = Localizations.localeOf(context).toString();
     final dateTime = DateTime.fromMillisecondsSinceEpoch(dateTimeMs);
-    final formattedDate = DateFormat.yMMMMd(locale).add_Hm().format(dateTime);
+    final formattedDate = DateFormat.yMMMd(locale).add_Hm().format(dateTime);
     return formattedDate;
   }
 
@@ -450,127 +449,6 @@ class _ReportSource extends DataTableSource implements ValueListenable {
   
   @override
   get value => selected.length;
-}
-
-
-// Report Form
-// TODO: Select date
-class ReportForm extends StatefulWidget {
-  final void Function(Report report)? onSubmit;
-  final void Function(Report? report)? onDispose;
-  final ReportTable table;
-  final Report? baseReport;
-
-  const ReportForm({
-    super.key, required this.table, this.baseReport, this.onSubmit, this.onDispose  
-  });
-
-  @override
-  State<ReportForm> createState() => _ReportFormState();
-}
-
-class _ReportFormState extends State<ReportForm> {
-  late AppLocalizations localization;
-  final _noteController = TextEditingController(text: "");
-  double value = 0;
-  bool submited = false;
-
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    if(widget.baseReport != null) {
-      _noteController.text = widget.baseReport!.note;
-      value = widget.baseReport!.value;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    localization = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          localization.reportValue,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: noteInput(),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ValueInputDoubleWidget(
-                  label: localization.value,
-                  suffix: widget.table.valueSuffix,
-                  minValue: -1_000_000_000,
-                  maxValue: 1_000_000_000,
-                  initialValue: value,
-                  onChanged: (value) => this.value = value,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: submitButton(),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    if(widget.onDispose != null) {
-      widget.onDispose!(submited ? null : getReport());
-    }
-  }
-
-  Widget noteInput() {
-    return TextFormField(
-      controller: _noteController,
-      decoration: InputDecoration(labelText: localization.notes),
-      maxLines: 6,
-      validator: (value) {
-        if (value == null || value.length > 500) {
-          return localization.invalidNote;
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget submitButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          submited = true;
-          if(widget.onSubmit != null) {
-            widget.onSubmit!(getReport());
-          }
-        }
-      },
-      child: Text(localization.add),
-    );
-  }
-
-  Report getReport() {
-    return Report(
-      value: value,
-      note: _noteController.text,
-      tableId: widget.table.id!,
-      reportDate: DateTime.now().millisecondsSinceEpoch,
-    );
-  }
 }
 
 
@@ -814,7 +692,7 @@ class _ReportViewState extends State<ReportView> {
   String formatDate(BuildContext context, int dateTimeMs) {
     final locale = Localizations.localeOf(context).toString();
     final dateTime = DateTime.fromMillisecondsSinceEpoch(dateTimeMs);
-    final formattedDate = DateFormat.yMMMMd(locale).add_Hm().format(dateTime);
+    final formattedDate = DateFormat.yMd(locale).add_Hm().format(dateTime);
     return formattedDate;
   }
 

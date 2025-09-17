@@ -16,6 +16,7 @@ import 'package:fittrackr/utils/cloud/firestore.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 // StateManager
 
@@ -194,6 +195,20 @@ class StateManager extends ChangeNotifier {
     } finally {
       _isSyncing = false;
     }
+  }
+
+  List<ChangeNotifierProvider> providers() {
+    final providers = [
+      ChangeNotifierProvider(create: (_) => exercisesState),
+      ChangeNotifierProvider(create: (_) => metadataState),
+      ChangeNotifierProvider(create: (_) => trainingPlanState),
+      ChangeNotifierProvider(create: (_) => trainingHistoryState),
+      ChangeNotifierProvider(create: (_) => reportTableState),
+      ChangeNotifierProvider(create: (_) => reportState),
+      ChangeNotifierProvider(create: (_) => authState),
+      ChangeNotifierProvider(create: (_) => this),
+    ];
+    return providers;
   }
 
   Future<void> _handleSaveResult(SaveResult result) async {

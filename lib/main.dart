@@ -12,16 +12,7 @@ void main() async {
   
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => states.exercisesState),
-        ChangeNotifierProvider(create: (_) => states.metadataState),
-        ChangeNotifierProvider(create: (_) => states.trainingPlanState),
-        ChangeNotifierProvider(create: (_) => states.trainingHistoryState),
-        ChangeNotifierProvider(create: (_) => states.reportTableState),
-        ChangeNotifierProvider(create: (_) => states.reportState),
-        ChangeNotifierProvider(create: (_) => states.authState),
-        ChangeNotifierProvider(create: (_) => states),
-      ],
+      providers: states.providers(),
       child: App(),
     ),
   );

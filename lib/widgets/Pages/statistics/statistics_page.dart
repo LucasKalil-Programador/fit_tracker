@@ -1,6 +1,7 @@
 import 'package:fittrackr/database/entities/report_table.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/app_states.dart';
+import 'package:fittrackr/widgets/Pages/statistics/report_form.dart';
 import 'package:fittrackr/widgets/Pages/statistics/statistics_widgets.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/material.dart';
