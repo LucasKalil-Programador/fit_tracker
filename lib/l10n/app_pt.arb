@@ -198,7 +198,7 @@
   "thirdPartyServicesDescription": "O FitTracker utiliza serviços do Google para autenticação e armazenamento:\n\n• Google Sign-In — usado apenas para autenticação.\n• Firebase (Google Cloud) — usado para armazenar os dados do app.\n\nO uso desses serviços está sujeito à Política de Privacidade do Google.",
   "useOfInformationDescription": "• Identificar sua conta dentro do aplicativo.\n• Salvar e sincronizar seus treinos e progresso entre dispositivos.\n• Melhorar a experiência e corrigir problemas técnicos.",
   "collectedDataDescription": "O FitTracker coleta apenas os seguintes dados:\n\n• ID de usuário do Google (fornecida pelo login via Google Sign-In).\n• Dados gerados pelo uso do app (ex.: treinos, metas, progresso, estatísticas de uso dentro do app).\n\nNão coletamos nome, e-mail, telefone ou outros dados pessoais diretamente.",
-  "appVersionPlatform": "Versão {version} | Plataforma: {platform}",
+  "appVersionPlatform": "Versão {version} | Plataforma: {platform} | {mode}",
   "accountDeleted": "Conta excluída",
   "accountDeletionError": "Erro ao excluir conta. Tente novamente mais tarde",
   "deleteAccountWarning": "Você está prestes a deletar sua conta. Todos os dados armazenados na nuvem serão permanentemente excluídos, mas os dados locais no seu dispositivo permanecerão intactos. Esta ação é irreversível e a conta não poderá ser reativada.",

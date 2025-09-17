@@ -5,6 +5,7 @@ import 'package:fittrackr/main.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:fittrackr/widgets/common/request_buttons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -186,7 +187,9 @@ class VersionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
+    final mode = kDebugMode ? "Debug" : "Release";
     String platform = "unknown";
+
     if(Platform.isAndroid) {
       platform = "Android";
     } else if(Platform.isIOS) {
@@ -195,7 +198,7 @@ class VersionWidget extends StatelessWidget {
       platform = "Windows";
     }
     
-    return Text(localization.appVersionPlatform(version, platform), style: TextStyle(fontWeight: FontWeight.bold),);
+    return Text(localization.appVersionPlatform(version, platform, mode), style: TextStyle(fontWeight: FontWeight.bold),);
   }
 }
 

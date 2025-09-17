@@ -4,6 +4,7 @@ import 'package:fittrackr/states/state_manager.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/Pages/config/google_widget.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class ConfigPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -40,10 +42,16 @@ class ConfigPage extends StatelessWidget {
                 DefaultDivider(),
                 GoogleLoginWidget(),
                 DefaultDivider(),
-                AccountDeletionButton(isLogged: true, onConfirmDeletion: () => onConfirmDeletion(context, localization)),
+                AccountDeletionButton(
+                  isLogged: true,
+                  onConfirmDeletion:
+                      () => onConfirmDeletion(context, localization),
+                ),
                 DefaultDivider(),
-                DevTools(),
-                DefaultDivider(),
+                if(kDebugMode)
+                  DevTools(),
+                if(kDebugMode)
+                  DefaultDivider(),
               ],
             ),
           );

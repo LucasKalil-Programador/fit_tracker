@@ -768,12 +768,13 @@
   "@collectedDataDescription": {
     "description": "Explanation of the data collected by the app"
   },
-  "appVersionPlatform": "Version {version} | Platform: {platform}",
+  "appVersionPlatform": "Version {version} | Platform: {platform} | {mode}",
   "@appVersionPlatform": {
-    "description": "Displays the current app version and platform",
+    "description": "Displays the current app version and platform and mode",
     "placeholders": {
       "version": {},
-      "platform": {}
+      "platform": {},
+      "mode": {}
     }
   },
   "accountDeleted": "Account deleted",
