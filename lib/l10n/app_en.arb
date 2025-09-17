@@ -795,5 +795,17 @@
   "deleteAccount": "Delete Account",
   "@deleteAccount": {
     "description": "Label for delete account action"
+  },
+  "selectedDate": "Selected Date:",
+  "@selectedDate": {
+    "description": "Label showing the selected date"
+  },
+  "selectTime": "Select Time",
+  "@selectTime": {
+    "description": "Button or label to select a time"
+  },
+  "selectDate": "Select Date",
+  "@selectDate": {
+    "description": "Button or label to select a date"
   }
 }

@@ -20,7 +20,7 @@ class ReportForm extends StatefulWidget {
 
 class _ReportFormState extends State<ReportForm> {
   late AppLocalizations localization;
-  final _noteController = TextEditingController(text: "");
+  final _noteController = TextEditingController(text: '');
 
   DateTime selectedDate = DateTime.now();
   double value = 0;
@@ -90,30 +90,34 @@ class _ReportFormState extends State<ReportForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        ElevatedButton.icon(
-          icon: const Icon(Icons.calendar_today),
-          label: const Text("Select Date"),
-          onPressed: () async {
-            final DateTime? date = await showDatePicker(
-              context: context,
-              firstDate: DateTime.fromMillisecondsSinceEpoch(0),
-              lastDate: DateTime.now(),
-              initialDate: selectedDate,
-            );
-            if (date != null) {
-              setState(() {
-                selectedDate = selectedDate.copyWith(
-                  day: date.day,
-                  month: date.month,
-                  year: date.year,
+        Column(
+          children: [
+            ElevatedButton.icon(
+              icon: const Icon(Icons.calendar_today),
+              label: Text(localization.selectDate),
+              onPressed: () async {
+                final DateTime? date = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+                  lastDate: DateTime.now(),
+                  initialDate: selectedDate,
                 );
-              });
-            }
-          },
+                if (date != null) {
+                  setState(() {
+                    selectedDate = selectedDate.copyWith(
+                      day: date.day,
+                      month: date.month,
+                      year: date.year,
+                    );
+                  });
+                }
+              },
+            ),
+          ],
         ),
         ElevatedButton.icon(
           icon: const Icon(Icons.access_time),
-          label: const Text("Select Time"),
+          label: Text(localization.selectTime),
           onPressed: () async {
             final TimeOfDay? time = await showTimePicker(
               context: context,
@@ -141,7 +145,7 @@ class _ReportFormState extends State<ReportForm> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          "Selected Date:",
+          localization.selectedDate,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),

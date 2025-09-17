@@ -203,5 +203,8 @@
   "accountDeletionError": "Erro ao excluir conta. Tente novamente mais tarde",
   "deleteAccountWarning": "Você está prestes a deletar sua conta. Todos os dados armazenados na nuvem serão permanentemente excluídos, mas os dados locais no seu dispositivo permanecerão intactos. Esta ação é irreversível e a conta não poderá ser reativada.",
   "attention": "Atenção!",
-  "deleteAccount": "Deletar Conta"
+  "deleteAccount": "Deletar Conta",
+  "selectedDate": "Data selecionada:",
+  "selectTime": "Selecionar hora",
+  "selectDate": "Selecionar data"
 }

@@ -613,4 +613,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccount => 'Delete Account';
+
+  @override
+  String get selectedDate => 'Selected Date:';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
+  String get selectDate => 'Select Date';
 }

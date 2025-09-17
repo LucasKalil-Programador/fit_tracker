@@ -1270,6 +1270,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete Account'**
   String get deleteAccount;
+
+  /// Label showing the selected date
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Date:'**
+  String get selectedDate;
+
+  /// Button or label to select a time
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// Button or label to select a date
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get selectDate;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

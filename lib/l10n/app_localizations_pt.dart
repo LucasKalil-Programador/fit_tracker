@@ -613,4 +613,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get deleteAccount => 'Deletar Conta';
+
+  @override
+  String get selectedDate => 'Data selecionada:';
+
+  @override
+  String get selectTime => 'Selecionar hora';
+
+  @override
+  String get selectDate => 'Selecionar data';
 }
