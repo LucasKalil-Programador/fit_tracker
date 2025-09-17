@@ -155,10 +155,14 @@ class _DefaultGraphState extends State<DefaultGraph> {
     return LineChart(
       LineChartData(
         showingTooltipIndicators: selected.map((e) {
+              if(e >= widget.spots.length) return null;
               return ShowingTooltipIndicators([
                 LineBarSpot(lineBarsData[0], 0, widget.spots[e]),
               ]);
-        },).toList(),
+          },)
+          .where((element) => element != null)
+          .cast<ShowingTooltipIndicators>()
+          .toList(),
         lineBarsData: lineBarsData,
         lineTouchData: lineTouchData,
         minY: widget.minY ?? getMin(),
