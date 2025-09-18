@@ -43,6 +43,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           localization.createPlan,
@@ -82,7 +83,7 @@ class _TrainingPlanFormState extends State<TrainingPlanForm> {
                 ),
               ),
               SizedBox(
-                height: 600,
+                height: MediaQuery.of(context).size.height * 0.5,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: exerciseSelection(),
