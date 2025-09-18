@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCGtzc-66mytx0ynyqAJtGky6Cebhd1zVY',
-    appId: '1:982021563960:android:469c7fbb1b78000f3328cd',
+    appId: '1:982021563960:android:8c7916a50bde29093328cd',
     messagingSenderId: '982021563960',
     projectId: 'fittracker-1da45',
     storageBucket: 'fittracker-1da45.firebasestorage.app',
@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '982021563960',
     projectId: 'fittracker-1da45',
     storageBucket: 'fittracker-1da45.firebasestorage.app',
-    androidClientId: '982021563960-jfvpmv0vp8m0q3jdpqjcgcdn50nno1po.apps.googleusercontent.com',
+    androidClientId: '982021563960-3dksqubrrhc3k2t8di2685at2nlb1anr.apps.googleusercontent.com',
     iosClientId: '982021563960-6l7n98vee62t87f6n5qat13dr9ckq2e9.apps.googleusercontent.com',
     iosBundleId: 'com.example.fittrackr',
   );
@@ -75,7 +75,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '982021563960',
     projectId: 'fittracker-1da45',
     storageBucket: 'fittracker-1da45.firebasestorage.app',
-    androidClientId: '982021563960-jfvpmv0vp8m0q3jdpqjcgcdn50nno1po.apps.googleusercontent.com',
+    androidClientId: '982021563960-3dksqubrrhc3k2t8di2685at2nlb1anr.apps.googleusercontent.com',
     iosClientId: '982021563960-6l7n98vee62t87f6n5qat13dr9ckq2e9.apps.googleusercontent.com',
     iosBundleId: 'com.example.fittrackr',
   );
