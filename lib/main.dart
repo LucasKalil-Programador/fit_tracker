@@ -3,7 +3,7 @@ import 'package:fittrackr/states/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const version = "1.0.0";
+const version = "RC 1.0.1";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
