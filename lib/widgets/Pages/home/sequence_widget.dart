@@ -59,7 +59,7 @@ class Sequence extends StatelessWidget {
     
     int offset = 0;
     int sequence = 0;
-
+    if(history.isEmpty) return 0;
     while(true) {
       final day = now.subtract(Duration(days: offset));
       final hasHistory = history.hasHistoryInDate(day.day, day.month, day.year);
