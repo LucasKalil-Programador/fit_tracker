@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/Pages/fit_tracker_terms_page.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/auth_state.dart';
@@ -16,8 +17,9 @@ import 'package:provider/provider.dart';
 enum ResyncOption{ local, server, none }
 
 class GoogleLoginWidget extends StatefulWidget {
+  final bool? isLoading;
 
-  const GoogleLoginWidget({super.key});
+  const GoogleLoginWidget({super.key, this.isLoading});
 
   @override
   State<GoogleLoginWidget> createState() => _GoogleLoginWidgetState();
@@ -29,6 +31,12 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
 
   bool isSyncing = false;
   bool isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    isLoading = widget.isLoading ?? false;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +53,17 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
         Consumer<AuthState>(
           builder: (BuildContext context, AuthState authState, Widget? child) { 
             if(authState.status == AuthStatus.authenticated) {
-              return logout(context, authState);
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  logout(context, authState),
+                  AccountDeletionButton(
+                    isLogged: true,
+                    onConfirmDeletion:
+                        () => onConfirmDeletion(context, localization),
+                  ),
+                ],
+              );
             } else {
               return login(context, authState);
             }
@@ -316,6 +334,28 @@ class _GoogleLoginWidgetState extends State<GoogleLoginWidget> {
       }
     } catch (_) { }
     return false;
+  }
+
+  // Account deletion
+
+  void onConfirmDeletion(BuildContext context, AppLocalizations localization) async {
+    if(isLoading) return;
+    setState(() => isLoading = true);
+    try {
+      final manager = Provider.of<StateManager>(context, listen: false);
+      final result = await manager.deleteAccount();
+      if (context.mounted) {
+        showSnackMessage(
+          context,
+          result
+              ? localization.accountDeleted
+              : localization.accountDeletionError,
+          result,
+        );
+      }
+    } finally {
+      setState(() => isLoading = false);
+    }
   }
 }
 
