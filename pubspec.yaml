@@ -106,6 +106,8 @@ flutter:
     - assets/svg/fire_dark.svg
     - assets/svg/fire_light.svg
     - assets/icons/fittracker_consept_icon_blue.PNG
+    - assets/json/exercises_en.json
+    - assets/json/exercises_pt-br.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
