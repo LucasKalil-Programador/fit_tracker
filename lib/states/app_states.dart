@@ -1,8 +1,10 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:fittrackr/database/entities/exercise.dart';
 import 'package:fittrackr/database/entities/report_table.dart';
 import 'package:fittrackr/database/entities/training_history.dart';
 import 'package:fittrackr/database/entities/training_plan.dart';
 import 'package:fittrackr/states/base_list_state.dart';
+import 'package:fittrackr/utils/logger.dart';
 
 class ExercisesState extends BaseListState<Exercise> {
   ExercisesState({super.dbProxy, super.loadDatabase});
@@ -14,11 +16,14 @@ class ExercisesState extends BaseListState<Exercise> {
   }
 
   List<Exercise> search(String searchStr) {
-    return where((e) => _searchFilter(e, searchStr.toLowerCase())).toList();
+    logger.i(_normalize(searchStr));
+    return where((e) => _searchFilter(e, _normalize(searchStr))).toList();
   }
 
+  String _normalize(String str) => removeDiacritics(str).toLowerCase();
+
   bool _searchFilter(Exercise exercise, String searchStr) {
-    return exercise.name.toLowerCase().contains(searchStr) ||
+    return _normalize(exercise.name).contains(searchStr) ||
            [exercise.reps, exercise.amount, exercise.sets].contains(int.tryParse(searchStr));
   }
 

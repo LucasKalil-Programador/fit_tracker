@@ -66,6 +66,7 @@ dependencies:
   sqflite_sqlcipher: ^3.3.0
   sqflite_common: ^2.5.5
   flutter_secure_storage: ^9.2.4
+  diacritic: ^0.1.6
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
