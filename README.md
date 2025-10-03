@@ -3,10 +3,12 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.7.2-blue?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.0+-blue?logo=dart)
 ![Platform](https://img.shields.io/badge/Plataforma-Android%20%7C%20iOS-green)
+![Firebase](https://img.shields.io/badge/Firebase-Integrado-orange?logo=firebase)
+![Version](https://img.shields.io/badge/Vers%C3%A3o-1.0.1-blue)
 ![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-yellow)
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange)
+![Status](https://img.shields.io/badge/Status-Lan%C3%A7ado-brightgreen)
 
-**FitTracker é um aplicativo criado com o objetivo de auxiliar no planejamento e na execução de treinos, com foco principal em academias. A ideia surgiu por motivação pessoal, e todas as funcionalidades foram pensadas por um desenvolvedor que realmente utiliza o app no dia a dia. Atualmente, o app já se encontra em um estágio utilizável, embora ainda apresente alguns problemas e falte alguns recursos, e vem sendo testado em uso real por mim.**
+**FitTracker é um aplicativo criado com o objetivo de auxiliar no planejamento e na execução de treinos, com foco principal em academias. A ideia surgiu por motivação pessoal, e todas as funcionalidades foram pensadas por um desenvolvedor que realmente utiliza o app no dia a dia. O app foi lançado em sua primeira versão estável (v1.0.1), com todas as funcionalidades principais implementadas, sistema de backup em nuvem e conformidade com LGPD.**
 
 # Índice
 
@@ -21,6 +23,8 @@
 - [🛠️ Tecnologias Usadas](#️-tecnologias-usadas)
 - [🔧 Estrutura do Projeto](#-estrutura-do-projeto)
 - [🧪 Testes](#-testes)
+- [🔒 Privacidade e Segurança](#-privacidade-e-segurança)
+- [🌍 Internacionalização](#-internacionalização)
 - [📈 Roadmap](#-roadmap)
 - [📄 Licença](#-licença)
 - [✒️ Autor](#️-autor)
@@ -71,13 +75,15 @@
 
 **As próximas telas mostram o cronômetro interno do app, com funções básicas de controle de tempo, e a tela de configurações, onde o usuário pode ajustar diversos aspectos do aplicativo conforme suas preferências.**
 
-**Na tela de configurações, existem três áreas principais:**
+**Na tela de configurações, existem quatro áreas principais:**
 
 1. Tema: permite ao usuário escolher entre os modos claro, escuro ou seguir o tema do sistema, ajustando o esquema de cores para melhor visualização em diferentes situações.
 
-2. Dados: oferece a opção de importar e exportar os dados do aplicativo em formato .json, facilitando backups ou migração.
+2. Idioma: suporte completo para Português (Brasil) e Inglês, com troca dinâmica do idioma em tempo real.
 
-3. Ferramentas para desenvolvedor: inclui ações como limpar todos os dados ou gerar dados de demonstração. Essa seção não estará visível na versão final (release) do app.
+3. Dados: oferece a opção de importar e exportar os dados do aplicativo em formato .json, facilitando backups locais ou migração. Integração com Firebase para backup automático em nuvem.
+
+4. Conta: gerenciamento de autenticação com Google, visualização de termos de uso e políticas de privacidade.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/49710336-6a59-4636-8852-dec1559c3f7e" width="30%" />
@@ -93,9 +99,14 @@
 - [x] Histórico e visualização gráfica do progresso
 - [x] Múltiplos cronômetros integrados
 - [x] Tema claro, escuro e sistema
+- [x] Suporte completo para Português (Brasil) e Inglês
 - [x] Armazenamento local utilizando SQLite
-- [ ] Página inicial (Home) personalizada
-- [ ] Backup em nuvem com Firebase
+- [x] Autenticação com Google (Firebase Auth)
+- [x] Backup em nuvem com Firebase Firestore
+- [x] Sincronização automática de dados entre dispositivos
+- [x] Página inicial (Home) personalizada
+- [x] Conformidade com LGPD
+- [x] Termos de uso e políticas de privacidade
 - [ ] Compartilhamento de treinos e exercícios
 
 ## 📦 Instalação
@@ -105,6 +116,7 @@ Siga os passos abaixo para rodar o projeto localmente:
 ### Pré-requisitos
 - Flutter instalado 3.7.2 ou superior
 - Dispositivo físico ou emulador configurado
+- Conta Firebase configurada (para funcionalidades de autenticação e backup)
 
 ### Passos
 
@@ -118,6 +130,8 @@ cd fit_tracker
 # Instale as dependências
 flutter pub get
 
+# Configure o Firebase (adicione google-services.json para Android e GoogleService-Info.plist para iOS)
+
 # Execute o app
 flutter run
 ```
@@ -126,15 +140,18 @@ Certifique-se de que um dispositivo/emulador está conectado antes de rodar o fl
 
 # 🛠️ Tecnologias Usadas
 
-- Flutter – SDK principal para desenvolvimento multiplataforma
-- Provider – Gerenciamento de estado simples e eficiente
-- UUID – Geração de identificadores únicos
-- SQFLite – Banco de dados local SQLite
-- sqflite_common_ffi – Suporte ao SQLite em plataformas nativas e de desktop
-- Flutter Slidable – Ações deslizáveis em listas
-- FL Chart – Gráficos interativos e customizáveis
-- Logger – Log bonito e estruturado para debugging
-- Share Plus – Compartilhamento de conteúdo nativo
+- **Flutter** – SDK principal para desenvolvimento multiplataforma
+- **Provider** – Gerenciamento de estado simples e eficiente
+- **Firebase Auth** – Autenticação com Google
+- **Cloud Firestore** – Banco de dados em nuvem para backup e sincronização
+- **UUID** – Geração de identificadores únicos
+- **SQFLite** – Banco de dados local SQLite
+- **sqflite_common_ffi** – Suporte ao SQLite em plataformas nativas e de desktop
+- **Flutter Slidable** – Ações deslizáveis em listas
+- **FL Chart** – Gráficos interativos e customizáveis
+- **Logger** – Log estruturado para debugging
+- **Share Plus** – Compartilhamento de conteúdo nativo
+- **Intl** – Internacionalização e suporte a múltiplos idiomas
 
 # 🔧 Estrutura do Projeto
 
@@ -143,6 +160,8 @@ lib/
 │
 ├── database/      # Entidades e funções relacionadas ao SQLite
 ├── states/        # Gerenciamento de estado
+├── services/      # Integração com Firebase e outros serviços
+├── l10n/          # Arquivos de internacionalização (pt-BR e en)
 ├── widgets/       # Componentes visuais reutilizáveis
 │   ├── common/    # Widgets comuns e genéricos
 │   ├── pages/     # Telas do aplicativo
@@ -152,7 +171,7 @@ lib/
 ```
 
 ```bash
-test/ # Testes unitarios
+test/ # Testes unitários
 ```
 
 # 🧪 Testes
@@ -165,12 +184,46 @@ Para executar os testes, use o comando:
 flutter test
 ```
 
+# 🔒 Privacidade e Segurança
+
+O FitTracker leva a privacidade dos usuários a sério e está em conformidade com a LGPD (Lei Geral de Proteção de Dados). O aplicativo:
+
+- Coleta apenas dados essenciais para funcionamento (informações de treino, exercícios e progresso)
+- Utiliza autenticação segura via Google (Firebase Auth)
+- Armazena dados localmente no dispositivo por padrão
+- Oferece backup opcional em nuvem com criptografia
+- Não compartilha dados com terceiros
+- Fornece controle total ao usuário sobre seus dados (exportação e exclusão)
+
+Os Termos de Uso e Políticas de Privacidade estão disponíveis dentro do aplicativo e descrevem detalhadamente como os dados são coletados, armazenados e utilizados.
+
+# 🌍 Internacionalização
+
+O FitTracker oferece suporte completo para dois idiomas:
+
+- 🇧🇷 Português (Brasil)
+- 🇺🇸 Inglês (English)
+
+A troca de idioma é dinâmica e pode ser feita em tempo real através das configurações do app, sem necessidade de reiniciar o aplicativo.
+
 # 📈 Roadmap
 
-- [ ] Finalizar funcionalidades básicas do app
-- [ ] Desenvolver a página Home
-- [ ] Implementar testes para UI
-- [ ] Integrar com Firebase
+### Versão 1.0.1 (Atual - Lançamento) ✅
+- [x] Todas as funcionalidades básicas implementadas
+- [x] Integração completa com Firebase
+- [x] Autenticação com Google
+- [x] Backup e sincronização em nuvem
+- [x] Suporte a PT-BR e EN
+- [x] Conformidade com LGPD
+- [x] Termos de uso e políticas de privacidade
+
+### Próximas Versões
+- [ ] Compartilhamento de treinos e exercícios entre usuários
+- [ ] Notificações push para lembretes de treino
+- [ ] Integração com wearables (smartwatches)
+- [ ] Modo offline aprimorado
+- [ ] Testes de UI automatizados
+- [ ] Suporte a mais idiomas
 
 # 📄 Licença
 

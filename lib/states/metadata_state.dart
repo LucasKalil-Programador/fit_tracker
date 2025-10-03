@@ -85,6 +85,22 @@ class MetadataState extends ChangeNotifier {
       });
   }
 
+  Future<bool> clear() async {
+    if (dbProxy == null) {
+      _cache.clear();
+      notifyListeners();
+      return true;
+    }
+    
+    final result = await dbProxy!.deleteAll();
+    if(result.notHasError) {
+      _cache.clear();
+      notifyListeners();
+    }
+
+    return result.notHasError;
+  }
+
   Future<bool> waitLoad() => _completer.future;
 
   Future<bool> _loadFromDatabase() async {
