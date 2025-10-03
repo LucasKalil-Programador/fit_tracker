@@ -12,11 +12,13 @@ class StopwatchBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localization = AppLocalizations.of(context)!;
-    final controller = ref.watch(
+    StopWatch? controller = ref.watch(
       stopwatchControllerProvider.select((value) {
-        if (index < value.length) return value[index];
+        return index < value.length ? value[index] : null;
       }),
-    ) ?? StopWatch();
+    );
+    final isValidIndex = controller != null;
+    controller ??= StopWatch();
     
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -35,17 +37,18 @@ class StopwatchBody extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           spacing: 24,
           children: [
-            Expanded(child: resetButton(localization, ref)),
-            Expanded(child: playPausedButton(localization, ref, controller)),
+            Expanded(child: resetButton(localization, ref, isValidIndex)),
+            Expanded(child: playPausedButton(localization, ref, controller, isValidIndex)),
           ],
         ),
       ],
     );
   }
 
-  ElevatedButton resetButton(AppLocalizations localization, WidgetRef ref) {
+  ElevatedButton resetButton(AppLocalizations localization, WidgetRef ref, bool isValidIndex) {
     return ElevatedButton.icon(
       onPressed: () {
+        if(!isValidIndex) return;
         ref.read(stopwatchControllerProvider.notifier).resetAt(index);
       },
       label: Text(localization.reset, softWrap: false),
@@ -53,7 +56,7 @@ class StopwatchBody extends ConsumerWidget {
     );
   }
 
-  ElevatedButton playPausedButton(AppLocalizations localization, WidgetRef ref, StopWatch stopwatch) {
+  ElevatedButton playPausedButton(AppLocalizations localization, WidgetRef ref, StopWatch stopwatch, bool isValidIndex) {
     final label = stopwatch.isPaused
             ? (stopwatch.isZeroed
                 ? Text(localization.start, softWrap: false)
@@ -66,6 +69,7 @@ class StopwatchBody extends ConsumerWidget {
 
     return ElevatedButton.icon(
       onPressed: () {
+          if(!isValidIndex) return;
           final notifier = ref.read(stopwatchControllerProvider.notifier);
           if (stopwatch.isPaused) {
               notifier.startAt(index);
