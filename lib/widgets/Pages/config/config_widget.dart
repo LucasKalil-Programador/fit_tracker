@@ -1,129 +1,14 @@
 import 'dart:io';
 
 import 'package:fittrackr/database/generate_db.dart';
+import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/main.dart';
 import 'package:fittrackr/states/app_states.dart';
 import 'package:fittrackr/utils/importer_exporter.dart';
 import 'package:fittrackr/widgets/common/request_buttons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-
-
-// Theme Selector
-
-enum AppTheme {dark, light, system}
-
-class ThemeSelection extends StatefulWidget {
-  final AppTheme initialValue;
-  final Function(AppTheme theme)? onThemeSelected;
-
-  const ThemeSelection({super.key, this.onThemeSelected, required this.initialValue});
-
-  @override
-  State<ThemeSelection> createState() => _ThemeSelectionState();
-}
-
-class _ThemeSelectionState extends State<ThemeSelection> {
-  AppTheme? selectedTheme;
-
-  @override
-  void initState() {
-    super.initState();
-
-    selectedTheme = widget.initialValue;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-    Map<AppTheme, String> themeTextMap = {AppTheme.dark: localization.dark, AppTheme.light: localization.light, AppTheme.system: localization.system};
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(localization.theme, style: Theme.of(context).textTheme.titleLarge),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: AppTheme.values.length,
-          itemBuilder: (context, index) {
-            final item = AppTheme.values[index];
-            final String text =
-                themeTextMap.containsKey(item) ? themeTextMap[item]! : localization.defaultOption;
-            return ListTile(
-              title: Text(text),
-              leading: Radio<AppTheme>(
-                value: item,
-                groupValue: selectedTheme,
-                onChanged: (theme) {
-                  setState(() {
-                    selectedTheme = theme;
-                  });
-                  if(theme != null && widget.onThemeSelected != null) {
-                    widget.onThemeSelected!(theme);
-                  }
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-// Locale Selector
-
-class LocateSelector extends StatelessWidget {
-  final String selectedLocale;
-  final Function(Locale locale) onLocaleSelected;
-
-  const LocateSelector({super.key, required this.selectedLocale, required this.onLocaleSelected});
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: 8,
-      children: [
-        Center(child: Text(localization.languageTitle, style: Theme.of(context).textTheme.titleLarge)),
-        LayoutBuilder(builder: (context, constraints) => 
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: DropdownMenu(
-                initialSelection: selectedLocale,
-                width: constraints.maxWidth,
-                dropdownMenuEntries: [
-                  for (var locale in AppLocalizations.supportedLocales)
-                    DropdownMenuEntry<String>(value: locale.languageCode, label: getLanguageByCode(localization, locale.languageCode)),
-                  DropdownMenuEntry<String>(value: "sys", label: getLanguageByCode(localization, "sys"))
-                ],
-                onSelected: (value) {
-                  if(value != null) {
-                    onLocaleSelected(Locale(value));
-                  }
-                },
-              )
-            ),
-        ),
-      ],
-    );
-  }
-
-  String getLanguageByCode(AppLocalizations localization, String languageCode) {
-    switch (languageCode) {
-      case "pt":
-        return localization.portugueseLanguage;
-      case "en":
-        return localization.englishLanguage;
-      default:
-        return localization.system;
-    }
-  }
-}
 
 // Dev Tools
 

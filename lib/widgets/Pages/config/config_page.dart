@@ -2,6 +2,8 @@ import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/states/metadata_state.dart';
 import 'package:fittrackr/widgets/Pages/config/config_widget.dart';
 import 'package:fittrackr/widgets/Pages/config/google_widget.dart';
+import 'package:fittrackr/widgets/Pages/config/locate_selector.dart';
+import 'package:fittrackr/widgets/Pages/config/theme_selector.dart';
 import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -29,22 +31,14 @@ class ConfigPage extends StatelessWidget {
               children: [
                 VersionWidget(),
                 DefaultDivider(),
-                ThemeSelection(
-                  initialValue: getTheme(metadataState),
-                  onThemeSelected: (theme) => onThemeSelected(context, theme),
-                ),
+                ThemeSelector(),
                 DefaultDivider(),
-                LocateSelector(
-                  selectedLocale: getLocale(metadataState),
-                  onLocaleSelected: (locale) => onLocaleSelected(context, locale),
-                ),
+                LocateSelector(),
                 DefaultDivider(),
                 GoogleLoginWidget(),
                 DefaultDivider(),
-                if(kDebugMode)
-                  DevTools(),
-                if(kDebugMode)
-                  DefaultDivider(),
+                if(kDebugMode) DevTools(),
+                if(kDebugMode) DefaultDivider(),
               ],
             ),
           );
@@ -53,21 +47,7 @@ class ConfigPage extends StatelessWidget {
     );
   }
 
-  AppTheme getTheme(MetadataState metadataState) {
-    final selectedTheme = metadataState.get(themeKey);
-    final themeNameMap = AppTheme.values.asNameMap();
-
-    if(selectedTheme != null && themeNameMap.containsKey(selectedTheme)) {
-      return AppTheme.values.byName(selectedTheme);
-    }
-    return AppTheme.system;
-  }
-
-  String getLocale(MetadataState metadataState) {
-    return metadataState.get(localeKey) ?? "sys";
-  }
-
-  void onThemeSelected(BuildContext context, AppTheme theme) {
+  void onThemeSelected(BuildContext context, ThemeMode theme) {
     final metadataState = Provider.of<MetadataState>(context, listen: false);
     metadataState.put(themeKey, theme.name);
   }
