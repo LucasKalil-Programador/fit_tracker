@@ -5,8 +5,6 @@ import 'package:fittrackr/database/proxy/proxy.dart';
 import 'package:fittrackr/utils/logger.dart';
 import 'package:flutter/material.dart';
 
-const themeKey = "Theme:key";
-const localeKey = "Locale:key";
 const metadataActivatedKey = "workout:activated";
 const metadataDoneKey = "workout:donelist";
 const sequencePreferenceKey = "sequence:preference";

@@ -46,16 +46,6 @@ class ConfigPage extends StatelessWidget {
       ),
     );
   }
-
-  void onThemeSelected(BuildContext context, ThemeMode theme) {
-    final metadataState = Provider.of<MetadataState>(context, listen: false);
-    metadataState.put(themeKey, theme.name);
-  }
-
-  void onLocaleSelected(BuildContext context, Locale locale) {
-    final metadataState = Provider.of<MetadataState>(context, listen: false);
-    metadataState.put(localeKey, locale.languageCode); 
-  }
 }
 
 
