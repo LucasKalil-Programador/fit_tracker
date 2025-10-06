@@ -1,4 +1,4 @@
-import 'package:fittrackr/Providers/App/page_index.dart';
+import 'package:fittrackr/Providers/app/page_index.dart';
 import 'package:fittrackr/Controllers/locale/locale_controller.dart';
 import 'package:fittrackr/Controllers/theme/theme_controller.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';

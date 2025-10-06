@@ -42,7 +42,7 @@ final class StopwatchControllerProvider
 }
 
 String _$stopwatchControllerHash() =>
-    r'a85d279ddfb5f3ef105c2ca08ea0c79cf4022e00';
+    r'6fc357884897cbe99086caa65a48d448200a04c0';
 
 abstract class _$StopwatchController extends $Notifier<List<StopWatch>> {
   List<StopWatch> build();

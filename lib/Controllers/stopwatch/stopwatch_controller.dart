@@ -15,6 +15,11 @@ class StopwatchController extends _$StopwatchController {
   }
 
   void removeAt(int index) {
+    if(state.length <= 1) {
+      state = const [StopWatch()];
+      return;
+    }
+    
     state = List.unmodifiable([
       for (int i = 0; i < state.length; i++)
         if (i != index) state[i],
