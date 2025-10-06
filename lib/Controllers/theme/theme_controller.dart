@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'theme_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ThemeController extends _$ThemeController {
   @override
   ThemeMode build() {

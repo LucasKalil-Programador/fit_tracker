@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:fittrackr/Controllers/stopwatch/stopwatch_controller.dart';
-import 'package:fittrackr/Providers/stopwatch/tab_index.dart';
+import 'package:fittrackr/Providers/common/tab_index.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/page_selector.dart';
 import 'package:fittrackr/widgets/Pages/stop_watch/stopwatch_body.dart';
@@ -16,6 +16,7 @@ class StopWatchPage extends ConsumerStatefulWidget {
 }
 
 class _StopWatchPageState extends ConsumerState<StopWatchPage> with TickerProviderStateMixin {
+  final String widgetID = "stopwatch page";
   late final localization = AppLocalizations.of(context)!;
   late TabController tabController;
   late PageController pageController;
@@ -30,7 +31,7 @@ class _StopWatchPageState extends ConsumerState<StopWatchPage> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final stopwatches = ref.watch(stopwatchControllerProvider);
-    final tabIndex = min(ref.watch(tabIndexProvider), stopwatches.length - 1);
+    final tabIndex = min(ref.watch(tabIndexProvider(id: widgetID)), stopwatches.length - 1);
     
     tabController = TabController(
       initialIndex: tabIndex,
@@ -52,7 +53,7 @@ class _StopWatchPageState extends ConsumerState<StopWatchPage> with TickerProvid
             child: PageView.builder(
               itemCount: stopwatches.length,
               controller: pageController,
-              onPageChanged: (index) => ref.read(tabIndexProvider.notifier).setTab(index),
+              onPageChanged: (index) => ref.read(tabIndexProvider(id: widgetID).notifier).setTab(index),
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50),

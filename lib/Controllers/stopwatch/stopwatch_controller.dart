@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'stopwatch_controller.g.dart';
 
 
-@riverpod
+@Riverpod(keepAlive: true)
 class StopwatchController extends _$StopwatchController {
   @override
   List<StopWatch> build() => const [StopWatch()];

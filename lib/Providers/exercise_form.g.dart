@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'locale_controller.dart';
+part of 'exercise_form.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,52 +9,53 @@ part of 'locale_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(LocaleController)
-const localeControllerProvider = LocaleControllerProvider._();
+@ProviderFor(ExerciseFormController)
+const exerciseFormControllerProvider = ExerciseFormControllerProvider._();
 
-final class LocaleControllerProvider
-    extends $NotifierProvider<LocaleController, Locale?> {
-  const LocaleControllerProvider._()
+final class ExerciseFormControllerProvider
+    extends $NotifierProvider<ExerciseFormController, FormData> {
+  const ExerciseFormControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'localeControllerProvider',
+        name: r'exerciseFormControllerProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localeControllerHash();
+  String debugGetCreateSourceHash() => _$exerciseFormControllerHash();
 
   @$internal
   @override
-  LocaleController create() => LocaleController();
+  ExerciseFormController create() => ExerciseFormController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Locale? value) {
+  Override overrideWithValue(FormData value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<Locale?>(value),
+      providerOverride: $SyncValueProvider<FormData>(value),
     );
   }
 }
 
-String _$localeControllerHash() => r'68d910dfc372e3ebc9dd7478b9b5e42baa59ba86';
+String _$exerciseFormControllerHash() =>
+    r'7ddc3a18c49f059df07fee6447f0c61b3ff832f3';
 
-abstract class _$LocaleController extends $Notifier<Locale?> {
-  Locale? build();
+abstract class _$ExerciseFormController extends $Notifier<FormData> {
+  FormData build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<Locale?, Locale?>;
+    final ref = this.ref as $Ref<FormData, FormData>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<Locale?, Locale?>,
-              Locale?,
+              AnyNotifier<FormData, FormData>,
+              FormData,
               Object?,
               Object?
             >;

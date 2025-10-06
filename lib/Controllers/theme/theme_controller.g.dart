@@ -20,7 +20,7 @@ final class ThemeControllerProvider
         argument: null,
         retry: null,
         name: r'themeControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class ThemeControllerProvider
   }
 }
 
-String _$themeControllerHash() => r'8873a76a871844284fead1aeb66bd575d780301c';
+String _$themeControllerHash() => r'86f6e43bddfba7419e7f59f5756155f975e9de67';
 
 abstract class _$ThemeController extends $Notifier<ThemeMode> {
   ThemeMode build();

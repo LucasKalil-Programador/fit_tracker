@@ -20,7 +20,7 @@ final class StopwatchControllerProvider
         argument: null,
         retry: null,
         name: r'stopwatchControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -42,7 +42,7 @@ final class StopwatchControllerProvider
 }
 
 String _$stopwatchControllerHash() =>
-    r'6fc357884897cbe99086caa65a48d448200a04c0';
+    r'80b1c8d8bc23d9ada37fcea264f24f7254852623';
 
 abstract class _$StopwatchController extends $Notifier<List<StopWatch>> {
   List<StopWatch> build();
