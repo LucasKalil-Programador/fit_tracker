@@ -33,6 +33,12 @@ class _IntValueInputState extends State<IntValueInput> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
   void didUpdateWidget(covariant IntValueInput oldWidget) {
     super.didUpdateWidget(oldWidget);
     controller.text = widget.value.toString();
@@ -85,9 +91,9 @@ class _IntValueInputState extends State<IntValueInput> {
       decoration: InputDecoration(labelText: widget.label ?? localization.weight, suffixText: widget.suffix ?? localization.kg),
       onChanged: (value) {
         final number = int.tryParse(controller.text);
-        if(number == null) return;
-
-        if(widget.min != null && number < widget.min!) {
+        if(number == null) {
+          widget.onChanged.call(0);
+        } else if(widget.min != null && number < widget.min!) {
           widget.onChanged.call(widget.min!);
         } else if(widget.max != null && number > widget.max!) {
           widget.onChanged.call(widget.max!);

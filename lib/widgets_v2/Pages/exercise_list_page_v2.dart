@@ -103,10 +103,14 @@ class ExerciseListPageV2 extends ConsumerWidget {
           ),
         );
       },
-    );
+    ).then((_) {
+      if(mode == ExerciseFormMode.edit) {
+        ref.read(exerciseFormControllerProvider.notifier).clear();
+      }
+    },);
   }
 
-  void onSubmit(WidgetRef ref, Exercise newExercise, ExerciseFormMode mode) async {
+  void onSubmit(WidgetRef ref, Exercise newExercise, ExerciseFormMode mode) {
     final localization = AppLocalizations.of(ref.context)!;
     
     bool success = false;

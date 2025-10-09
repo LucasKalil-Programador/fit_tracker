@@ -808,5 +808,21 @@
   "selectDate": "Select Date",
   "@selectDate": {
     "description": "Button or label to select a date"
+  },
+  "invalidReps": "Repetitions must be between 0 and 500.",
+  "@invalidReps": {
+    "description": "Error message shown when reps are outside the valid range (0-500)."
+  },
+  "invalidSets": "Sets must be between 0 and 500.",
+  "@invalidSets": {
+    "description": "Error message shown when sets are outside the valid range (0-500)."
+  },
+  "invalidAmount": "Amount must be between 0 and 2.",
+  "@invalidAmount": {
+    "description": "Error message shown when amount is outside the valid range (0-2)."
+  },
+  "invalidExerciseName": "Exercise name cannot be empty.",
+  "@invalidExerciseName": {
+    "description": "Error message shown when exercise name is empty."
   }
 }

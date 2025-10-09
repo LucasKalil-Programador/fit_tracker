@@ -1288,6 +1288,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Date'**
   String get selectDate;
+
+  /// Error message shown when reps are outside the valid range (0-500).
+  ///
+  /// In en, this message translates to:
+  /// **'Repetitions must be between 0 and 500.'**
+  String get invalidReps;
+
+  /// Error message shown when sets are outside the valid range (0-500).
+  ///
+  /// In en, this message translates to:
+  /// **'Sets must be between 0 and 500.'**
+  String get invalidSets;
+
+  /// Error message shown when amount is outside the valid range (0-2).
+  ///
+  /// In en, this message translates to:
+  /// **'Amount must be between 0 and 2.'**
+  String get invalidAmount;
+
+  /// Error message shown when exercise name is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise name cannot be empty.'**
+  String get invalidExerciseName;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

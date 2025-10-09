@@ -1,6 +1,7 @@
 import 'package:fittrackr/Models/exercise.dart';
 import 'package:fittrackr/Providers/exercise_form.dart';
 import 'package:fittrackr/l10n/app_localizations.dart';
+import 'package:fittrackr/widgets/common/default_widgets.dart';
 import 'package:fittrackr/widgets_v2/Pages/int_value_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,12 @@ class _ExerciseFormState extends ConsumerState<ExerciseForm> {
     _nameController = TextEditingController(
       text: ref.read(exerciseFormControllerProvider).name,
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
   }
 
   @override
@@ -159,12 +166,38 @@ class _ExerciseFormState extends ConsumerState<ExerciseForm> {
     );
   }
 
-  Widget submitButton(AppLocalizations localization) {
+  String? validateData(AppLocalizations localization) {
     final data = ref.read(exerciseFormControllerProvider);
+    if(data.reps < 0 || data.reps > 500) {
+      return localization.invalidReps;
+    } 
 
+    if(data.sets < 0 || data.sets > 500) {
+      return localization.invalidSets;
+    } 
+
+    if(data.amount < 0 || data.amount > 2) {
+      return localization.invalidAmount;
+    } 
+
+    if(data.name.isEmpty) {
+      return localization.invalidName;
+    }
+
+    return null;
+  }
+
+  Widget submitButton(AppLocalizations localization) {
     return ElevatedButton(
       onPressed: () {
-        if (_formKey.currentState!.validate()) {
+        final data = ref.read(exerciseFormControllerProvider);
+        final valid = validateData(localization);
+
+        if(valid != null) {
+          showSnackMessage(context, valid, false);
+        }
+
+        if (_formKey.currentState!.validate() && valid == null) {
           String? newId;
           if (widget.mode == ExerciseFormMode.edit && widget.baseExercise != null) {
             newId = widget.baseExercise!.id;
@@ -176,7 +209,7 @@ class _ExerciseFormState extends ConsumerState<ExerciseForm> {
             amount: data.amount,
             sets: data.sets,
             type: data.type, 
-            category: ""
+            category: "" // TODO category
           );
           widget.onSubmit?.call(exercise);
         }

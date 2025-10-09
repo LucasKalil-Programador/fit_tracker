@@ -622,4 +622,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get selectDate => 'Selecionar data';
+
+  @override
+  String get invalidReps => 'Número de repetições deve estar entre 0 e 500.';
+
+  @override
+  String get invalidSets => 'Número de séries deve estar entre 0 e 500.';
+
+  @override
+  String get invalidAmount => 'Quantidade deve estar entre 0 e 2.';
+
+  @override
+  String get invalidExerciseName => 'O nome do exercício não pode estar vazio.';
 }

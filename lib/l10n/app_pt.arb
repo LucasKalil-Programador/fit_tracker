@@ -206,5 +206,9 @@
   "deleteAccount": "Deletar Conta",
   "selectedDate": "Data selecionada:",
   "selectTime": "Selecionar hora",
-  "selectDate": "Selecionar data"
+  "selectDate": "Selecionar data",
+  "invalidReps": "Número de repetições deve estar entre 0 e 500.",
+  "invalidSets": "Número de séries deve estar entre 0 e 500.",
+  "invalidAmount": "Quantidade deve estar entre 0 e 2.",
+  "invalidExerciseName": "O nome do exercício não pode estar vazio."
 }

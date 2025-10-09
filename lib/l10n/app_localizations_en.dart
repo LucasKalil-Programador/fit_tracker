@@ -622,4 +622,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectDate => 'Select Date';
+
+  @override
+  String get invalidReps => 'Repetitions must be between 0 and 500.';
+
+  @override
+  String get invalidSets => 'Sets must be between 0 and 500.';
+
+  @override
+  String get invalidAmount => 'Amount must be between 0 and 2.';
+
+  @override
+  String get invalidExerciseName => 'Exercise name cannot be empty.';
 }
